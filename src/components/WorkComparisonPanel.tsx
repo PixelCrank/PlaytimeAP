@@ -120,13 +120,50 @@ export default function WorkComparisonPanel() {
     );
   }
 
+  // Generate contextual insights
+  const generateInsights = useMemo(() => {
+    if (!comparison || works.length < 2) return [];
+    
+    const insights: string[] = [];
+    const [work1, work2] = works;
+    
+    // Temporal insights
+    if (comparison.temporalDistance) {
+      if (comparison.temporalDistance < 10) {
+        insights.push(`Ces œuvres sont contemporaines (${comparison.temporalDistance} ans d'écart) et reflètent probablement les mêmes contextes culturels.`);
+      } else if (comparison.temporalDistance > 100) {
+        insights.push(`Malgré ${comparison.temporalDistance} ans de distance, ces œuvres dialoguent à travers le temps sur des préoccupations similaires.`);
+      }
+    }
+    
+    // Cross-medium insights
+    if (!comparison.sameMedium) {
+      insights.push(`Cette comparaison trans-média entre ${work1.type} et ${work2.type} révèle comment différents médiums explorent des territoires émotionnels similaires.`);
+    }
+    
+    // Emotional resonance
+    if (comparison.sharedEmotions.length >= 2) {
+      insights.push(`L'intersection émotionnelle (${comparison.sharedEmotions.join(', ')}) suggère une résonance profonde dans leur rapport au temps.`);
+    }
+    
+    // Realm insights
+    if (comparison.sameRealm) {
+      const realmLabels = { cosmic: 'cosmique', human: 'humain', disrupted: 'dérangé' };
+      insights.push(`Les deux œuvres appartiennent au monde ${realmLabels[work1.realm as keyof typeof realmLabels]}, partageant une vision similaire de la temporalité.`);
+    } else {
+      insights.push(`Ces œuvres explorent des "mondes du temps" différents (${work1.realm} vs ${work2.realm}), offrant des perspectives complémentaires.`);
+    }
+    
+    return insights;
+  }, [comparison, works]);
+
   // Two works selected
   return (
-    <div className="fixed bottom-6 right-6 bg-white border-2 border-indigo-300 rounded-2xl shadow-2xl p-6 w-[600px] max-h-[80vh] overflow-y-auto z-50">
+    <div className="fixed bottom-6 right-6 bg-white border-2 border-indigo-300 rounded-2xl shadow-2xl p-6 w-[700px] max-h-[85vh] overflow-y-auto z-50">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className="text-2xl">⚖️</span>
-          <h3 className="text-lg font-bold text-slate-900">Comparaison d'œuvres</h3>
+          <h3 className="text-lg font-bold text-slate-900">Analyse comparative</h3>
         </div>
         <button
           onClick={clearComparison}
@@ -161,47 +198,140 @@ export default function WorkComparisonPanel() {
         </div>
       </div>
 
-      {/* Works Side by Side */}
-      <div className="grid grid-cols-2 gap-4 mb-4">
-        {works.map((work, idx) => (
-          <div 
-            key={work.id}
-            className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-4 border"
-          >
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex-1 pr-2">
-                <button
-                  onClick={() => setSelectedId(work.id)}
-                  className="font-medium text-slate-900 text-left hover:text-indigo-600 transition"
-                >
-                  {work.titre}
-                </button>
-                <div className="text-xs text-slate-600 mt-1">{work.createur}</div>
-              </div>
+      {/* Side-by-Side Metadata Table */}
+      <div className="mb-4">
+        <div className="grid grid-cols-[120px_1fr_1fr] gap-2 text-xs">
+          {/* Header */}
+          <div className="font-semibold text-slate-700 py-2"></div>
+          {works.map((work, idx) => (
+            <div key={`header-${idx}`} className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg p-3 border">
+              <button
+                onClick={() => setSelectedId(work.id)}
+                className="font-medium text-slate-900 text-left hover:text-indigo-600 transition w-full"
+              >
+                {work.titre}
+              </button>
+              <div className="text-slate-600 mt-1">{work.createur}</div>
               <button
                 onClick={() => removeFromComparison(work.id)}
-                className="text-slate-400 hover:text-slate-600 text-sm"
+                className="text-slate-400 hover:text-slate-600 text-xs mt-2"
               >
-                ×
+                ✕ Retirer
               </button>
             </div>
-            <div className="text-xs text-slate-500 flex flex-wrap gap-1">
-              <span className="px-1.5 py-0.5 bg-white rounded">{work.type}</span>
-              <span className="px-1.5 py-0.5 bg-white rounded">{work.annee}</span>
-              <span className="px-1.5 py-0.5 bg-white rounded">{work.realm}</span>
+          ))}
+          
+          {/* Rows */}
+          <div className="font-medium text-slate-600 py-2">Type</div>
+          {works.map((w, i) => (
+            <div key={`type-${i}`} className="bg-slate-50 rounded px-2 py-2">{w.type}</div>
+          ))}
+          
+          <div className="font-medium text-slate-600 py-2">Année</div>
+          {works.map((w, i) => (
+            <div key={`year-${i}`} className="bg-slate-50 rounded px-2 py-2">{w.annee || 'N/A'}</div>
+          ))}
+          
+          <div className="font-medium text-slate-600 py-2">Monde</div>
+          {works.map((w, i) => (
+            <div key={`realm-${i}`} className="bg-slate-50 rounded px-2 py-2 capitalize">{w.realm}</div>
+          ))}
+          
+          <div className="font-medium text-slate-600 py-2">Siècle</div>
+          {works.map((w, i) => (
+            <div key={`century-${i}`} className="bg-slate-50 rounded px-2 py-2">
+              {w.anneeNum === 19 ? 'XIXe' : w.anneeNum === 20 ? 'XXe–XXIe' : 'N/A'}
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Temporal Distance */}
+      {/* Timeline Context Visualization */}
       {comparison && comparison.temporalDistance !== null && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-          <div className="flex items-center gap-2 text-sm">
-            <span className="text-lg">📅</span>
-            <span className="text-blue-900">
-              <strong>{comparison.temporalDistance} ans</strong> séparent ces deux œuvres
-            </span>
+        <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-4 mb-4">
+          <h4 className="text-sm font-semibold text-blue-900 mb-3 flex items-center gap-2">
+            <span>⏳</span>
+            Contexte temporel
+          </h4>
+          <div className="relative h-16">
+            {/* Timeline bar */}
+            <div className="absolute top-6 left-0 right-0 h-1 bg-blue-200 rounded"></div>
+            
+            {/* Work markers */}
+            {(() => {
+              const year1 = parseInt(works[0].annee?.match(/\d{4}/)?.[0] || '0');
+              const year2 = parseInt(works[1].annee?.match(/\d{4}/)?.[0] || '0');
+              const minYear = Math.min(year1, year2);
+              const maxYear = Math.max(year1, year2);
+              const range = maxYear - minYear || 1;
+              
+              return works.map((work, idx) => {
+                const year = parseInt(work.annee?.match(/\d{4}/)?.[0] || '0');
+                const position = ((year - minYear) / range) * 100;
+                
+                return (
+                  <div
+                    key={work.id}
+                    className="absolute"
+                    style={{ left: `${position}%`, top: idx === 0 ? '0' : '2rem' }}
+                  >
+                    <div className={`w-3 h-3 rounded-full ${idx === 0 ? 'bg-violet-500' : 'bg-orange-500'} border-2 border-white shadow`}></div>
+                    <div className={`text-[10px] font-medium mt-1 whitespace-nowrap ${idx === 0 ? 'text-violet-700' : 'text-orange-700'}`}>
+                      {year}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
+          </div>
+          <div className="text-xs text-blue-800 mt-3 text-center">
+            <strong>{comparison.temporalDistance} années</strong> séparent ces œuvres
+          </div>
+        </div>
+      )}
+
+      {/* Venn Diagram Visualization */}
+      {comparison && (comparison.sharedEmotions.length > 0 || comparison.sharedCategories.length > 0) && (
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-4 mb-4">
+          <h4 className="text-sm font-semibold text-purple-900 mb-3 flex items-center gap-2">
+            <span>◉</span>
+            Diagramme de Venn - Intersections
+          </h4>
+          
+          {/* Visual Venn representation */}
+          <div className="flex items-center justify-center mb-3 relative h-24">
+            {/* Left circle */}
+            <div className="absolute left-[25%] w-20 h-20 rounded-full bg-violet-300/40 border-2 border-violet-400 flex items-center justify-center">
+              <span className="text-xs font-bold text-violet-700">{works[0].emotions?.length || 0}</span>
+            </div>
+            
+            {/* Right circle */}
+            <div className="absolute right-[25%] w-20 h-20 rounded-full bg-orange-300/40 border-2 border-orange-400 flex items-center justify-center">
+              <span className="text-xs font-bold text-orange-700">{works[1].emotions?.length || 0}</span>
+            </div>
+            
+            {/* Intersection */}
+            <div className="absolute left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-gradient-to-r from-violet-400/60 to-orange-400/60 border-2 border-purple-500 flex items-center justify-center z-10">
+              <div className="text-center">
+                <div className="text-lg font-bold text-purple-900">{comparison.sharedEmotions.length}</div>
+                <div className="text-[8px] text-purple-800">partagées</div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-2 text-xs text-center">
+            <div className="text-violet-700">
+              <div className="font-semibold">{(comparison.uniqueEmotions1.length || 0) + (comparison.uniqueCategories1.length || 0)}</div>
+              <div className="text-[10px]">Uniques à 1</div>
+            </div>
+            <div className="text-purple-900">
+              <div className="font-semibold">{comparison.sharedEmotions.length + comparison.sharedCategories.length}</div>
+              <div className="text-[10px]">Partagées</div>
+            </div>
+            <div className="text-orange-700">
+              <div className="font-semibold">{(comparison.uniqueEmotions2.length || 0) + (comparison.uniqueCategories2.length || 0)}</div>
+              <div className="text-[10px]">Uniques à 2</div>
+            </div>
           </div>
         </div>
       )}
@@ -314,22 +444,43 @@ export default function WorkComparisonPanel() {
         </div>
       )}
 
-      {/* Interpretation */}
-      {comparison && (
+      {/* Enhanced AI-Generated Insights */}
+      {comparison && generateInsights.length > 0 && (
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <span className="text-2xl">💡</span>
+            <span className="text-2xl">🧠</span>
             <div className="flex-1">
-              <h4 className="text-sm font-semibold text-amber-900 mb-1">Interprétation</h4>
-              <p className="text-sm text-amber-800">
+              <h4 className="text-sm font-semibold text-amber-900 mb-2">Analyse contextuelle</h4>
+              
+              {/* Summary insight */}
+              <p className="text-sm text-amber-800 mb-3 pb-3 border-b border-amber-200">
                 {comparison.similarityPercent >= 70 ? (
-                  <>Ces œuvres partagent une <strong>ADN culturel très proche</strong> malgré leurs différences de médium ou d'époque. Elles explorent des territoires émotionnels et thématiques similaires.</>
+                  <>Ces œuvres partagent un <strong>ADN culturel très proche</strong> ({comparison.similarityPercent}% de similarité). Elles explorent des territoires émotionnels et thématiques similaires.</>
                 ) : comparison.similarityPercent >= 40 ? (
-                  <>Ces œuvres présentent des <strong>convergences thématiques notables</strong> tout en maintenant des identités distinctes. Elles dialoguent autour de préoccupations communes.</>
+                  <>Ces œuvres présentent des <strong>convergences thématiques notables</strong> ({comparison.similarityPercent}% de similarité) tout en maintenant des identités distinctes.</>
                 ) : (
-                  <>Ces œuvres sont <strong>très différentes</strong> dans leur approche du temps. Leur comparaison révèle la diversité des représentations temporelles dans le corpus.</>
+                  <>Ces œuvres sont <strong>relativement différentes</strong> ({comparison.similarityPercent}% de similarité), révélant la diversité des représentations temporelles.</>
                 )}
               </p>
+              
+              {/* Contextual insights */}
+              <div className="space-y-2">
+                {generateInsights.map((insight, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-xs text-amber-800">
+                    <span className="text-amber-600 mt-0.5">▸</span>
+                    <span>{insight}</span>
+                  </div>
+                ))}
+              </div>
+              
+              {/* Research suggestion */}
+              {comparison.similarityPercent >= 40 && (
+                <div className="mt-3 pt-3 border-t border-amber-200 text-xs text-amber-700">
+                  <strong>💡 Piste de recherche :</strong> Ces œuvres pourraient constituer une base intéressante pour explorer 
+                  {comparison.sharedCategories.length > 0 ? ` les thèmes de ${comparison.sharedCategories[0]}` : ' les dialogues trans-temporels'} 
+                  dans le corpus.
+                </div>
+              )}
             </div>
           </div>
         </div>

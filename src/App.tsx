@@ -34,6 +34,7 @@ import ShareSnapshotPanel from "./components/ShareSnapshotPanel";
 import MediaGalleryView from "./components/MediaGalleryView";
 import MediaLightbox from "./components/MediaLightbox";
 import VideoPlaylistBuilder from "./components/VideoPlaylistBuilder";
+import TimelineScrubber from "./components/TimelineScrubber";
 import { useStore } from "./store/useStore";
 
 export default function App() {
@@ -343,6 +344,11 @@ export default function App() {
               </div>
               
               <EmotionRangeFilter />
+              
+              {/* Timeline Scrubber */}
+              <div className="mt-3">
+                <TimelineScrubber />
+              </div>
             </div>
             
             {/* Discovery Tools */}
