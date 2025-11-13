@@ -31,15 +31,20 @@ import WorkComparisonPanel from "./components/WorkComparisonPanel";
 import VisitHistoryPanel from "./components/VisitHistoryPanel";
 import CustomTagsManager from "./components/CustomTagsManager";
 import ShareSnapshotPanel from "./components/ShareSnapshotPanel";
+import MediaGalleryView from "./components/MediaGalleryView";
+import MediaLightbox from "./components/MediaLightbox";
+import VideoPlaylistBuilder from "./components/VideoPlaylistBuilder";
 
 export default function App() {
-  const [view, setView] = useState<"constellation" | "emotion">("constellation");
+  const [view, setView] = useState<"constellation" | "emotion" | "gallery">("constellation");
   const [showWelcome, setShowWelcome] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showVisitHistory, setShowVisitHistory] = useState(false);
   const [showCustomTags, setShowCustomTags] = useState(false);
   const [showShareSnapshot, setShowShareSnapshot] = useState(false);
+  const [lightboxWorkId, setLightboxWorkId] = useState<string | null>(null);
+  const [showPlaylistBuilder, setShowPlaylistBuilder] = useState(false);
 
   useEffect(() => {
     const hasVisited = localStorage.getItem("playtime-visited");
@@ -142,6 +147,16 @@ export default function App() {
                 >
                   🎭 Émotions
                 </button>
+                <button
+                  onClick={() => setView("gallery")}
+                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
+                    view === "gallery" 
+                      ? "bg-white shadow-sm text-slate-900" 
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  🎬 Galerie
+                </button>
               </div>
             </div>
             
@@ -164,6 +179,14 @@ export default function App() {
               >
                 📸 Partager
               </button>
+              {view === 'gallery' && (
+                <button
+                  onClick={() => setShowPlaylistBuilder(true)}
+                  className="px-3 py-1.5 text-xs bg-red-500 hover:bg-red-600 rounded-lg font-medium text-white flex items-center gap-1.5"
+                >
+                  🎬 Playlist
+                </button>
+              )}
               <InsightHistoryPanel />
               <TimelineSlider />
               <EmotionalCompass />
@@ -277,16 +300,18 @@ export default function App() {
           <div className="absolute inset-0">
             {view === "constellation" ? (
               <WorldCanvas />
-            ) : (
+            ) : view === "emotion" ? (
               <>
                 <EmotionMapCanvas />
                 <div className="absolute bottom-4 right-4">
                   <EmotionLegend />
                 </div>
               </>
+            ) : (
+              <MediaGalleryView onOpenLightbox={(workId) => setLightboxWorkId(workId)} />
             )}
           </div>
-          <NodeDrawer />
+          {view !== "gallery" && <NodeDrawer />}
         </main>
       </div>
 
@@ -297,6 +322,15 @@ export default function App() {
       {showVisitHistory && <VisitHistoryPanel onClose={() => setShowVisitHistory(false)} />}
       {showCustomTags && <CustomTagsManager onClose={() => setShowCustomTags(false)} />}
       {showShareSnapshot && <ShareSnapshotPanel onClose={() => setShowShareSnapshot(false)} />}
+      
+      {/* Media Gallery Modals */}
+      {lightboxWorkId && (
+        <MediaLightbox
+          workId={lightboxWorkId}
+          onClose={() => setLightboxWorkId(null)}
+        />
+      )}
+      {showPlaylistBuilder && <VideoPlaylistBuilder onClose={() => setShowPlaylistBuilder(false)} />}
 
       <footer className="border-t bg-white px-6 py-3 flex items-center justify-between text-xs text-slate-500">
         <span>© 2025 Crank Studio · Playtime v1.0</span>
