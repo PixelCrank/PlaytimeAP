@@ -16,6 +16,10 @@ import SerendipityExplorer from "./components/SerendipityExplorer";
 import CuratedPlaylistBuilder from "./components/CuratedPlaylistBuilder";
 import CorpusGapAnalyzer from "./components/CorpusGapAnalyzer";
 import SocialExperienceGenerator from "./components/SocialExperienceGenerator";
+import MoodBasedEntry from "./components/MoodBasedEntry";
+import EmotionalTrajectoryTimeline from "./components/EmotionalTrajectoryTimeline";
+import CrossMediumRemix from "./components/CrossMediumRemix";
+import RealmComparison from "./components/RealmComparison";
 
 export default function App() {
   const [view, setView] = useState<"constellation" | "emotion">(
@@ -75,6 +79,7 @@ export default function App() {
         <aside className="w-80 bg-white border-r shadow-sm overflow-y-auto">
           <div className="p-4 space-y-4">
             <div className="space-y-2">
+              <MoodBasedEntry />
               <QualitativeSearch />
               <SerendipityExplorer />
             </div>
@@ -85,6 +90,9 @@ export default function App() {
             <EmotionRangeFilter />
             
             <div className="pt-4 border-t space-y-2">
+              <RealmComparison />
+              <EmotionalTrajectoryTimeline />
+              <CrossMediumRemix />
               <CuratedPlaylistBuilder />
               <CorpusGapAnalyzer />
               <SocialExperienceGenerator />
