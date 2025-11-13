@@ -20,6 +20,9 @@ import MoodBasedEntry from "./components/MoodBasedEntry";
 import EmotionalTrajectoryTimeline from "./components/EmotionalTrajectoryTimeline";
 import CrossMediumRemix from "./components/CrossMediumRemix";
 import RealmComparison from "./components/RealmComparison";
+import KeywordCloud from "./components/KeywordCloud";
+import TemporalDensityHeatmap from "./components/TemporalDensityHeatmap";
+import MediumEmotionDialect from "./components/MediumEmotionDialect";
 
 export default function App() {
   const [view, setView] = useState<"constellation" | "emotion">(
@@ -80,6 +83,7 @@ export default function App() {
           <div className="p-4 space-y-4">
             <div className="space-y-2">
               <MoodBasedEntry />
+              <KeywordCloud />
               <QualitativeSearch />
               <SerendipityExplorer />
             </div>
@@ -91,6 +95,8 @@ export default function App() {
             
             <div className="pt-4 border-t space-y-2">
               <RealmComparison />
+              <TemporalDensityHeatmap />
+              <MediumEmotionDialect />
               <EmotionalTrajectoryTimeline />
               <CrossMediumRemix />
               <CuratedPlaylistBuilder />

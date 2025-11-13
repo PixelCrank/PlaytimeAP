@@ -151,7 +151,17 @@ export const buildPredicateWithCentury = (filters: FilterState, centuryFilter: 1
 
     // Check century
     if (centuryFilter !== null) {
-      if (typeof work.anneeNum === "number" && work.anneeNum === centuryFilter) {
+      // Try anneeNum first, then parse from annee string
+      let workCentury = work.anneeNum;
+      
+      if (workCentury === null || workCentury === undefined) {
+        const year = extractYear(work);
+        if (year !== null) {
+          workCentury = year < 1900 ? 19 : 20;
+        }
+      }
+      
+      if (workCentury === centuryFilter) {
         matches = true;
       }
     }
