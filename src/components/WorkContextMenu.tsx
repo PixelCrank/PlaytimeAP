@@ -20,15 +20,24 @@ export default function WorkContextMenu({ workId, x, y, onClose }: WorkContextMe
   const canAddToComparison = comparisonWorkIds.length < 2 || isInComparison;
 
   useEffect(() => {
-    const handleClickOutside = () => onClose();
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('[data-context-menu]')) {
+        onClose();
+      }
+    };
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
     
-    document.addEventListener('click', handleClickOutside);
+    // Delay adding listener to prevent immediate close
+    const timer = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 10);
     document.addEventListener('keydown', handleEscape);
     
     return () => {
+      clearTimeout(timer);
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
@@ -47,6 +56,7 @@ export default function WorkContextMenu({ workId, x, y, onClose }: WorkContextMe
 
   return (
     <div
+      data-context-menu
       className="fixed z-[200] bg-white border-2 border-slate-300 rounded-lg shadow-2xl py-2 min-w-[200px]"
       style={{ left: `${adjustedX}px`, top: `${adjustedY}px` }}
       onClick={(e) => e.stopPropagation()}
