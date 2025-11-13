@@ -27,6 +27,7 @@ import WelcomeModal from "./components/WelcomeModal";
 import CollectionPanel from "./components/CollectionPanel";
 import JourneyBuilder from "./components/JourneyBuilder";
 import InsightHistoryPanel from "./components/InsightHistoryPanel";
+import WorkComparisonPanel from "./components/WorkComparisonPanel";
 
 export default function App() {
   const [view, setView] = useState<"constellation" | "emotion">("constellation");
@@ -209,6 +210,9 @@ export default function App() {
           <NodeDrawer />
         </main>
       </div>
+
+      {/* Work Comparison Floating Panel */}
+      <WorkComparisonPanel />
 
       <footer className="border-t bg-white px-6 py-3 flex items-center justify-between text-xs text-slate-500">
         <span>© 2025 Crank Studio · Playtime v1.0</span>

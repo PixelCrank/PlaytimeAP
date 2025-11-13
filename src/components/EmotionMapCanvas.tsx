@@ -6,6 +6,7 @@ import { emotionsToCoords } from "../lib/emotionMap";
 import { typeColor, defaultNodeColor } from "../lib/colors";
 import { buildPredicateWithCentury } from "../lib/filters";
 import HoverPreview from "./HoverPreview";
+import WorkContextMenu from "./WorkContextMenu";
 import type { WorkNode } from "../lib/types";
 
 export default function EmotionMapCanvas() {
@@ -17,6 +18,7 @@ export default function EmotionMapCanvas() {
   
   const [hoveredWork, setHoveredWork] = useState<WorkNode | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [contextMenu, setContextMenu] = useState<{ workId: string; x: number; y: number } | null>(null);
 
   const all = works as any[];
   const filtered = useMemo(
@@ -120,6 +122,10 @@ export default function EmotionMapCanvas() {
     setSelectedId(d.id);
     markVisited(d.id);
   })
+  .on("contextmenu", (event: any, d: any) => {
+    event.preventDefault();
+    setContextMenu({ workId: d.id, x: event.clientX, y: event.clientY });
+  })
   .on("mouseover", (event: any, d: any) => {
     const rect = ref.current?.getBoundingClientRect();
     if (rect) {
@@ -150,6 +156,14 @@ export default function EmotionMapCanvas() {
         aria-label="Carte valence × arousal"
       />
       {hoveredWork && <HoverPreview work={hoveredWork} x={mousePos.x} y={mousePos.y} />}
+      {contextMenu && (
+        <WorkContextMenu
+          workId={contextMenu.workId}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </div>
   );
 }

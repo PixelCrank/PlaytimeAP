@@ -40,6 +40,7 @@ type State = {
   
   // Comparison mode
   comparisonMode: boolean;
+  comparisonWorkIds: string[]; // Works selected for comparison (max 2)
   
   // Collection Management
   bookmarked: Set<string>;
@@ -58,6 +59,9 @@ type State = {
   setCenturyFilter: (c: 19 | 20 | null) => void;
   setJourney: (j: string | null) => void;
   toggleComparisonMode: () => void;
+  addToComparison: (id: string) => void;
+  removeFromComparison: (id: string) => void;
+  clearComparison: () => void;
   
   // Collection actions
   toggleBookmark: (id: string) => void;
@@ -84,6 +88,7 @@ export const useStore = create<State>()(
       centuryFilter: null,
       selectedJourney: null,
       comparisonMode: false,
+      comparisonWorkIds: [],
       
       bookmarked: new Set(),
       customJourneys: [],
@@ -116,6 +121,25 @@ export const useStore = create<State>()(
       setCenturyFilter: (c) => set({ centuryFilter: c }),
       setJourney: (j) => set({ selectedJourney: j }),
       toggleComparisonMode: () => set({ comparisonMode: !get().comparisonMode }),
+      
+      addToComparison: (id) => {
+        const current = get().comparisonWorkIds;
+        if (current.includes(id)) return;
+        if (current.length >= 2) {
+          // Replace oldest (first item)
+          set({ comparisonWorkIds: [current[1], id] });
+        } else {
+          set({ comparisonWorkIds: [...current, id] });
+        }
+      },
+      
+      removeFromComparison: (id) => {
+        set({ comparisonWorkIds: get().comparisonWorkIds.filter(wid => wid !== id) });
+      },
+      
+      clearComparison: () => {
+        set({ comparisonWorkIds: [] });
+      },
       
       toggleBookmark: (id) => {
         const b = new Set(get().bookmarked);

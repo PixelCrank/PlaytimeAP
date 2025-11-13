@@ -5,6 +5,7 @@ import data from "../data/works.json";
 import { buildPredicateWithCentury } from "../lib/filters";
 import { typeColor, defaultNodeColor } from "../lib/colors";
 import HoverPreview from "./HoverPreview";
+import WorkContextMenu from "./WorkContextMenu";
 import type { WorkNode } from "../lib/types";
 
 export default function WorldCanvas() {
@@ -19,6 +20,7 @@ export default function WorldCanvas() {
   
   const [hoveredWork, setHoveredWork] = useState<WorkNode | null>(null);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [contextMenu, setContextMenu] = useState<{ workId: string; x: number; y: number } | null>(null);
 
   const all = data as any[];
   const filtered = useMemo(
@@ -68,7 +70,7 @@ export default function WorldCanvas() {
   })
   .on("contextmenu", (event: any, d: any) => {
     event.preventDefault();
-    toggleBookmark(d.id);
+    setContextMenu({ workId: d.id, x: event.clientX, y: event.clientY });
   })
   .on("mouseover", (event: any, d: any) => {
     const rect = ref.current?.getBoundingClientRect();
@@ -99,6 +101,14 @@ circles
     <div className="relative w-full h-[70vh]">
       <svg ref={ref} className="w-full h-full select-none" role="img" aria-label="Carte des œuvres" />
       {hoveredWork && <HoverPreview work={hoveredWork} x={mousePos.x} y={mousePos.y} />}
+      {contextMenu && (
+        <WorkContextMenu
+          workId={contextMenu.workId}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </div>
   );
 }
