@@ -12,6 +12,21 @@ export type CustomJourney = {
   updatedAt: number;
 };
 
+export type SavedInsight = {
+  id: string;
+  type: 'discovery' | 'comparison' | 'anomaly' | 'pattern';
+  message: string;
+  icon: string;
+  timestamp: number;
+  filterState: {
+    realm: string;
+    filters: FilterState;
+    centuryFilter: number | null;
+    totalWorks: number;
+  };
+  bookmarked: boolean;
+};
+
 type State = {
   realm: "cosmic" | "human" | "disrupted";
   filters: FilterState;
@@ -30,6 +45,10 @@ type State = {
   bookmarked: Set<string>;
   customJourneys: CustomJourney[];
   
+  // Insight History
+  insightHistory: SavedInsight[];
+  bookmarkedInsights: Set<string>;
+  
   setSelectedId: (id: string | null) => void;
   markVisited: (id: string) => void;
   setRealm: (r: State["realm"]) => void;
@@ -45,6 +64,12 @@ type State = {
   addCustomJourney: (journey: Omit<CustomJourney, "id" | "createdAt" | "updatedAt">) => void;
   updateCustomJourney: (id: string, updates: Partial<Omit<CustomJourney, "id" | "createdAt">>) => void;
   deleteCustomJourney: (id: string) => void;
+  
+  // Insight actions
+  saveInsight: (insight: Omit<SavedInsight, "id" | "timestamp" | "bookmarked">) => void;
+  toggleInsightBookmark: (id: string) => void;
+  deleteInsight: (id: string) => void;
+  clearInsightHistory: () => void;
 };
 
 export const useStore = create<State>()(
@@ -62,6 +87,9 @@ export const useStore = create<State>()(
       
       bookmarked: new Set(),
       customJourneys: [],
+      
+      insightHistory: [],
+      bookmarkedInsights: new Set(),
 
       setRealm: (r) => set({ realm: r }),
 
@@ -116,17 +144,60 @@ export const useStore = create<State>()(
       deleteCustomJourney: (id) => {
         set({ customJourneys: get().customJourneys.filter((j) => j.id !== id) });
       },
+      
+      saveInsight: (insight) => {
+        const newInsight: SavedInsight = {
+          ...insight,
+          id: `insight-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          timestamp: Date.now(),
+          bookmarked: false,
+        };
+        // Prevent duplicates (same message within 1 minute)
+        const recentDuplicate = get().insightHistory.find(
+          i => i.message === insight.message && Date.now() - i.timestamp < 60000
+        );
+        if (recentDuplicate) return;
+        
+        set({ insightHistory: [newInsight, ...get().insightHistory].slice(0, 100) }); // Keep last 100
+      },
+      
+      toggleInsightBookmark: (id) => {
+        const b = new Set(get().bookmarkedInsights);
+        b.has(id) ? b.delete(id) : b.add(id);
+        set({ bookmarkedInsights: b });
+      },
+      
+      deleteInsight: (id) => {
+        set({ 
+          insightHistory: get().insightHistory.filter((i) => i.id !== id),
+          bookmarkedInsights: (() => {
+            const b = new Set(get().bookmarkedInsights);
+            b.delete(id);
+            return b;
+          })()
+        });
+      },
+      
+      clearInsightHistory: () => {
+        set({ 
+          insightHistory: get().insightHistory.filter(i => get().bookmarkedInsights.has(i.id)),
+        });
+      },
     }),
     {
       name: "playtime-collection",
       partialize: (state) => ({
         bookmarked: Array.from(state.bookmarked),
         customJourneys: state.customJourneys,
+        insightHistory: state.insightHistory,
+        bookmarkedInsights: Array.from(state.bookmarkedInsights),
       }),
       merge: (persisted: any, current) => ({
         ...current,
         bookmarked: new Set(persisted?.bookmarked || []),
         customJourneys: persisted?.customJourneys || [],
+        insightHistory: persisted?.insightHistory || [],
+        bookmarkedInsights: new Set(persisted?.bookmarkedInsights || []),
       }),
     }
   )

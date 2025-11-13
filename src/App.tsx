@@ -26,6 +26,7 @@ import MediumEmotionDialect from "./components/MediumEmotionDialect";
 import WelcomeModal from "./components/WelcomeModal";
 import CollectionPanel from "./components/CollectionPanel";
 import JourneyBuilder from "./components/JourneyBuilder";
+import InsightHistoryPanel from "./components/InsightHistoryPanel";
 
 export default function App() {
   const [view, setView] = useState<"constellation" | "emotion">("constellation");
@@ -83,6 +84,7 @@ export default function App() {
             </div>
             
             <div className="flex items-center gap-4">
+              <InsightHistoryPanel />
               <TimelineSlider />
               <EmotionalCompass />
             </div>
