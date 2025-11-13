@@ -1,10 +1,12 @@
-import { useRef, useEffect, useMemo } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import * as d3 from "d3";
 import works from "../data/works.json";
 import { useStore } from "../store/useStore";
 import { emotionsToCoords } from "../lib/emotionMap";
 import { typeColor, defaultNodeColor } from "../lib/colors";
 import { buildPredicateWithCentury } from "../lib/filters";
+import HoverPreview from "./HoverPreview";
+import type { WorkNode } from "../lib/types";
 
 export default function EmotionMapCanvas() {
   const ref = useRef<SVGSVGElement>(null);
@@ -12,6 +14,9 @@ export default function EmotionMapCanvas() {
   const centuryFilter = useStore((s) => s.centuryFilter);
   const setSelectedId = useStore((s) => s.setSelectedId);
   const markVisited = useStore((s) => s.markVisited);
+  
+  const [hoveredWork, setHoveredWork] = useState<WorkNode | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
   const all = works as any[];
   const filtered = useMemo(
@@ -111,8 +116,19 @@ export default function EmotionMapCanvas() {
   .attr("fill", (d: any) => typeColor[d.type] ?? defaultNodeColor)
   .attr("class", "cursor-pointer")
   .on("click", (_: any, d: any) => {
+    setHoveredWork(null);
     setSelectedId(d.id);
     markVisited(d.id);
+  })
+  .on("mouseover", (event: any, d: any) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) {
+      setMousePos({ x: event.clientX - rect.left, y: event.clientY - rect.top });
+      setHoveredWork(d);
+    }
+  })
+  .on("mouseout", () => {
+    setHoveredWork(null);
   });
 
     circles
@@ -126,11 +142,14 @@ export default function EmotionMapCanvas() {
   }, [filtered, setSelectedId, markVisited]);
 
   return (
-    <svg
-      ref={ref}
-      className="w-full h-[70vh] select-none"
-      role="img"
-      aria-label="Carte valence × arousal"
-    />
+    <div className="relative w-full h-[70vh]">
+      <svg
+        ref={ref}
+        className="w-full h-full select-none"
+        role="img"
+        aria-label="Carte valence × arousal"
+      />
+      {hoveredWork && <HoverPreview work={hoveredWork} x={mousePos.x} y={mousePos.y} />}
+    </div>
   );
 }

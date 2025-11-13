@@ -185,7 +185,7 @@ export default function TemporalDensityHeatmap() {
                       </div>
                     );
                   })}
-                  </div>
+                </div>
                 )}
               </div>
 

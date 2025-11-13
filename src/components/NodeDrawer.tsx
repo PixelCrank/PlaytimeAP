@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import works from "../data/works.json";
 import type { WorkNode } from "../lib/types";
 import { useStore } from "../store/useStore";
+import { analyzeMediaUrl, getMediaIcon } from "../lib/media";
 
 const entries = works as WorkNode[];
 
@@ -13,8 +14,17 @@ export default function NodeDrawer() {
   const setSelectedId = useStore(s => s.setSelectedId);
   const togglePin = useStore(s => s.togglePin);
   const pinned = useStore(s => s.pinned);
+  const bookmarked = useStore(s => s.bookmarked);
+  const toggleBookmark = useStore(s => s.toggleBookmark);
 
   const node = useMemo(() => entries.find(w => w.id === selectedId) ?? null, [selectedId]);
+  
+  // Hooks must be called unconditionally before any early returns
+  const [showEmbed, setShowEmbed] = useState(false);
+  const mediaInfo = useMemo(() => {
+    if (!node || !node.lien || node.lien.trim() === '') return null;
+    return analyzeMediaUrl(node.lien);
+  }, [node?.lien]);
 
   if (!node) {
     return (
@@ -31,6 +41,7 @@ export default function NodeDrawer() {
   }
 
   const isPinned = pinned.has(node.id);
+  const isBookmarked = bookmarked.has(node.id);
 
   return (
     <aside
@@ -46,6 +57,18 @@ export default function NodeDrawer() {
           )}
         </div>
         <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={() => toggleBookmark(node.id)}
+            className={`text-xs border rounded-full px-3 py-1 ${
+              isBookmarked 
+                ? "bg-purple-600 text-white border-purple-600" 
+                : "bg-white hover:bg-purple-50 border-slate-300"
+            }`}
+            title={isBookmarked ? "Retirer de la collection" : "Ajouter à la collection"}
+          >
+            {isBookmarked ? "⭐ Dans ma collection" : "⭐ Ajouter"}
+          </button>
           <button
             type="button"
             onClick={() => togglePin(node.id)}
@@ -78,17 +101,77 @@ export default function NodeDrawer() {
         {node.commentaire && (
           <p className="text-slate-600 whitespace-pre-line leading-relaxed">{node.commentaire}</p>
         )}
-        {node.lien && (
-          <p>
+        
+        {/* Media Section */}
+        {mediaInfo && (
+          <div className="border-t pt-3 mt-3">
+            <div className="flex items-center justify-between mb-2">
+              <strong className="font-medium text-slate-900 flex items-center gap-2">
+                <span className="text-lg">{getMediaIcon(mediaInfo.type)}</span>
+                <span>Média</span>
+              </strong>
+              {(mediaInfo.type === 'youtube' || mediaInfo.type === 'vimeo') && (
+                <button
+                  onClick={() => setShowEmbed(!showEmbed)}
+                  className="text-xs px-2 py-1 bg-slate-100 hover:bg-slate-200 rounded"
+                >
+                  {showEmbed ? 'Masquer' : 'Afficher'}
+                </button>
+              )}
+            </div>
+
+            {/* YouTube/Vimeo Embed */}
+            {showEmbed && mediaInfo.embedUrl && (
+              <div className="aspect-video bg-slate-100 rounded overflow-hidden mb-2">
+                <iframe
+                  src={mediaInfo.embedUrl}
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title={node.titre}
+                />
+              </div>
+            )}
+
+            {/* Image Preview */}
+            {mediaInfo.type === 'image' && (
+              <div className="rounded overflow-hidden mb-2 bg-slate-100">
+                <img
+                  src={mediaInfo.thumbnail}
+                  alt={node.titre}
+                  className="w-full h-auto"
+                />
+              </div>
+            )}
+
+            {/* Thumbnail for videos (when not showing embed) */}
+            {!showEmbed && mediaInfo.thumbnail && (mediaInfo.type === 'youtube' || mediaInfo.type === 'vimeo') && (
+              <div className="relative rounded overflow-hidden mb-2 cursor-pointer group" onClick={() => setShowEmbed(true)}>
+                <img
+                  src={mediaInfo.thumbnail}
+                  alt={node.titre}
+                  className="w-full h-auto"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition flex items-center justify-center">
+                  <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
+                    <span className="text-3xl">▶️</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* External Link */}
             <a
-              href={node.lien.trim()}
+              href={mediaInfo.originalUrl.trim()}
               target="_blank"
               rel="noreferrer"
-              className="text-sky-600 hover:text-sky-800 underline"
+              className="text-sky-600 hover:text-sky-800 underline text-sm flex items-center gap-1"
             >
-              Ressource
+              <span>Ouvrir dans un nouvel onglet</span>
+              <span className="text-xs">↗</span>
             </a>
-          </p>
+          </div>
         )}
       </div>
     </aside>

@@ -1,5 +1,16 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { FilterState } from "../lib/filters";
+
+export type CustomJourney = {
+  id: string;
+  title: string;
+  description: string;
+  workIds: string[];
+  transitions: { [key: string]: string }; // workId -> transition note
+  createdAt: number;
+  updatedAt: number;
+};
 
 type State = {
   realm: "cosmic" | "human" | "disrupted";
@@ -15,6 +26,10 @@ type State = {
   // Comparison mode
   comparisonMode: boolean;
   
+  // Collection Management
+  bookmarked: Set<string>;
+  customJourneys: CustomJourney[];
+  
   setSelectedId: (id: string | null) => void;
   markVisited: (id: string) => void;
   setRealm: (r: State["realm"]) => void;
@@ -24,42 +39,95 @@ type State = {
   setCenturyFilter: (c: 19 | 20 | null) => void;
   setJourney: (j: string | null) => void;
   toggleComparisonMode: () => void;
+  
+  // Collection actions
+  toggleBookmark: (id: string) => void;
+  addCustomJourney: (journey: Omit<CustomJourney, "id" | "createdAt" | "updatedAt">) => void;
+  updateCustomJourney: (id: string, updates: Partial<Omit<CustomJourney, "id" | "createdAt">>) => void;
+  deleteCustomJourney: (id: string) => void;
 };
 
-export const useStore = create<State>((set, get) => ({
-  realm: "human",
-  filters: { types: [], categories: [], emotions: [], yearRange: null, search: "" },
-  pinned: new Set(),
-  selectedId: null,
-  visitedIds: new Set(),
-  
-  centuryFilter: null,
-  selectedJourney: null,
-  comparisonMode: false,
+export const useStore = create<State>()(
+  persist(
+    (set, get) => ({
+      realm: "human",
+      filters: { types: [], categories: [], emotions: [], yearRange: null, search: "" },
+      pinned: new Set(),
+      selectedId: null,
+      visitedIds: new Set(),
+      
+      centuryFilter: null,
+      selectedJourney: null,
+      comparisonMode: false,
+      
+      bookmarked: new Set(),
+      customJourneys: [],
 
-  setRealm: (r) => set({ realm: r }),
+      setRealm: (r) => set({ realm: r }),
 
-  setFilters: (f) =>
-    set({
-      filters: { ...get().filters, ...f },
+      setFilters: (f) =>
+        set({
+          filters: { ...get().filters, ...f },
+        }),
+
+      togglePin: (id) => {
+        const p = new Set(get().pinned);
+        p.has(id) ? p.delete(id) : p.add(id);
+        set({ pinned: p });
+      },
+
+      setPinned: (pinned) => set({ pinned }),
+
+      setSelectedId: (id) => set({ selectedId: id }),
+      markVisited: (id) => {
+        const v = new Set(get().visitedIds);
+        v.add(id);
+        set({ visitedIds: v });
+      },
+      
+      setCenturyFilter: (c) => set({ centuryFilter: c }),
+      setJourney: (j) => set({ selectedJourney: j }),
+      toggleComparisonMode: () => set({ comparisonMode: !get().comparisonMode }),
+      
+      toggleBookmark: (id) => {
+        const b = new Set(get().bookmarked);
+        b.has(id) ? b.delete(id) : b.add(id);
+        set({ bookmarked: b });
+      },
+      
+      addCustomJourney: (journey) => {
+        const newJourney: CustomJourney = {
+          ...journey,
+          id: `journey-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        };
+        set({ customJourneys: [...get().customJourneys, newJourney] });
+      },
+      
+      updateCustomJourney: (id, updates) => {
+        set({
+          customJourneys: get().customJourneys.map((j) =>
+            j.id === id ? { ...j, ...updates, updatedAt: Date.now() } : j
+          ),
+        });
+      },
+      
+      deleteCustomJourney: (id) => {
+        set({ customJourneys: get().customJourneys.filter((j) => j.id !== id) });
+      },
     }),
-
-  togglePin: (id) => {
-    const p = new Set(get().pinned);
-    p.has(id) ? p.delete(id) : p.add(id);
-    set({ pinned: p });
-  },
-
-  setPinned: (pinned) => set({ pinned }),
-
-  setSelectedId: (id) => set({ selectedId: id }),
-  markVisited: (id) => {
-    const v = new Set(get().visitedIds);
-    v.add(id);
-    set({ visitedIds: v });
-  },
-  
-  setCenturyFilter: (c) => set({ centuryFilter: c }),
-  setJourney: (j) => set({ selectedJourney: j }),
-  toggleComparisonMode: () => set({ comparisonMode: !get().comparisonMode }),
-}));
+    {
+      name: "playtime-collection",
+      partialize: (state) => ({
+        bookmarked: Array.from(state.bookmarked),
+        customJourneys: state.customJourneys,
+      }),
+      merge: (persisted: any, current) => ({
+        ...current,
+        bookmarked: new Set(persisted?.bookmarked || []),
+        customJourneys: persisted?.customJourneys || [],
+      }),
+    }
+  )
+);

@@ -20,3 +20,5 @@ export interface WorkNode {
   motsCles: string[];
   realm: "cosmic" | "human" | "disrupted";
 }
+
+export type Work = WorkNode;
