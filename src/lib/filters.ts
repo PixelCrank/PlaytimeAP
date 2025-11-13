@@ -6,7 +6,8 @@ export type FilterState = {
   emotions: string[];
   yearRange: [number, number] | null;
   search: string;
-  centuryFilter?: 19 | 20 | null;
+  realmFilter: "tous" | "cosmic" | "human" | "disrupted";
+  centuryFilter: "tous" | "XIXe" | "XXe" | null;
 };
 
 const normalize = (value: string) =>
@@ -39,6 +40,25 @@ export const buildPredicate = (filters: FilterState) => {
   const searchTerm = filters.search.trim().length > 0 ? normalize(filters.search.trim()) : "";
 
   return (work: WorkNode) => {
+    // Realm filter
+    if (filters.realmFilter && filters.realmFilter !== "tous" && work.realm !== filters.realmFilter) {
+      return false;
+    }
+
+    // Century filter
+    if (filters.centuryFilter && filters.centuryFilter !== "tous") {
+      const century = work.anneeNum;
+      if (century === null || century === undefined) {
+        return false;
+      }
+      if (filters.centuryFilter === "XIXe" && century !== 19) {
+        return false;
+      }
+      if (filters.centuryFilter === "XXe" && century !== 20) {
+        return false;
+      }
+    }
+
     if (typeSet.size > 0 && !typeSet.has(work.type)) {
       return false;
     }

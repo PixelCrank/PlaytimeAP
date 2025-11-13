@@ -34,8 +34,12 @@ import ShareSnapshotPanel from "./components/ShareSnapshotPanel";
 import MediaGalleryView from "./components/MediaGalleryView";
 import MediaLightbox from "./components/MediaLightbox";
 import VideoPlaylistBuilder from "./components/VideoPlaylistBuilder";
+import { useStore } from "./store/useStore";
 
 export default function App() {
+  const filters = useStore((state) => state.filters);
+  const setFilters = useStore((state) => state.setFilters);
+  
   const [view, setView] = useState<"constellation" | "emotion" | "gallery">("constellation");
   const [showWelcome, setShowWelcome] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
@@ -160,136 +164,216 @@ export default function App() {
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowVisitHistory(true)}
-                className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700 flex items-center gap-1.5"
-              >
-                🕰️ Historique
-              </button>
-              <button
-                onClick={() => setShowCustomTags(true)}
-                className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700 flex items-center gap-1.5"
-              >
-                🏷️ Tags
-              </button>
-              <button
-                onClick={() => setShowShareSnapshot(true)}
-                className="px-3 py-1.5 text-xs bg-violet-500 hover:bg-violet-600 rounded-lg font-medium text-white flex items-center gap-1.5"
-              >
-                📸 Partager
-              </button>
-              {view === 'gallery' && (
-                <button
-                  onClick={() => setShowPlaylistBuilder(true)}
-                  className="px-3 py-1.5 text-xs bg-red-500 hover:bg-red-600 rounded-lg font-medium text-white flex items-center gap-1.5"
-                >
-                  🎬 Playlist
+            <div className="flex items-center gap-3">
+              {view !== 'gallery' && <EmotionalCompass />}
+              {view !== 'gallery' && <TimelineSlider />}
+              
+              {/* Tools Dropdown */}
+              <div className="relative group">
+                <button className="px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700 flex items-center gap-2 transition">
+                  ⚙️ Outils
+                  <span className="text-xs">▼</span>
                 </button>
-              )}
-              <InsightHistoryPanel />
-              <TimelineSlider />
-              <EmotionalCompass />
+                <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl border-2 border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                  <div className="py-2">
+                    <button
+                      onClick={() => setShowVisitHistory(true)}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-3"
+                    >
+                      <span>🕰️</span>
+                      <span>Historique de visite</span>
+                    </button>
+                    <button
+                      onClick={() => setShowCustomTags(true)}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-3"
+                    >
+                      <span>🏷️</span>
+                      <span>Tags personnalisés</span>
+                    </button>
+                    <InsightHistoryPanel asMenuItem={true} />
+                    <div className="border-t my-1" />
+                    {view === 'gallery' && (
+                      <button
+                        onClick={() => setShowPlaylistBuilder(true)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-3"
+                      >
+                        <span>🎬</span>
+                        <span>Créer une playlist</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => setShowShareSnapshot(true)}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-3"
+                    >
+                      <span>📸</span>
+                      <span>Partager cette vue</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <button
+                onClick={() => setShowWelcome(true)}
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                title="Aide"
+              >
+                ❓
+              </button>
             </div>
           </div>
-        </div>
-        
-        <div className="border-t bg-slate-50 px-6 py-2">
-          <InsightsPanel />
         </div>
       </header>
 
       <div className="flex-1 flex">
         <aside className="w-80 bg-white border-r shadow-sm overflow-y-auto">
           <div className="p-4 space-y-4">
-            {/* Quick Start */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">✨</span>
-                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">Démarrage rapide</h3>
+            {/* Insights - Now in sidebar for better context */}
+            {view !== 'gallery' && (
+              <div className="bg-gradient-to-br from-violet-50 to-blue-50 rounded-lg p-3 border border-violet-200">
+                <InsightsPanel compact={true} />
               </div>
+            )}
+            
+            {/* Quick Actions */}
+            <div className="space-y-2">
               <MoodBasedEntry />
-              <button
-                onClick={() => setShowWelcome(true)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition text-sm"
-              >
-                <span>❓</span>
-                <span>Revoir le guide</span>
-              </button>
+              <QualitativeSearch />
             </div>
             
-            {/* Collection & Journey */}
+            {/* Collection */}
             <div className="border-t pt-4 space-y-2">
               <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">💼</span>
-                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">Ma Collection</h3>
+                <span className="text-lg">⭐</span>
+                <h3 className="text-sm font-bold text-slate-700">Ma Collection</h3>
               </div>
               <CollectionPanel />
               <JourneyBuilder />
-            </div>
-            
-            {/* Exploration Tools */}
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">🔍</span>
-                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">Explorer</h3>
-              </div>
-              <KeywordCloud />
-              <QualitativeSearch />
-              <SerendipityExplorer />
             </div>
             
             {/* Filters */}
             <div className="border-t pt-4">
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-lg">🎯</span>
-                <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">Filtres</h3>
+                <h3 className="text-sm font-bold text-slate-700">Filtres</h3>
               </div>
               <JourneySelector />
+              
+              {/* Three Worlds Filter */}
+              <div className="mb-3">
+                <label className="text-xs font-medium text-slate-600 mb-1.5 block">Monde du temps</label>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    onClick={() => setFilters({ realmFilter: "tous" })}
+                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
+                      filters.realmFilter === "tous"
+                        ? "bg-slate-700 text-white"
+                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    Tous
+                  </button>
+                  <button
+                    onClick={() => setFilters({ realmFilter: "cosmic" })}
+                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
+                      filters.realmFilter === "cosmic"
+                        ? "bg-purple-600 text-white"
+                        : "bg-white border border-purple-200 text-purple-700 hover:bg-purple-50"
+                    }`}
+                  >
+                    🌌 Cosmique
+                  </button>
+                  <button
+                    onClick={() => setFilters({ realmFilter: "human" })}
+                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
+                      filters.realmFilter === "human"
+                        ? "bg-blue-600 text-white"
+                        : "bg-white border border-blue-200 text-blue-700 hover:bg-blue-50"
+                    }`}
+                  >
+                    👤 Humain
+                  </button>
+                  <button
+                    onClick={() => setFilters({ realmFilter: "disrupted" })}
+                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
+                      filters.realmFilter === "disrupted"
+                        ? "bg-red-600 text-white"
+                        : "bg-white border border-red-200 text-red-700 hover:bg-red-50"
+                    }`}
+                  >
+                    ⚡ Dérangé
+                  </button>
+                </div>
+              </div>
+
+              {/* Century Filter */}
+              <div className="mb-3">
+                <label className="text-xs font-medium text-slate-600 mb-1.5 block">Période</label>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    onClick={() => setFilters({ centuryFilter: "tous" })}
+                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
+                      filters.centuryFilter === "tous"
+                        ? "bg-slate-700 text-white"
+                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    Toutes
+                  </button>
+                  <button
+                    onClick={() => setFilters({ centuryFilter: "XIXe" })}
+                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
+                      filters.centuryFilter === "XIXe"
+                        ? "bg-amber-600 text-white"
+                        : "bg-white border border-amber-200 text-amber-700 hover:bg-amber-50"
+                    }`}
+                  >
+                    XIXe
+                  </button>
+                  <button
+                    onClick={() => setFilters({ centuryFilter: "XXe" })}
+                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
+                      filters.centuryFilter === "XXe"
+                        ? "bg-teal-600 text-white"
+                        : "bg-white border border-teal-200 text-teal-700 hover:bg-teal-50"
+                    }`}
+                  >
+                    XXe–XXIe
+                  </button>
+                </div>
+              </div>
+              
               <EmotionRangeFilter />
             </div>
             
-            {/* Analysis Tools - Collapsible */}
+            {/* Discovery Tools */}
+            <div className="border-t pt-4 space-y-2">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-lg">🔍</span>
+                <h3 className="text-sm font-bold text-slate-700">Découverte</h3>
+              </div>
+              <KeywordCloud />
+              <SerendipityExplorer />
+            </div>
+            
+            {/* Advanced Analysis - Collapsible */}
             <div className="border-t pt-4">
               <button
                 onClick={() => setShowAnalysis(!showAnalysis)}
-                className="w-full flex items-center justify-between mb-2 text-left"
+                className="w-full flex items-center justify-between mb-2 text-left hover:bg-slate-50 rounded p-2 transition"
               >
                 <div className="flex items-center gap-2">
                   <span className="text-lg">📊</span>
-                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">Analyses</h3>
+                  <h3 className="text-sm font-bold text-slate-700">Analyses Avancées</h3>
                 </div>
                 <span className="text-slate-400 text-sm">{showAnalysis ? "−" : "+"}</span>
               </button>
               {showAnalysis && (
-                <div className="space-y-2">
+                <div className="space-y-2 pl-2">
                   <RealmComparison />
                   <TemporalDensityHeatmap />
                   <MediumEmotionDialect />
                   <EmotionalTrajectoryTimeline />
-                </div>
-              )}
-            </div>
-            
-            {/* Research Tools - Collapsible */}
-            <div className="border-t pt-4">
-              <button
-                onClick={() => setShowResearch(!showResearch)}
-                className="w-full flex items-center justify-between mb-2 text-left"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">🔬</span>
-                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">Outils recherche</h3>
-                </div>
-                <span className="text-slate-400 text-sm">{showResearch ? "−" : "+"}</span>
-              </button>
-              {showResearch && (
-                <div className="space-y-2">
-                  <CrossMediumRemix />
-                  <CuratedPlaylistBuilder />
-                  <CorpusGapAnalyzer />
-                  <SocialExperienceGenerator />
-                  <MediumComparisonPanel />
+                  <TemporalEvolutionPanel />
                 </div>
               )}
             </div>
@@ -311,7 +395,7 @@ export default function App() {
               <MediaGalleryView onOpenLightbox={(workId) => setLightboxWorkId(workId)} />
             )}
           </div>
-          {view !== "gallery" && <NodeDrawer />}
+          <NodeDrawer />
         </main>
       </div>
 

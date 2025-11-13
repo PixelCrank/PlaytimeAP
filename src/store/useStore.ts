@@ -128,7 +128,7 @@ export const useStore = create<State>()(
   persist(
     (set, get) => ({
       realm: "human",
-      filters: { types: [], categories: [], emotions: [], yearRange: null, search: "" },
+      filters: { types: [], categories: [], emotions: [], yearRange: null, search: "", realmFilter: "tous", centuryFilter: "tous" },
       pinned: new Set(),
       selectedId: null,
       visitedIds: new Set(),
