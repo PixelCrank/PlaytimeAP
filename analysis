@@ -1,0 +1,421 @@
+# Playtime — Analyse du corpus et pistes d’exploration
+
+Ce document résume **ce que révèle le corpus Playtime** et propose des
+**axes de navigation, d’interface et d’usages** pour continuer à itérer sur
+le projet (web, installation, recherche, etc.).
+
+Il se base sur le fichier :
+
+- **Playtime_Master.csv**
+- **620 œuvres** au total
+
+---
+
+## 1. Structure du corpus
+
+### 1.1. Types de média
+
+Le corpus est très équilibré :
+
+- **Music** : 116
+- **Littérature** : 104
+- **Art** : 100
+- **Cinéma** : 100
+- **Jeux vidéo** : 100
+- **BD** : 100
+
+👉 **Forces :**
+- équilibre quasi parfait entre médiums narratifs/visuels/sonores.
+- idéal pour des **comparaisons trans-média** (ex. “nostalgie en cinéma vs jeux vidéo”).
+
+---
+
+### 1.2. Champs principaux
+
+Pour chaque œuvre, on retrouve notamment :
+
+- **Titre, Créateur, Type, Médium**
+- **Année** (texte libre)  
+- **Année (numérique)** → ici codée en **siècles** :
+  - `19` (XIXe) : 290 entrées  
+  - `20` (XXe+) : 312 entrées  
+- **Commentaire** (souvent riche → très utile pour l’interface)
+- **Lien** (ressources externes)
+- **Catégories 1–3** (thèmes liés au temps)
+- **Émotions 1–3**
+- **Mots-clés**
+- **Durée / Dimension** (durée, taille, format matériel…)
+
+---
+
+## 2. Paysage des catégories et des émotions
+
+### 2.1. Catégories les plus fréquentes
+
+Top 15 catégories (toutes colonnes Catégorie 1–3 confondues) :
+
+1. **représentation du temps** — 202
+2. **temps et identité** — 202
+3. **temps vécu** — 190
+4. **expérience du temps** — 170
+5. **manipulations du temps** — 130
+6. **temps et sacré** — 86
+7. **nature du temps** — 62
+8. **temps et espace** — 44
+9. **temps biologique** — 34
+10. **temps et rêve** — 24
+11. **temps cosmique** — 22
+12. **temps et vécu** — 12 *(variante orthographique de “temps vécu”)*  
+13. **temps géologique** — 8
+14. **manipulation du temps** — 4 *(singulier vs pluriel)*
+15. **temps écologique** — 2
+
+👉 **Patterns :**
+
+- Le corpus tourne clairement autour de trois grandes dimensions :
+  - **Temps comme représentation** (images, récits, dispositifs)
+  - **Temps comme expérience vécue / identité**  
+  - **Temps comme manipulation / distorsion**
+- Il existe déjà en germe **3 “mondes” ou “visages” du temps** :
+  - **Cosmique** : nature du temps, temps cosmique, temps géologique, temps écologique…
+  - **Humain** : temps vécu, temps et identité, temps biologique, temps et sacré…
+  - **Dérangé / manipulé** : manipulations du temps, représentation du temps (dans un sens plus critique), temps et rêve…
+
+Les petites incohérences (`temps vécu` vs `temps et vécu`, `manipulations du temps` vs `manipulation du temps`) sont mineures mais importantes à normaliser pour plus tard
+(requêtes, filtres, stats).
+
+---
+
+### 2.2. Émotions les plus fréquentes
+
+Top 15 émotions (toutes colonnes Émotion 1–3 confondues) :
+
+1. **tristesse** — 202  
+2. **nostalgie** — 180  
+3. **surprise** — 130  
+4. **sérénité** — 124  
+5. **confiance** — 120  
+6. **excitation** — 88  
+7. **vigilance** — 88  
+8. **fascination** — 84  
+9. **peur** — 74  
+10. **joie** — 50  
+11. **tension** — 44  
+12. **colère** — 32  
+13. **ennui** — 28  
+14. **admiration** — 28  
+15. **dégoût** — 12  
+
+👉 **Portrait émotionnel du corpus :**
+
+- Dominante claire de **tristesse** et **nostalgie** → un rapport au temps marqué par :
+  - les pertes
+  - les absences
+  - la mémoire (ce qui reste / ce qui échappe)
+- En parallèle, présence forte de :
+  - **sérénité** et **confiance** → apaisement, acceptation
+  - **fascination / surprise** → curiosité, émerveillement
+  - **peur / vigilance / tension** → inquiétude face aux distorsions, catastrophes, fins du monde, etc.
+
+L’ensemble crée une tonalité globale :  
+> **un corpus profondément contemplatif, mélancolique, mais pas désespéré** —
+> partagé entre inquiétude et émerveillement.
+
+---
+
+### 2.3. Couples Catégorie × Émotion
+
+Top couples *Catégorie – Émotion* (co-occurrences) :
+
+- **temps et identité × tristesse** — 88  
+- **temps vécu × nostalgie** — 86  
+- **temps vécu × tristesse** — 86  
+- **temps et identité × nostalgie** — 76  
+- **temps et identité × confiance** — 66  
+- **expérience du temps × nostalgie** — 58  
+- **expérience du temps × tristesse** — 52  
+- **représentation du temps × tristesse** — 50  
+- **expérience du temps × sérénité** — 48  
+- **représentation du temps × vigilance** — 48  
+
+👉 **Ce que ça raconte :**
+
+- **Temps vécu / temps et identité** sont le **cœur émotionnel** du corpus :  
+  ils concentrent tristesse, nostalgie, mais aussi confiance.
+- **Expérience du temps** se situe entre mélancolie et sérénité.  
+- **Représentation du temps** attire davantage des émotions de **surveillance / inquiétude**
+  (vigilance) ou de **distance réflexive**.
+
+On obtient une sorte de **triangle émotionnel** :  
+
+1. **Humain & intime \[temps vécu / identité\]**  
+   - tristesse, nostalgie, confiance
+2. **Expérientiel & contemplatif \[expérience du temps\]**  
+   - sérénité, fascination
+3. **Critique & manipulé \[représentation / manipulations\]**  
+   - vigilance, peur, tension
+
+C’est la base parfaite pour les **3 “visages du temps”** que tu exploires déjà.
+
+---
+
+## 3. Ce que le corpus révèle (synthèse thématique)
+
+### 3.1. Trois visages du temps (confirmés par les données)
+
+Les co-occurrences catégorie/émotion confirment très fort l’intuition
+de trois “mondes” ou “visages” :
+
+1. **Temps cosmique / naturel**
+   - Catégories : nature du temps, temps cosmique, temps géologique, temps écologique…
+   - Émotions associées : fascination, sérénité, parfois peur (catastrophe, fin du monde).
+   - Narration : l’humain face à quelque chose d’immense, lent, presque incompréhensible.
+
+2. **Temps humain / vécu / sacré**
+   - Catégories : temps vécu, temps et identité, temps biologique, temps et sacré…
+   - Émotions dominantes : tristesse, nostalgie, confiance, sérénité.
+   - Narration : mémoire, famille, filiation, vieillissement, rites.
+
+3. **Temps manipulé / technologique / narratif**
+   - Catégories : manipulations du temps, représentation du temps, temps et rêve.
+   - Émotions : surprise, excitation, peur, vigilance, tension.
+   - Narration : boucles temporelles, voyages dans le temps, gameplay basé sur le temps, montages, glitchs.
+
+Ces trois pôles sont **statistiques**, pas seulement conceptuels :
+le corpus les matérialise vraiment.
+
+---
+
+### 3.2. Répartition temporelle (Année)
+
+Le champ **Année (numérique)** encode principalement :
+
+- `19` → œuvres du XIXe siècle (et éventuellement avant)
+- `20` → œuvres du XXe / XXIe
+
+Répartition :
+
+- XIXe : **290**
+- XXe–XXIe : **312**
+
+Le corpus est donc **quasi équilibré** entre :
+
+- un **canon historique** (Verne, œuvres littéraires classiques, etc.)
+- et un **horizon contemporain** (ciné, jeux vidéo, musique, BD).
+
+👉 **Intéressant pour l’interface** :  
+permettre de voir comment certaines émotions ou thèmes se déplacent entre XIXe et XXe.
+
+---
+
+### 3.3. Mediums et émotions
+
+Même sans détailler chaque matrice, on peut déjà poser des intuitions :
+
+- **Littérature** :  
+  - souvent associée à **identité**, **temps vécu**, **temps sacré**  
+  - forte présence de **tristesse** et **nostalgie**  
+- **Cinéma** :  
+  - beaucoup de **représentation** et **manipulation du temps**  
+  - plus de **peur**, **tension**, **vigilance**  
+- **Jeux vidéo** :  
+  - naturellement alignés sur **manipulations du temps**  
+  - plus d’**excitation**, de **surprise**  
+- **Music** :  
+  - interface idéale pour **temps vécu** et **émotions pures**  
+  - ancre émotionnelle pour les parcours
+
+Il y a un vrai potentiel pour montrer **les “dialectes” émotionnels** de chaque médium.
+
+---
+
+## 4. Pistes de navigation & interfaces
+
+À partir de ces patterns, voici des façons **intéressantes, lisibles et riches**
+d’explorer le corpus.
+
+### 4.1. Cartographie émotionnelle (déjà prototypée)
+
+- **X = valence** (négatif → positif)
+- **Y = arousal** (calme → intense)
+- Couleur = **type de média**
+
+Usages :
+
+- Voir les **amas d’œuvres mélancoliques** vs joyeuses, calmes vs intenses.
+- Filtrer par **médium** pour comparer, par ex. :
+  - la nostalgie en littérature vs en jeux vidéo.
+- Parcours thématiques :
+  - “Les œuvres les plus calmes et positives”  
+  - “Les zones de peur et de tension”
+  - “La diagonale nostalgie → sérénité”
+
+**À enrichir :**
+
+- Taille des points = nombre d’émotions associées  
+- Highlight des œuvres partageant une émotion avec celle sélectionnée
+
+---
+
+### 4.2. Constellation des trois mondes (Cosmic / Human / Disrupted)
+
+Version **plus narrative / immersive** :
+
+- X = **monde** (cosmique / humain / dérangé)
+- Y = **temps historique** (19 vs 20)
+- Couleur = **médium**
+- Jitter + forces de répulsion pour garder un aspect organique.
+
+Interactions :
+
+- Survol d’un monde → résumé (“Le temps cosmique : lenteur, vertige, échelles inhumaines…”).
+- Clic sur une œuvre → panneau détaillé (déjà en place).
+- Slider temporel → voir disparaître / apparaître des œuvres par siècle.
+
+Cette vue raconte **l’histoire culturelle de la perception du temps**.
+
+---
+
+### 4.3. Grille “Médium × Visage du temps”
+
+Une vue plus analytique, type **tableau croisé** :
+
+- Colonnes = types de média
+- Lignes = mondes (cosmique / humain / dérangé)
+- Chaque cellule = mini-nuage de points ou mini-statistiques :
+  - nb d’œuvres
+  - émotions dominantes
+  - œuvres “icônes”
+
+Exemples de lectures :
+
+- Où la **peur** est-elle la plus présente ?  
+- Dans quel médium la **nostalgie** est-elle la plus forte ?  
+- Quels types de média explorent le plus **temps sacré** vs **temps cosmique** ?
+
+---
+
+### 4.4. Parcours guidés (“Journeys”)
+
+Basés sur les patterns du corpus, proposer des **scénarios de visite** :
+
+1. **“Du cosmos à l’intime”**  
+   - Commencer par des œuvres cosmologiques (temps cosmique / nature du temps)  
+   - Glisser progressivement vers **temps vécu / identité**  
+   - Terminer sur une œuvre très personnelle / introspective.
+
+2. **“Anxiété temporelle”**  
+   - Œuvres autour de la fin du monde, des bugs temporels, de la surveillance, etc.  
+   - Catégories : manipulations du temps, représentation du temps  
+   - Émotions : peur, vigilance, tension, excitation.
+
+3. **“Rituels & sacré”**  
+   - Temps et sacré / temps biologique / temps et identité  
+   - Émotions : sérénité, confiance, parfois tristesse.  
+
+Ces parcours peuvent être :
+
+- **pré-curés** (fixes)
+- ou **générés à la volée** (l’interface construit un chemin en fonction d’un mood de départ).
+
+---
+
+### 4.5. Interfaces de recherche “qualitative”
+
+Avec ces données, on peut imaginer des filtres orientés **recherche/création** :
+
+- “Montre-moi toutes les œuvres du XIXe qui lient **temps vécu** et **tristesse**.”
+- “Compare des œuvres où **manipulations du temps** coexiste avec **joie**, vs celles avec **peur**.”
+- “Quelles œuvres combinent **temps et sacré** + **peur** ?”
+
+L’interface pourrait être :
+
+- un panneau de filtres (médium, siècle, catégories, émotions)
+- ou un **assistant** (“Je cherche…”) qui convertit une requête textuelle en filtres.
+
+---
+
+## 5. Scénarios d’usage
+
+### 5.1. Pour un·e visiteur·se curieux·se
+
+- Arrive avec un mood (“je me sens nostalgique & un peu anxieux à propos du futur”).
+- L’interface lui propose :
+  - une **carte émotionnelle** filtrée,
+  - un **parcours narratif**,
+  - quelques œuvres “miroirs”.
+
+### 5.2. Pour un·e chercheur·se / enseignant·e
+
+- Utilise la grille pour montrer :
+  - différences entre médiums,
+  - évolution des thèmes entre XIXe / XXe,
+  - liens entre catégories (ex. temps et identité ↔ temps sacré).
+- Peut exporter des listes d’œuvres, des graphes ou des captures de vues.
+
+### 5.3. Pour toi / Crank Studio
+
+- S’en sert comme **base de design-research** :
+  - repérer des “trous” (peu d’œuvres temps écologique, par ex.)  
+  - cibler des thématiques futures à explorer (ex. joie & temps cosmique).
+- Support de pitch pour :
+  - projets d’installation
+  - ateliers (workshops design, écriture, game design)
+  - collaborations avec musées, écoles, institutions culturelles.
+
+---
+
+## 6. Qualité des données & recommandations
+
+Quelques points à garder en tête pour la suite :
+
+1. **Uniformiser les catégories**  
+   - `temps vécu` vs `temps et vécu`  
+   - `manipulations du temps` vs `manipulation du temps`  
+   → choisir une forme canonique et la garder partout.
+
+2. **Clarifier l’usage de la colonne “Émotions” (globale)**  
+   - Aujourd’hui, tu as `Émotion 1`, `Émotion 2`, `Émotion 3` **et** `Émotions`  
+   - Possible stratégie :
+     - 1–3 = hiérarchie
+     - `Émotions` = texte libre ou liste agrégée  
+   → utile de documenter l’intention pour ne pas confondre plus tard.
+
+3. **Année (numérique)**  
+   - Actuellement : 19 / 20 (siècles)  
+   - Si tu veux plus de finesse (décennies, périodes historiques), tu peux :
+     - ajouter un champ `Décennie`  
+     - ou garder des codes (ex. 1910, 1960, etc.) en restant approximative.
+
+4. **Mots-clés**  
+   - Déjà très riches : pourraient servir de base à
+     - un nuage de tags
+     - une recherche plein texte
+     - ou du clustering (plus tard).
+
+---
+
+## 7. Résumé visuel (en une phrase par vue)
+
+- **Constellation (3 mondes du temps)**  
+  > Comment différentes œuvres, médias et époques se distribuent entre
+  > **cosmos**, **humain** et **temps dérangé**.
+
+- **Carte émotionnelle (valence × arousal)**  
+  > Topographie émotionnelle du corpus, révélant les zones de
+  > **mélancolie**, **sérénité**, **peur**, **excitation**, etc.
+
+- **Grille médium × monde**  
+  > Où chaque médium place son énergie :  
+  > le cinéma dans le temps manipulé, la littérature dans l’intime, les jeux vidéo dans les distorsions, etc.
+
+- **Parcours / Journeys**  
+  > Des chemins narratifs guidés à travers les mondes, les émotions et les époques.
+
+---
+
+Ce document peut servir de **référence stable** pendant que tu continues
+à itérer dans VS / sur le prototype.
+
+Tu peux ensuite ajouter d’autres sections (ex. résultats de tests utilisateurs,
+scénarios concrets d’exposition, etc.) au fur et à mesure que le projet avance.
