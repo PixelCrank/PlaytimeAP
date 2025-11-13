@@ -1,7 +1,7 @@
 // src/App.tsx
 import { useState, useEffect } from "react";
 import EmotionalCompass from "./components/EmotionalCompass";
-import WorldCanvas from "./components/WorldCanvas";
+import TemporalTimelineView from "./components/TemporalTimelineView";
 import EmotionMapCanvas from "./components/EmotionMapCanvas";
 import NodeDrawer from "./components/NodeDrawer";
 import EmotionLegend from "./components/EmotionLegend";
@@ -140,7 +140,7 @@ export default function App() {
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
-                  🌌 Constellation
+                  📅 Chronologie
                 </button>
                 <button
                   onClick={() => setView("emotion")}
@@ -254,54 +254,8 @@ export default function App() {
                 Filtrer
               </h2>
               
-              {/* Monde & Période - Combined */}
-              <div className="space-y-4 mb-4">
-                <div>
-                  <label className="text-sm font-semibold text-slate-700 mb-2 block">Monde du temps</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      onClick={() => setFilters({ realmFilter: "tous" })}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                        filters.realmFilter === "tous"
-                          ? "bg-slate-800 text-white shadow"
-                          : "bg-slate-50 text-slate-700 hover:bg-slate-100"
-                      }`}
-                    >
-                      Tous
-                    </button>
-                    <button
-                      onClick={() => setFilters({ realmFilter: "cosmic" })}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                        filters.realmFilter === "cosmic"
-                          ? "bg-purple-600 text-white shadow"
-                          : "bg-purple-50 text-purple-700 hover:bg-purple-100"
-                      }`}
-                    >
-                      🌌 Cosmique
-                    </button>
-                    <button
-                      onClick={() => setFilters({ realmFilter: "human" })}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                        filters.realmFilter === "human"
-                          ? "bg-blue-600 text-white shadow"
-                          : "bg-blue-50 text-blue-700 hover:bg-blue-100"
-                      }`}
-                    >
-                      👤 Humain
-                    </button>
-                    <button
-                      onClick={() => setFilters({ realmFilter: "disrupted" })}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                        filters.realmFilter === "disrupted"
-                          ? "bg-red-600 text-white shadow"
-                          : "bg-red-50 text-red-700 hover:bg-red-100"
-                      }`}
-                    >
-                      ⚡ Dérangé
-                    </button>
-                  </div>
-                </div>
-
+              {/* Période filter */}
+              <div className="mb-4">
                 <div>
                   <label className="text-sm font-semibold text-slate-700 mb-2 block">Période</label>
                   <div className="grid grid-cols-3 gap-2">
@@ -383,7 +337,7 @@ export default function App() {
         <main className="flex-1 relative">
           <div className="absolute inset-0">
             {view === "constellation" ? (
-              <WorldCanvas />
+              <TemporalTimelineView />
             ) : view === "emotion" ? (
               <>
                 <EmotionMapCanvas />

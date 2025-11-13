@@ -16,6 +16,7 @@ export default function WorldCanvas() {
   const markVisited   = useStore(s => s.markVisited);
   const bookmarked = useStore(s => s.bookmarked);
   const toggleBookmark = useStore(s => s.toggleBookmark);
+  const setFilters = useStore(s => s.setFilters);
   const ref = useRef<SVGSVGElement>(null);
   
   const [hoveredWork, setHoveredWork] = useState<WorkNode | null>(null);
@@ -34,56 +35,112 @@ export default function WorldCanvas() {
 
     const nodes = filtered.map(d => ({ ...d }));
 
+    // Account for NodeDrawer on right side - shift centers left slightly
+    const effectiveWidth = width - 100; // Less space reservation
+    const xOffset = 0; // Use full left edge
+    
     const centers: Record<string, [number, number]> = {
-      human: [width/2, height*0.65],
-      cosmic: [width*0.25, height*0.25],
-      disrupted: [width*0.75, height*0.25],
+      human: [width/2, height*0.6],
+      cosmic: [width*0.3, height*0.35],
+      disrupted: [width*0.7, height*0.35],
     };
     const [cx, cy] = centers[realm] ?? centers.human;
 
+    // When a specific realm is selected, spread nodes more to reveal clusters
+    const isRealmFiltered = filters.realmFilter !== 'tous';
+    const chargeStrength = isRealmFiltered ? -80 : -35;
+    const centerStrength = isRealmFiltered ? 0.4 : 0.6;
+    
     const sim = d3.forceSimulation(nodes as any)
-      .force("charge", d3.forceManyBody().strength(-20))
-      .force("center", d3.forceCenter(cx, cy))
-      .force("collision", d3.forceCollide().radius(() => 8))
+      .force("charge", d3.forceManyBody().strength(chargeStrength))
+      .force("center", d3.forceCenter(cx, cy).strength(centerStrength))
+      .force("collision", d3.forceCollide().radius((d: any) => (bookmarked.has(d.id) ? 10 : 8)))
       .alpha(1).alphaDecay(0.05);
 
     const svg = d3.select(ref.current!);
     svg.selectAll("*").remove();
 
     const g = svg.append("g");
+    
+    // Add zoom behavior
+    const zoom = d3.zoom<SVGSVGElement, unknown>()
+      .scaleExtent([0.5, 3])
+      .on("zoom", (event: any) => {
+        g.attr("transform", event.transform);
+      });
+    
+    svg.call(zoom as any);
+    
+    // Apply initial zoom when realm is selected
+    if (isRealmFiltered) {
+      const [zoomX, zoomY] = centers[filters.realmFilter as keyof typeof centers] || [width/2, height/2];
+      svg.transition()
+        .duration(750)
+        .call(zoom.transform as any, d3.zoomIdentity.translate(width/2 - zoomX * 1.5, height/2 - zoomY * 1.5).scale(1.5));
+    } else {
+      svg.transition()
+        .duration(750)
+        .call(zoom.transform as any, d3.zoomIdentity);
+    }
 
-    // Add realm background zones with labels
+    // Realm background zones with visible labels
     const realmZones = [
-      { realm: 'cosmic', center: centers.cosmic, label: '🌌 Cosmique', color: '#a78bfa', textColor: '#7c3aed' },
-      { realm: 'human', center: centers.human, label: '👤 Humain', color: '#60a5fa', textColor: '#2563eb' },
-      { realm: 'disrupted', center: centers.disrupted, label: '⚡ Dérangé', color: '#f87171', textColor: '#dc2626' }
+      { name: "Cosmique", emoji: "🌌", x: width*0.3, y: height*0.35, color: "rgba(147, 51, 234, 0.1)" },
+      { name: "Humain", emoji: "👤", x: width/2, y: height*0.6, color: "rgba(59, 130, 246, 0.1)" },
+      { name: "Dérangé", emoji: "⚡", x: width*0.7, y: height*0.35, color: "rgba(239, 68, 68, 0.1)" },
     ];
 
     realmZones.forEach(zone => {
-      const [zx, zy] = zone.center;
+      const realmKey = zone.name === 'Cosmique' ? 'cosmic' : zone.name === 'Humain' ? 'human' : 'disrupted';
+      const isActive = filters.realmFilter === realmKey;
       
       // Background circle for realm
-      g.append("circle")
-        .attr("cx", zx)
-        .attr("cy", zy)
-        .attr("r", Math.min(width, height) * 0.15)
+      const circle = g.append("circle")
+        .attr("cx", zone.x)
+        .attr("cy", zone.y)
+        .attr("r", Math.min(width, height) * (isActive ? 0.18 : 0.12))
         .attr("fill", zone.color)
-        .attr("opacity", 0.08)
         .attr("stroke", zone.color)
-        .attr("stroke-width", 2)
+        .attr("stroke-width", isActive ? 3 : 2)
         .attr("stroke-dasharray", "5,5")
-        .attr("opacity", 0.15);
+        .attr("opacity", isActive ? 0.3 : 0.2)
+        .style("cursor", "pointer")
+        .style("transition", "all 0.3s ease")
+        .on("click", () => {
+          if (isActive) {
+            setFilters({ realmFilter: 'tous' });
+          } else {
+            setFilters({ realmFilter: realmKey });
+          }
+        })
+        .on("mouseover", function(this: SVGCircleElement) {
+          d3.select(this)
+            .attr("opacity", 0.4)
+            .attr("stroke-width", 3);
+        })
+        .on("mouseout", function(this: SVGCircleElement) {
+          d3.select(this)
+            .attr("opacity", isActive ? 0.3 : 0.2)
+            .attr("stroke-width", isActive ? 3 : 2);
+        });
       
-      // Realm label
+      // Realm label with emoji - also clickable
       g.append("text")
-        .attr("x", zx)
-        .attr("y", zy - Math.min(width, height) * 0.18)
+        .attr("x", zone.x)
+        .attr("y", zone.y - Math.min(width, height) * 0.14)
         .attr("text-anchor", "middle")
-        .attr("font-size", "16px")
+        .attr("font-size", isActive ? "20px" : "18px")
         .attr("font-weight", "bold")
-        .attr("fill", zone.textColor)
-        .attr("opacity", 0.6)
-        .text(zone.label);
+        .attr("opacity", isActive ? 0.9 : 0.7)
+        .style("cursor", "pointer")
+        .text(`${zone.emoji} ${zone.name}`)
+        .on("click", () => {
+          if (isActive) {
+            setFilters({ realmFilter: 'tous' });
+          } else {
+            setFilters({ realmFilter: realmKey });
+          }
+        });
     });
 
     // Detect and label emotional clusters
@@ -138,13 +195,14 @@ export default function WorldCanvas() {
   .enter()
   .append("circle")
   .attr("class", "work-node")
-  .attr("r", (d: any) => bookmarked.has(d.id) ? 6 : 4)
+  .attr("r", (d: any) => bookmarked.has(d.id) ? 7 : 5)
   .attr("opacity", 0.9)
   .attr("fill", (d: any) => typeColor[d.type] ?? defaultNodeColor)
   .attr("stroke", (d: any) => bookmarked.has(d.id) ? "#fbbf24" : "none")
   .attr("stroke-width", (d: any) => bookmarked.has(d.id) ? 2 : 0)
   .attr("class", "cursor-pointer")
-  .on("click", (_: any, d: any) => {
+  .on("click", (event: any, d: any) => {
+    event.stopPropagation();
     setHoveredWork(null);
     setSelectedId(d.id);
     markVisited(d.id);
@@ -211,7 +269,7 @@ circles
     });
 
     return () => { sim.stop(); };
-  }, [realm, filtered, bookmarked, setSelectedId, markVisited, toggleBookmark]);
+  }, [realm, filtered, bookmarked, setSelectedId, markVisited, toggleBookmark, filters.realmFilter]);
 
   return (
     <div className="relative w-full h-[70vh]">

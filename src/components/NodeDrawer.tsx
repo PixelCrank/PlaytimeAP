@@ -22,23 +22,14 @@ export default function NodeDrawer() {
   
   // Hooks must be called unconditionally before any early returns
   const [showEmbed, setShowEmbed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const mediaInfo = useMemo(() => {
     if (!node || !node.lien || node.lien.trim() === '') return null;
     return analyzeMediaUrl(node.lien);
   }, [node?.lien]);
 
   if (!node) {
-    return (
-      <aside
-        className="mt-6 md:mt-0 md:absolute md:inset-y-0 md:right-0 md:w-96 border rounded-lg bg-white/90 backdrop-blur p-4 shadow-sm"
-        aria-live="polite"
-      >
-        <h2 className="text-lg font-semibold">Explorer les œuvres</h2>
-        <p className="mt-2 text-sm text-slate-600">
-          Cliquez sur un point de la carte pour ouvrir la fiche détaillée d'une œuvre. Utilisez la boussole pour naviguer entre les trois royaumes du temps.
-        </p>
-      </aside>
-    );
+    return null; // Don't show anything when no work is selected
   }
 
   const isPinned = pinned.has(node.id);
@@ -46,48 +37,73 @@ export default function NodeDrawer() {
 
   return (
     <aside
-      className="mt-6 md:mt-0 md:absolute md:inset-y-0 md:right-0 md:w-96 border rounded-lg bg-white/95 backdrop-blur p-4 shadow-md flex flex-col"
+      className={`mt-6 md:mt-0 md:absolute md:inset-y-0 md:right-0 border-l bg-white/95 backdrop-blur shadow-xl flex flex-col transition-all duration-300 z-50 ${
+        isCollapsed ? 'md:w-12' : 'md:w-96'
+      }`}
       aria-live="polite"
     >
-      <header className="flex items-start justify-between gap-2">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-slate-500">{node.type}</p>
-          <h2 className="text-xl font-semibold leading-snug">{node.titre}</h2>
-          {node.createur && (
-            <p className="text-sm text-slate-600">{node.createur}</p>
-          )}
-        </div>
-        <div className="flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={() => toggleBookmark(node.id)}
-            className={`text-xs border rounded-full px-3 py-1 ${
-              isBookmarked 
-                ? "bg-purple-600 text-white border-purple-600" 
-                : "bg-white hover:bg-purple-50 border-slate-300"
-            }`}
-            title={isBookmarked ? "Retirer de la collection" : "Ajouter à la collection"}
-          >
-            {isBookmarked ? "⭐ Dans ma collection" : "⭐ Ajouter"}
-          </button>
-          <button
-            type="button"
-            onClick={() => togglePin(node.id)}
-            className={`text-xs border rounded-full px-3 py-1 ${isPinned ? "bg-black text-white" : "bg-white"}`}
-          >
-            {isPinned ? "Épinglé" : "Épingler"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedId(null)}
-            className="text-xs text-slate-500 hover:text-slate-700"
-          >
-            Fermer
-          </button>
-        </div>
-      </header>
+      {/* Collapse/Expand Toggle */}
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -left-8 top-4 w-8 h-8 bg-white/95 backdrop-blur border border-r-0 rounded-l-lg shadow-md hover:bg-slate-50 transition flex items-center justify-center text-slate-600 hover:text-slate-900"
+        title={isCollapsed ? "Développer" : "Réduire"}
+      >
+        {isCollapsed ? '◀' : '▶'}
+      </button>
 
-      <div className="mt-4 space-y-3 text-sm text-slate-700 overflow-y-auto">
+      {isCollapsed ? (
+        /* Collapsed state - show minimal info */
+        <div className="p-2 h-full flex flex-col items-center gap-2 overflow-hidden">
+          <button
+            onClick={() => setIsCollapsed(false)}
+            className="text-xs writing-mode-vertical-rl transform rotate-180 text-slate-600 hover:text-slate-900 py-4"
+          >
+            {node.titre.slice(0, 20)}...
+          </button>
+        </div>
+      ) : (
+        /* Expanded state - full drawer */
+        <div className="p-4 flex flex-col h-full overflow-hidden"
+    >
+        <header className="flex items-start justify-between gap-2">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-slate-500">{node.type}</p>
+            <h2 className="text-xl font-semibold leading-snug">{node.titre}</h2>
+            {node.createur && (
+              <p className="text-sm text-slate-600">{node.createur}</p>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={() => toggleBookmark(node.id)}
+              className={`text-xs border rounded-full px-3 py-1 ${
+                isBookmarked 
+                  ? "bg-purple-600 text-white border-purple-600" 
+                  : "bg-white hover:bg-purple-50 border-slate-300"
+              }`}
+              title={isBookmarked ? "Retirer de la collection" : "Ajouter à la collection"}
+            >
+              {isBookmarked ? "⭐ Dans ma collection" : "⭐ Ajouter"}
+            </button>
+            <button
+              type="button"
+              onClick={() => togglePin(node.id)}
+              className={`text-xs border rounded-full px-3 py-1 ${isPinned ? "bg-black text-white" : "bg-white"}`}
+            >
+              {isPinned ? "Épinglé" : "Épingler"}
+            </button>
+            <button
+              type="button"
+              onClick={() => setSelectedId(null)}
+              className="text-xs text-slate-500 hover:text-slate-700"
+            >
+              Fermer
+            </button>
+          </div>
+        </header>
+
+        <div className="mt-4 space-y-3 text-sm text-slate-700 overflow-y-auto flex-1">
         {node.annee && (
           <p><strong className="font-medium text-slate-900">Année :</strong> {node.annee}</p>
         )}
@@ -175,9 +191,11 @@ export default function NodeDrawer() {
           </div>
         )}
         
-        {/* Personal Notes */}
-        <NotesPanel workId={node.id} />
+          {/* Personal Notes */}
+          <NotesPanel workId={node.id} />
+        </div>
       </div>
+      )}
     </aside>
   );
 }
