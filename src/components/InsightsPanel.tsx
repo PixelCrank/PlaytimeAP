@@ -230,7 +230,120 @@ export default function InsightsPanel({ compact = false }: { compact?: boolean }
       }
     }
     
-    // 7. Comparative insight: vs full corpus
+    // 7. Medium-Category Cross-Reference Discoveries
+    if (stats.sortedCategories.length > 0) {
+      const [topCat, catCount] = stats.sortedCategories[0];
+      
+      // Find which media dominate this category
+      const mediaForCategory: Record<string, number> = {};
+      filtered.forEach(work => {
+        if (work.categories?.includes(topCat)) {
+          mediaForCategory[work.type] = (mediaForCategory[work.type] || 0) + 1;
+        }
+      });
+      
+      const sortedMedia = Object.entries(mediaForCategory).sort((a, b) => b[1] - a[1]);
+      if (sortedMedia.length >= 2) {
+        const [media1, count1] = sortedMedia[0];
+        const [media2, count2] = sortedMedia[1];
+        const totalInCat = Object.values(mediaForCategory).reduce((a, b) => a + b, 0);
+        const combinedPercent = Math.round(((count1 + count2) / totalInCat) * 100);
+        
+        if (combinedPercent >= 65) {
+          findings.push({
+            id: 'medium-category-link',
+            type: 'discovery',
+            icon: '🎯',
+            message: `${combinedPercent}% des œuvres "${topCat}" viennent de ${media1} et ${media2}`,
+            confidence: 'high'
+          });
+        }
+      }
+    }
+    
+    // 8. Emotion-Century Peak Detection
+    if (stats.sortedEmotions.length > 0 && Object.keys(stats.centuries).length > 1) {
+      const [topEmo] = stats.sortedEmotions[0];
+      
+      // Count this emotion by century
+      const emoByCentury: Record<string, number> = {};
+      filtered.forEach(work => {
+        if (work.emotions?.includes(topEmo) && work.anneeNum) {
+          emoByCentury[work.anneeNum] = (emoByCentury[work.anneeNum] || 0) + 1;
+        }
+      });
+      
+      const sortedCenturies = Object.entries(emoByCentury).sort((a, b) => b[1] - a[1]);
+      if (sortedCenturies.length >= 2) {
+        const [peakCent, peakCount] = sortedCenturies[0];
+        const [otherCent, otherCount] = sortedCenturies[1];
+        
+        if (peakCount >= otherCount * 2) {
+          const centuryLabel = peakCent === '19' ? 'XIXe' : 'XXe–XXIe';
+          findings.push({
+            id: 'emotion-century-peak',
+            type: 'discovery',
+            icon: '📈',
+            message: `"${topEmo}" culmine dans les œuvres du ${centuryLabel}`,
+            confidence: 'high'
+          });
+        }
+      }
+    }
+    
+    // 9. Rare Combination Alerts (e.g., "Only 2 works explore ecological time + joy")
+    const rareCategories = ['temps écologique', 'temps géologique'];
+    const positiveEmotions = ['joie', 'excitation', 'confiance'];
+    
+    rareCategories.forEach(rareCat => {
+      positiveEmotions.forEach(posEmo => {
+        const count = filtered.filter(work => 
+          work.categories?.includes(rareCat) && work.emotions?.includes(posEmo)
+        ).length;
+        
+        if (count > 0 && count <= 3) {
+          findings.push({
+            id: `rare-combo-${rareCat}-${posEmo}`,
+            type: 'anomaly',
+            icon: '💎',
+            message: `Seulement ${count} œuvre${count > 1 ? 's' : ''} explore${count > 1 ? 'nt' : ''} "${rareCat}" avec "${posEmo}"`,
+            confidence: 'high'
+          });
+        }
+      });
+    });
+    
+    // 10. Identity Works Emotion Profile
+    const identityWorks = filtered.filter(work => 
+      work.categories?.some((c: string) => c.includes('identité'))
+    );
+    
+    if (identityWorks.length >= 5) {
+      const identityEmotions: Record<string, number> = {};
+      identityWorks.forEach(work => {
+        work.emotions?.forEach((e: string) => {
+          identityEmotions[e] = (identityEmotions[e] || 0) + 1;
+        });
+      });
+      
+      const sortedIdEmotions = Object.entries(identityEmotions).sort((a, b) => b[1] - a[1]);
+      if (sortedIdEmotions.length > 0) {
+        const [topIdEmo, idEmoCount] = sortedIdEmotions[0];
+        const idPercent = Math.round((idEmoCount / identityWorks.length) * 100);
+        
+        if (idPercent >= 50) {
+          findings.push({
+            id: 'identity-emotion',
+            type: 'discovery',
+            icon: '🪞',
+            message: `${idPercent}% des œuvres sur l'identité portent "${topIdEmo}"`,
+            confidence: 'high'
+          });
+        }
+      }
+    }
+    
+    // 11. Comparative insight: vs full corpus
     if (percentage < 10) {
       findings.push({
         id: 'narrow-selection',
