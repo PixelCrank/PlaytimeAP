@@ -3,6 +3,7 @@ import works from "../data/works.json";
 import type { WorkNode } from "../lib/types";
 import { useStore } from "../store/useStore";
 import { analyzeMediaUrl, getMediaIcon } from "../lib/media";
+import NotesPanel from "./NotesPanel";
 
 const entries = works as WorkNode[];
 
@@ -173,6 +174,9 @@ export default function NodeDrawer() {
             </a>
           </div>
         )}
+        
+        {/* Personal Notes */}
+        <NotesPanel workId={node.id} />
       </div>
     </aside>
   );

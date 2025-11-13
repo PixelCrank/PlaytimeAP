@@ -27,6 +27,34 @@ export type SavedInsight = {
   bookmarked: boolean;
 };
 
+export type UserNote = {
+  id: string;
+  workId: string;
+  content: string;
+  createdAt: number;
+  updatedAt: number;
+};
+
+export type CustomTag = {
+  id: string;
+  label: string;
+  color: string; // hex color
+  workIds: string[];
+  createdAt: number;
+};
+
+export type VisitRecord = {
+  id: string;
+  workId: string;
+  timestamp: number;
+  context: {
+    realm: string;
+    filters: FilterState;
+    centuryFilter: number | null;
+    fromJourney?: string;
+  };
+};
+
 type State = {
   realm: "cosmic" | "human" | "disrupted";
   filters: FilterState;
@@ -49,6 +77,11 @@ type State = {
   // Insight History
   insightHistory: SavedInsight[];
   bookmarkedInsights: Set<string>;
+  
+  // Personal Layer
+  userNotes: UserNote[];
+  customTags: CustomTag[];
+  visitHistory: VisitRecord[];
   
   setSelectedId: (id: string | null) => void;
   markVisited: (id: string) => void;
@@ -74,6 +107,21 @@ type State = {
   toggleInsightBookmark: (id: string) => void;
   deleteInsight: (id: string) => void;
   clearInsightHistory: () => void;
+  
+  // Personal Layer actions
+  addNote: (workId: string, content: string) => void;
+  updateNote: (noteId: string, content: string) => void;
+  deleteNote: (noteId: string) => void;
+  getNoteForWork: (workId: string) => UserNote | undefined;
+  
+  addCustomTag: (label: string, color: string) => void;
+  updateCustomTag: (tagId: string, updates: Partial<Omit<CustomTag, "id" | "createdAt">>) => void;
+  deleteCustomTag: (tagId: string) => void;
+  addWorkToTag: (tagId: string, workId: string) => void;
+  removeWorkFromTag: (tagId: string, workId: string) => void;
+  
+  recordVisit: (workId: string) => void;
+  clearVisitHistory: () => void;
 };
 
 export const useStore = create<State>()(
@@ -95,6 +143,10 @@ export const useStore = create<State>()(
       
       insightHistory: [],
       bookmarkedInsights: new Set(),
+      
+      userNotes: [],
+      customTags: [],
+      visitHistory: [],
 
       setRealm: (r) => set({ realm: r }),
 
@@ -116,6 +168,7 @@ export const useStore = create<State>()(
         const v = new Set(get().visitedIds);
         v.add(id);
         set({ visitedIds: v });
+        get().recordVisit(id); // Also record to visit history
       },
       
       setCenturyFilter: (c) => set({ centuryFilter: c }),
@@ -207,6 +260,106 @@ export const useStore = create<State>()(
           insightHistory: get().insightHistory.filter(i => get().bookmarkedInsights.has(i.id)),
         });
       },
+      
+      // Personal Layer implementations
+      addNote: (workId, content) => {
+        const existingNote = get().userNotes.find(n => n.workId === workId);
+        if (existingNote) {
+          // Update existing note
+          set({
+            userNotes: get().userNotes.map(n =>
+              n.workId === workId ? { ...n, content, updatedAt: Date.now() } : n
+            ),
+          });
+        } else {
+          // Create new note
+          const newNote: UserNote = {
+            id: `note-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+            workId,
+            content,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+          };
+          set({ userNotes: [...get().userNotes, newNote] });
+        }
+      },
+      
+      updateNote: (noteId, content) => {
+        set({
+          userNotes: get().userNotes.map(n =>
+            n.id === noteId ? { ...n, content, updatedAt: Date.now() } : n
+          ),
+        });
+      },
+      
+      deleteNote: (noteId) => {
+        set({ userNotes: get().userNotes.filter(n => n.id !== noteId) });
+      },
+      
+      getNoteForWork: (workId) => {
+        return get().userNotes.find(n => n.workId === workId);
+      },
+      
+      addCustomTag: (label, color) => {
+        const newTag: CustomTag = {
+          id: `tag-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          label,
+          color,
+          workIds: [],
+          createdAt: Date.now(),
+        };
+        set({ customTags: [...get().customTags, newTag] });
+      },
+      
+      updateCustomTag: (tagId, updates) => {
+        set({
+          customTags: get().customTags.map(t =>
+            t.id === tagId ? { ...t, ...updates } : t
+          ),
+        });
+      },
+      
+      deleteCustomTag: (tagId) => {
+        set({ customTags: get().customTags.filter(t => t.id !== tagId) });
+      },
+      
+      addWorkToTag: (tagId, workId) => {
+        set({
+          customTags: get().customTags.map(t =>
+            t.id === tagId && !t.workIds.includes(workId)
+              ? { ...t, workIds: [...t.workIds, workId] }
+              : t
+          ),
+        });
+      },
+      
+      removeWorkFromTag: (tagId, workId) => {
+        set({
+          customTags: get().customTags.map(t =>
+            t.id === tagId ? { ...t, workIds: t.workIds.filter(id => id !== workId) } : t
+          ),
+        });
+      },
+      
+      recordVisit: (workId) => {
+        const state = get();
+        const newVisit: VisitRecord = {
+          id: `visit-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          workId,
+          timestamp: Date.now(),
+          context: {
+            realm: state.realm,
+            filters: state.filters,
+            centuryFilter: state.centuryFilter,
+            fromJourney: state.selectedJourney || undefined,
+          },
+        };
+        set({ visitHistory: [newVisit, ...state.visitHistory].slice(0, 200) }); // Keep last 200 visits
+      },
+      
+      clearVisitHistory: () => {
+        set({ visitHistory: [] });
+      },
     }),
     {
       name: "playtime-collection",
@@ -215,6 +368,9 @@ export const useStore = create<State>()(
         customJourneys: state.customJourneys,
         insightHistory: state.insightHistory,
         bookmarkedInsights: Array.from(state.bookmarkedInsights),
+        userNotes: state.userNotes,
+        customTags: state.customTags,
+        visitHistory: state.visitHistory,
       }),
       merge: (persisted: any, current) => ({
         ...current,
@@ -222,6 +378,9 @@ export const useStore = create<State>()(
         customJourneys: persisted?.customJourneys || [],
         insightHistory: persisted?.insightHistory || [],
         bookmarkedInsights: new Set(persisted?.bookmarkedInsights || []),
+        userNotes: persisted?.userNotes || [],
+        customTags: persisted?.customTags || [],
+        visitHistory: persisted?.visitHistory || [],
       }),
     }
   )

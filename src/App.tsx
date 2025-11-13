@@ -28,18 +28,79 @@ import CollectionPanel from "./components/CollectionPanel";
 import JourneyBuilder from "./components/JourneyBuilder";
 import InsightHistoryPanel from "./components/InsightHistoryPanel";
 import WorkComparisonPanel from "./components/WorkComparisonPanel";
+import VisitHistoryPanel from "./components/VisitHistoryPanel";
+import CustomTagsManager from "./components/CustomTagsManager";
+import ShareSnapshotPanel from "./components/ShareSnapshotPanel";
 
 export default function App() {
   const [view, setView] = useState<"constellation" | "emotion">("constellation");
   const [showWelcome, setShowWelcome] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showVisitHistory, setShowVisitHistory] = useState(false);
+  const [showCustomTags, setShowCustomTags] = useState(false);
+  const [showShareSnapshot, setShowShareSnapshot] = useState(false);
 
   useEffect(() => {
     const hasVisited = localStorage.getItem("playtime-visited");
     if (!hasVisited) {
       setShowWelcome(true);
       localStorage.setItem("playtime-visited", "true");
+    }
+  }, []);
+
+  // Parse URL parameters to restore shared snapshots
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    
+    if (params.has('realm')) {
+      const realm = params.get('realm');
+      if (realm === 'cosmic' || realm === 'human' || realm === 'disrupted') {
+        // Import useStore here to avoid circular dependencies
+        import('./store/useStore').then(({ useStore }) => {
+          useStore.getState().setRealm(realm);
+        });
+      }
+    }
+    
+    if (params.has('century')) {
+      const century = parseInt(params.get('century')!);
+      if (century === 19 || century === 20) {
+        import('./store/useStore').then(({ useStore }) => {
+          useStore.getState().setCenturyFilter(century);
+        });
+      }
+    }
+    
+    const filters: any = {};
+    
+    if (params.has('types')) {
+      filters.types = params.get('types')!.split(',');
+    }
+    
+    if (params.has('categories')) {
+      filters.categories = params.get('categories')!.split(',');
+    }
+    
+    if (params.has('emotions')) {
+      filters.emotions = params.get('emotions')!.split(',');
+    }
+    
+    if (params.has('yearMin') && params.has('yearMax')) {
+      filters.yearRange = [
+        parseInt(params.get('yearMin')!),
+        parseInt(params.get('yearMax')!)
+      ];
+    }
+    
+    if (params.has('search')) {
+      filters.search = params.get('search')!;
+    }
+    
+    if (Object.keys(filters).length > 0) {
+      import('./store/useStore').then(({ useStore }) => {
+        useStore.getState().setFilters(filters);
+      });
     }
   }, []);
 
@@ -84,7 +145,25 @@ export default function App() {
               </div>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowVisitHistory(true)}
+                className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700 flex items-center gap-1.5"
+              >
+                🕰️ Historique
+              </button>
+              <button
+                onClick={() => setShowCustomTags(true)}
+                className="px-3 py-1.5 text-xs bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700 flex items-center gap-1.5"
+              >
+                🏷️ Tags
+              </button>
+              <button
+                onClick={() => setShowShareSnapshot(true)}
+                className="px-3 py-1.5 text-xs bg-violet-500 hover:bg-violet-600 rounded-lg font-medium text-white flex items-center gap-1.5"
+              >
+                📸 Partager
+              </button>
               <InsightHistoryPanel />
               <TimelineSlider />
               <EmotionalCompass />
@@ -213,6 +292,11 @@ export default function App() {
 
       {/* Work Comparison Floating Panel */}
       <WorkComparisonPanel />
+
+      {/* Personal Layer Modals */}
+      {showVisitHistory && <VisitHistoryPanel onClose={() => setShowVisitHistory(false)} />}
+      {showCustomTags && <CustomTagsManager onClose={() => setShowCustomTags(false)} />}
+      {showShareSnapshot && <ShareSnapshotPanel onClose={() => setShowShareSnapshot(false)} />}
 
       <footer className="border-t bg-white px-6 py-3 flex items-center justify-between text-xs text-slate-500">
         <span>© 2025 Crank Studio · Playtime v1.0</span>
