@@ -70,6 +70,7 @@ export default function WorldCanvas() {
   })
   .on("contextmenu", (event: any, d: any) => {
     event.preventDefault();
+    event.stopPropagation();
     setContextMenu({ workId: d.id, x: event.clientX, y: event.clientY });
   })
   .on("mouseover", (event: any, d: any) => {

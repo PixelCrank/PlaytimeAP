@@ -22,7 +22,8 @@ export default function WorkContextMenu({ workId, x, y, onClose }: WorkContextMe
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (!target.closest('[data-context-menu]')) {
+      // Check if click is outside the menu AND not on an SVG element (D3 nodes)
+      if (!target.closest('[data-context-menu]') && target.tagName !== 'circle' && target.tagName !== 'svg') {
         onClose();
       }
     };
@@ -30,15 +31,17 @@ export default function WorkContextMenu({ workId, x, y, onClose }: WorkContextMe
       if (e.key === 'Escape') onClose();
     };
     
-    // Delay adding listener to prevent immediate close
+    // Delay adding listener to prevent immediate close from the right-click event
     const timer = setTimeout(() => {
       document.addEventListener('click', handleClickOutside);
-    }, 10);
+      document.addEventListener('contextmenu', handleClickOutside);
+    }, 100);
     document.addEventListener('keydown', handleEscape);
     
     return () => {
       clearTimeout(timer);
       document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('contextmenu', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
   }, [onClose]);
@@ -60,6 +63,10 @@ export default function WorkContextMenu({ workId, x, y, onClose }: WorkContextMe
       className="fixed z-[200] bg-white border-2 border-slate-300 rounded-lg shadow-2xl py-2 min-w-[200px]"
       style={{ left: `${adjustedX}px`, top: `${adjustedY}px` }}
       onClick={(e) => e.stopPropagation()}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
     >
       <button
         onClick={() => handleAction(() => setSelectedId(workId))}
