@@ -227,161 +227,155 @@ export default function App() {
 
       <div className="flex-1 flex">
         <aside className="w-80 bg-white border-r shadow-sm overflow-y-auto">
-          <div className="p-4 space-y-4">
-            {/* Insights - Now in sidebar for better context */}
+          <div className="p-5 space-y-6">
+            {/* Insights - Prominent at top */}
             {view !== 'gallery' && (
-              <div className="bg-gradient-to-br from-violet-50 to-blue-50 rounded-lg p-3 border border-violet-200">
-                <InsightsPanel compact={true} />
+              <div className="bg-gradient-to-br from-violet-100 via-purple-50 to-blue-100 rounded-xl p-4 border-2 border-violet-300 shadow-sm">
+                <InsightsPanel compact={false} />
               </div>
             )}
             
-            {/* Quick Actions */}
-            <div className="space-y-2">
-              <MoodBasedEntry />
-              <QualitativeSearch />
+            {/* 1. DISCOVER - Entry points */}
+            <div>
+              <h2 className="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <span className="text-xl">✨</span>
+                Explorer
+              </h2>
+              <div className="space-y-2">
+                <MoodBasedEntry />
+                <SerendipityExplorer />
+              </div>
             </div>
             
-            {/* Collection */}
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">⭐</span>
-                <h3 className="text-sm font-bold text-slate-700">Ma Collection</h3>
-              </div>
-              <CollectionPanel />
-              <JourneyBuilder />
-            </div>
-            
-            {/* Filters */}
-            <div className="border-t pt-4">
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-lg">🎯</span>
-                <h3 className="text-sm font-bold text-slate-700">Filtres</h3>
-              </div>
-              <JourneySelector />
+            {/* 2. FILTER - Core filtering */}
+            <div className="border-t-2 pt-5">
+              <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <span className="text-xl">🎯</span>
+                Filtrer
+              </h2>
               
-              {/* Three Worlds Filter */}
-              <div className="mb-3">
-                <label className="text-xs font-medium text-slate-600 mb-1.5 block">Monde du temps</label>
-                <div className="grid grid-cols-2 gap-1.5">
-                  <button
-                    onClick={() => setFilters({ realmFilter: "tous" })}
-                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
-                      filters.realmFilter === "tous"
-                        ? "bg-slate-700 text-white"
-                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-                    }`}
-                  >
-                    Tous
-                  </button>
-                  <button
-                    onClick={() => setFilters({ realmFilter: "cosmic" })}
-                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
-                      filters.realmFilter === "cosmic"
-                        ? "bg-purple-600 text-white"
-                        : "bg-white border border-purple-200 text-purple-700 hover:bg-purple-50"
-                    }`}
-                  >
-                    🌌 Cosmique
-                  </button>
-                  <button
-                    onClick={() => setFilters({ realmFilter: "human" })}
-                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
-                      filters.realmFilter === "human"
-                        ? "bg-blue-600 text-white"
-                        : "bg-white border border-blue-200 text-blue-700 hover:bg-blue-50"
-                    }`}
-                  >
-                    👤 Humain
-                  </button>
-                  <button
-                    onClick={() => setFilters({ realmFilter: "disrupted" })}
-                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
-                      filters.realmFilter === "disrupted"
-                        ? "bg-red-600 text-white"
-                        : "bg-white border border-red-200 text-red-700 hover:bg-red-50"
-                    }`}
-                  >
-                    ⚡ Dérangé
-                  </button>
+              {/* Monde & Période - Combined */}
+              <div className="space-y-4 mb-4">
+                <div>
+                  <label className="text-sm font-semibold text-slate-700 mb-2 block">Monde du temps</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setFilters({ realmFilter: "tous" })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        filters.realmFilter === "tous"
+                          ? "bg-slate-800 text-white shadow"
+                          : "bg-slate-50 text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      Tous
+                    </button>
+                    <button
+                      onClick={() => setFilters({ realmFilter: "cosmic" })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        filters.realmFilter === "cosmic"
+                          ? "bg-purple-600 text-white shadow"
+                          : "bg-purple-50 text-purple-700 hover:bg-purple-100"
+                      }`}
+                    >
+                      🌌 Cosmique
+                    </button>
+                    <button
+                      onClick={() => setFilters({ realmFilter: "human" })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        filters.realmFilter === "human"
+                          ? "bg-blue-600 text-white shadow"
+                          : "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                      }`}
+                    >
+                      👤 Humain
+                    </button>
+                    <button
+                      onClick={() => setFilters({ realmFilter: "disrupted" })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        filters.realmFilter === "disrupted"
+                          ? "bg-red-600 text-white shadow"
+                          : "bg-red-50 text-red-700 hover:bg-red-100"
+                      }`}
+                    >
+                      ⚡ Dérangé
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Century Filter */}
-              <div className="mb-3">
-                <label className="text-xs font-medium text-slate-600 mb-1.5 block">Période</label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  <button
-                    onClick={() => setFilters({ centuryFilter: "tous" })}
-                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
-                      filters.centuryFilter === "tous"
-                        ? "bg-slate-700 text-white"
-                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
-                    }`}
-                  >
-                    Toutes
-                  </button>
-                  <button
-                    onClick={() => setFilters({ centuryFilter: "XIXe" })}
-                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
-                      filters.centuryFilter === "XIXe"
-                        ? "bg-amber-600 text-white"
-                        : "bg-white border border-amber-200 text-amber-700 hover:bg-amber-50"
-                    }`}
-                  >
-                    XIXe
-                  </button>
-                  <button
-                    onClick={() => setFilters({ centuryFilter: "XXe" })}
-                    className={`px-2 py-1.5 rounded text-xs font-medium transition ${
-                      filters.centuryFilter === "XXe"
-                        ? "bg-teal-600 text-white"
-                        : "bg-white border border-teal-200 text-teal-700 hover:bg-teal-50"
-                    }`}
-                  >
-                    XXe–XXIe
-                  </button>
+                <div>
+                  <label className="text-sm font-semibold text-slate-700 mb-2 block">Période</label>
+                  <div className="grid grid-cols-3 gap-2">
+                    <button
+                      onClick={() => setFilters({ centuryFilter: "tous" })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        filters.centuryFilter === "tous"
+                          ? "bg-slate-800 text-white shadow"
+                          : "bg-slate-50 text-slate-700 hover:bg-slate-100"
+                      }`}
+                    >
+                      Toutes
+                    </button>
+                    <button
+                      onClick={() => setFilters({ centuryFilter: "XIXe" })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        filters.centuryFilter === "XIXe"
+                          ? "bg-amber-600 text-white shadow"
+                          : "bg-amber-50 text-amber-700 hover:bg-amber-100"
+                      }`}
+                    >
+                      XIXe
+                    </button>
+                    <button
+                      onClick={() => setFilters({ centuryFilter: "XXe" })}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
+                        filters.centuryFilter === "XXe"
+                          ? "bg-teal-600 text-white shadow"
+                          : "bg-teal-50 text-teal-700 hover:bg-teal-100"
+                      }`}
+                    >
+                      XXe–XXIe
+                    </button>
+                  </div>
                 </div>
               </div>
               
-              <EmotionRangeFilter />
-              
-              {/* Timeline Scrubber */}
-              <div className="mt-3">
+              {/* Timeline Scrubber - More prominent */}
+              <div className="mb-4">
                 <TimelineScrubber />
               </div>
+              
+              {/* Emotion filter */}
+              <EmotionRangeFilter />
             </div>
             
-            {/* Discovery Tools */}
-            <div className="border-t pt-4 space-y-2">
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-lg">🔍</span>
-                <h3 className="text-sm font-bold text-slate-700">Découverte</h3>
-              </div>
-              <KeywordCloud />
-              <SerendipityExplorer />
-            </div>
-            
-            {/* Advanced Analysis - Collapsible */}
-            <div className="border-t pt-4">
+            {/* 3. ANALYZE - Advanced tools (collapsed by default) */}
+            <div className="border-t-2 pt-5">
               <button
                 onClick={() => setShowAnalysis(!showAnalysis)}
-                className="w-full flex items-center justify-between mb-2 text-left hover:bg-slate-50 rounded p-2 transition"
+                className="w-full flex items-center justify-between text-left hover:bg-slate-50 rounded-lg p-3 transition group"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">📊</span>
-                  <h3 className="text-sm font-bold text-slate-700">Analyses Avancées</h3>
-                </div>
-                <span className="text-slate-400 text-sm">{showAnalysis ? "−" : "+"}</span>
+                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <span className="text-xl">📊</span>
+                  Analyser
+                  <span className="text-xs font-normal text-slate-500">({showAnalysis ? '5 outils' : 'ouvrir'})</span>
+                </h2>
+                <span className="text-slate-400 text-lg group-hover:text-slate-600">{showAnalysis ? "−" : "+"}</span>
               </button>
               {showAnalysis && (
-                <div className="space-y-2 pl-2">
-                  <RealmComparison />
-                  <TemporalDensityHeatmap />
-                  <MediumEmotionDialect />
+                <div className="mt-3 space-y-2">
                   <EmotionalTrajectoryTimeline />
-                  <TemporalEvolutionPanel />
+                  <CrossMediumRemix />
+                  <RealmComparison />
+                  <MediumEmotionDialect />
+                  <TemporalDensityHeatmap />
                 </div>
               )}
+            </div>
+            
+            {/* Ma Collection - At bottom */}
+            <div className="border-t pt-5">
+              <h3 className="text-sm font-semibold text-slate-700 mb-2">Ma Collection</h3>
+              <CollectionPanel />
             </div>
           </div>
         </aside>
