@@ -4,6 +4,7 @@ import type { WorkNode } from "../lib/types";
 import { useStore } from "../store/useStore";
 import { analyzeMediaUrl, getMediaIcon } from "../lib/media";
 import NotesPanel from "./NotesPanel";
+import WorkContextNarrative from "./WorkContextNarrative";
 
 const entries = works as WorkNode[];
 
@@ -191,6 +192,9 @@ export default function NodeDrawer() {
           </div>
         )}
         
+          {/* AI Contextual Narrative */}
+          <WorkContextNarrative work={node} />
+          
           {/* Personal Notes */}
           <NotesPanel workId={node.id} />
         </div>

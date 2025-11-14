@@ -44,6 +44,7 @@ export default function App() {
   const [view, setView] = useState<"constellation" | "emotion" | "gallery">("constellation");
   const [showWelcome, setShowWelcome] = useState(false);
   const [showResearch, setShowResearch] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showVisitHistory, setShowVisitHistory] = useState(false);
   const [showCustomTags, setShowCustomTags] = useState(false);
@@ -247,15 +248,24 @@ export default function App() {
               </div>
             </div>
             
-            {/* 2. FILTER - Core filtering */}
+            {/* 2. FILTER - Core filtering (collapsed by default) */}
             <div className="border-t-2 pt-5">
-              <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <span className="text-xl">🎯</span>
-                Filtrer
-              </h2>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="w-full flex items-center justify-between text-left hover:bg-slate-50 rounded-lg p-3 transition group"
+              >
+                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <span className="text-xl">🎯</span>
+                  Filtrer
+                  <span className="text-xs font-normal text-slate-500">({showFilters ? '2 filtres' : 'ouvrir'})</span>
+                </h2>
+                <span className="text-slate-400 text-lg group-hover:text-slate-600">{showFilters ? "−" : "+"}</span>
+              </button>
               
+              {showFilters && (
+                <div className="mt-4 space-y-4">
               {/* Période filter */}
-              <div className="mb-4">
+              <div>
                 <div>
                   <label className="text-sm font-semibold text-slate-700 mb-2 block">Période</label>
                   <div className="grid grid-cols-3 gap-2">
@@ -300,6 +310,8 @@ export default function App() {
               
               {/* Emotion filter */}
               <EmotionRangeFilter />
+                </div>
+              )}
             </div>
             
             {/* 3. ANALYZE - Advanced tools (collapsed by default) */}
