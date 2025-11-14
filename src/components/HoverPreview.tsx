@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { analyzeMediaUrl, getMediaIcon } from "../lib/media";
 import type { WorkNode } from "../lib/types";
+import { getEmotionIcon } from "../lib/emotionIcons";
+import { getMediumIcon } from "../lib/mediumIcons";
 
 interface HoverPreviewProps {
   work: WorkNode | null;
@@ -86,8 +88,9 @@ export default function HoverPreview({ work, x, y }: HoverPreviewProps) {
 
           <div className="flex items-center gap-1.5 mb-2">
             {work.type && (
-              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium">
-                {work.type}
+              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-medium flex items-center gap-1">
+                <span>{getMediumIcon(work.type)}</span>
+                <span>{work.type}</span>
               </span>
             )}
             {work.annee && (
@@ -106,7 +109,7 @@ export default function HoverPreview({ work, x, y }: HoverPreviewProps) {
                     key={i}
                     className="px-2 py-0.5 bg-purple-100 text-purple-800 rounded-full text-xs font-medium"
                   >
-                    {emotion}
+                    {getEmotionIcon(emotion)} {emotion}
                   </span>
                 ))}
               </div>

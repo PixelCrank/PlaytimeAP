@@ -6,6 +6,7 @@ import { typeColor, defaultNodeColor } from "../lib/colors";
 import EmptyStateWithSuggestions from "./EmptyStateWithSuggestions";
 import WorkContextMenu from "./WorkContextMenu";
 import type { WorkNode } from "../lib/types";
+import { getMediumIcon } from "../lib/mediumIcons";
 
 export default function TemporalTimelineView() {
   const filters = useStore(s => s.filters);
@@ -375,13 +376,14 @@ export default function TemporalTimelineView() {
                           {/* Type badge */}
                           <div className="mb-1">
                             <span
-                              className="px-1.5 py-0.5 text-[9px] font-medium rounded"
+                              className="px-1.5 py-0.5 text-[9px] font-medium rounded inline-flex items-center gap-1"
                               style={{
                                 backgroundColor: typeColor[work.type] || defaultNodeColor,
                                 color: 'white'
                               }}
                             >
-                              {work.type || 'Autre'}
+                              <span>{getMediumIcon(work.type)}</span>
+                              <span>{work.type || 'Autre'}</span>
                             </span>
                           </div>
 

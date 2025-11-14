@@ -3,6 +3,8 @@ import works from "../data/works.json";
 import type { WorkNode } from "../lib/types";
 import { useStore } from "../store/useStore";
 import { analyzeMediaUrl, getMediaIcon } from "../lib/media";
+import { getEmotionIcon } from "../lib/emotionIcons";
+import { getMediumIcon } from "../lib/mediumIcons";
 import NotesPanel from "./NotesPanel";
 import WorkContextNarrative from "./WorkContextNarrative";
 import TemporalDNAFingerprint from "./TemporalDNAFingerprint";
@@ -134,8 +136,9 @@ export default function WorkDetailModal() {
         <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-slate-50 to-white shrink-0">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 bg-slate-100 px-2 py-1 rounded">
-                {node.type}
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 bg-slate-100 px-2 py-1 rounded flex items-center gap-1.5">
+                <span>{getMediumIcon(node.type)}</span>
+                <span>{node.type}</span>
               </span>
               {node.annee && (
                 <span className="text-xs text-slate-500">📅 {node.annee}</span>
@@ -191,6 +194,17 @@ export default function WorkDetailModal() {
           <div className="grid grid-cols-3 gap-6">
             {/* Left Column - Main Info */}
             <div className="col-span-2 space-y-6">
+              {/* Media Thumbnail */}
+              {mediaInfo?.thumbnail && (
+                <div className="rounded-xl overflow-hidden shadow-lg border-2 border-slate-200">
+                  <img
+                    src={mediaInfo.thumbnail}
+                    alt={node.titre}
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              )}
+
               {/* Emotions & Categories */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -199,9 +213,10 @@ export default function WorkDetailModal() {
                     {(node.emotions || []).map((emotion, i) => (
                       <span
                         key={i}
-                        className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium"
+                        className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium flex items-center gap-1.5"
                       >
-                        {emotion}
+                        <span>{getEmotionIcon(emotion)}</span>
+                        <span>{emotion}</span>
                       </span>
                     ))}
                   </div>
@@ -213,9 +228,10 @@ export default function WorkDetailModal() {
                     {(node.categories || []).map((category, i) => (
                       <span
                         key={i}
-                        className="px-3 py-1 bg-amber-100 text-amber-800 rounded text-sm"
+                        className="px-3 py-1 bg-amber-100 text-amber-800 rounded text-sm font-medium flex items-center gap-1.5"
                       >
-                        {category}
+                        <span>🏷️</span>
+                        <span>{category}</span>
                       </span>
                     ))}
                   </div>
