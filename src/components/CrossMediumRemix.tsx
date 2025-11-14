@@ -6,12 +6,18 @@ export default function CrossMediumRemix() {
   const [isOpen, setIsOpen] = useState(false);
   const [sourceWork, setSourceWork] = useState<any | null>(null);
   const [remixes, setRemixes] = useState<any[]>([]);
+  const [chain, setChain] = useState<any[]>([]); // Track remix chain history
   const setSelectedId = useStore(s => s.setSelectedId);
 
   const all = data as any[];
 
-  const handleSelectSource = (work: any) => {
+  const handleSelectSource = (work: any, addToChain: boolean = true) => {
     setSourceWork(work);
+
+    // Add to chain if this is a new selection (not back navigation)
+    if (addToChain) {
+      setChain(prev => [...prev, work]);
+    }
 
     // Find works from OTHER media with similar emotional/thematic DNA
     const matches = all
@@ -58,6 +64,25 @@ export default function CrossMediumRemix() {
     setRemixes(Object.values(byMedium).slice(0, 5));
   };
 
+  const handleChainRemix = (work: any) => {
+    // Continue the chain with this work as new source
+    handleSelectSource(work, true);
+  };
+
+  const handleBackInChain = () => {
+    if (chain.length > 1) {
+      const newChain = chain.slice(0, -1);
+      setChain(newChain);
+      handleSelectSource(newChain[newChain.length - 1], false);
+    }
+  };
+
+  const handleRestartChain = () => {
+    setSourceWork(null);
+    setRemixes([]);
+    setChain([]);
+  };
+
   const randomWork = useMemo(() => {
     return all[Math.floor(Math.random() * all.length)];
   }, [all]);
@@ -91,12 +116,52 @@ export default function CrossMediumRemix() {
               setIsOpen(false);
               setSourceWork(null);
               setRemixes([]);
+              setChain([]);
             }}
             className="text-white hover:text-cyan-100 text-2xl leading-none"
           >
             ×
           </button>
         </div>
+
+        {/* Chain Breadcrumb - Show the remix path */}
+        {chain.length > 0 && (
+          <div className="bg-gradient-to-r from-slate-50 to-blue-50 border-b border-slate-200 px-6 py-3">
+            <div className="flex items-center gap-2 text-sm overflow-x-auto">
+              <span className="text-slate-600 font-semibold flex-shrink-0">🔗 Chaîne:</span>
+              {chain.map((work, idx) => (
+                <div key={work.id} className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => {
+                      const newChain = chain.slice(0, idx + 1);
+                      setChain(newChain);
+                      handleSelectSource(work, false);
+                    }}
+                    className={`px-2 py-1 rounded text-xs font-medium transition ${
+                      idx === chain.length - 1
+                        ? 'bg-cyan-600 text-white'
+                        : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                    }`}
+                  >
+                    {work.type}
+                  </button>
+                  {idx < chain.length - 1 && (
+                    <span className="text-slate-400">→</span>
+                  )}
+                </div>
+              ))}
+              {chain.length > 1 && (
+                <button
+                  onClick={handleRestartChain}
+                  className="ml-2 px-2 py-1 text-xs text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition flex-shrink-0"
+                  title="Recommencer la chaîne"
+                >
+                  ⟲ Recommencer
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto p-6">
           {!sourceWork ? (
@@ -152,15 +217,23 @@ export default function CrossMediumRemix() {
           ) : (
             <>
               <div className="mb-6">
-                <button
-                  onClick={() => {
-                    setSourceWork(null);
-                    setRemixes([]);
-                  }}
-                  className="text-sm text-cyan-600 hover:text-cyan-800 mb-3"
-                >
-                  ← Choisir une autre œuvre
-                </button>
+                <div className="flex items-center gap-3 mb-3">
+                  {chain.length > 1 && (
+                    <button
+                      onClick={handleBackInChain}
+                      className="text-sm text-slate-600 hover:text-slate-800 font-medium"
+                      title="Retour à l'étape précédente"
+                    >
+                      ← Retour
+                    </button>
+                  )}
+                  <button
+                    onClick={handleRestartChain}
+                    className="text-sm text-cyan-600 hover:text-cyan-800"
+                  >
+                    {chain.length > 1 ? '⟲ Recommencer' : '← Choisir une autre œuvre'}
+                  </button>
+                </div>
 
                 <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-400 rounded-lg p-4">
                   <div className="flex items-start gap-3">
@@ -217,17 +290,16 @@ export default function CrossMediumRemix() {
                   {remixes.map((remix, idx) => (
                     <div
                       key={remix.work.id}
-                      className="border-2 rounded-lg p-4 hover:border-cyan-400 hover:shadow-md transition cursor-pointer"
-                      onClick={() => {
-                        setSelectedId(remix.work.id);
-                        setIsOpen(false);
-                      }}
+                      className="border-2 rounded-lg p-4 hover:border-cyan-400 hover:shadow-md transition"
                     >
                       <div className="flex items-start gap-4">
                         <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-full flex items-center justify-center font-bold text-xl">
                           {idx + 1}
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 cursor-pointer" onClick={() => {
+                          setSelectedId(remix.work.id);
+                          setIsOpen(false);
+                        }}>
                           <div className="flex items-center gap-2 mb-2">
                             <span className="px-2 py-0.5 bg-slate-200 text-slate-800 text-xs rounded font-medium">
                               {remix.work.type}
@@ -276,10 +348,22 @@ export default function CrossMediumRemix() {
                           </div>
 
                           {remix.work.commentaire && (
-                            <p className="text-sm text-slate-600 line-clamp-2">
+                            <p className="text-sm text-slate-600 line-clamp-2 mb-3">
                               {remix.work.commentaire}
                             </p>
                           )}
+
+                          {/* Chain button */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleChainRemix(remix.work);
+                            }}
+                            className="mt-2 px-3 py-1.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-medium rounded-full hover:from-cyan-600 hover:to-blue-700 transition flex items-center gap-1.5"
+                          >
+                            <span>🔗</span>
+                            <span>Continuer la chaîne</span>
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -288,10 +372,15 @@ export default function CrossMediumRemix() {
               )}
 
               <div className="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
-                <p className="text-sm text-slate-700">
+                <p className="text-sm text-slate-700 mb-2">
                   <strong>💡 Comment ça marche ?</strong> L'algorithme compare les émotions 
                   et thèmes de chaque œuvre pour trouver des correspondances dans d'autres médias. 
                   Plus le score est élevé, plus l'ADN temporel est similaire.
+                </p>
+                <p className="text-sm text-slate-700">
+                  <strong>🔗 Chaîne de remix :</strong> Cliquez sur "Continuer la chaîne" pour 
+                  utiliser un remix comme nouvelle source. Créez des parcours trans-média inattendus : 
+                  <span className="font-mono text-xs bg-white px-1 rounded ml-1">Littérature → Cinéma → Jeu vidéo → Art</span>
                 </p>
               </div>
             </>

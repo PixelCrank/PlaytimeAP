@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useStore } from "../store/useStore";
 import data from "../data/works.json";
 import type { WorkNode } from "../lib/types";
@@ -9,6 +9,7 @@ export default function WorkComparisonPanel() {
   const removeFromComparison = useStore(s => s.removeFromComparison);
   const clearComparison = useStore(s => s.clearComparison);
   const setSelectedId = useStore(s => s.setSelectedId);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const works = useMemo(() => {
     const allWorks = data as WorkNode[];
@@ -67,22 +68,38 @@ export default function WorkComparisonPanel() {
 
   if (works.length === 0) {
     return (
-      <div className="fixed bottom-6 right-6 bg-white border-2 border-indigo-300 rounded-2xl shadow-2xl p-6 w-96 z-50">
-        <div className="text-center">
-          <div className="text-4xl mb-3">⚖️</div>
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Comparaison d'œuvres</h3>
-          <p className="text-sm text-slate-600 mb-3">
-            Sélectionnez 2 œuvres pour analyser leurs similitudes et différences
-          </p>
-          <div className="text-xs text-slate-500 bg-slate-50 rounded-lg p-3">
-            <strong>Astuce :</strong> Clic droit sur une œuvre dans la carte et choisissez "Comparer"
-          </div>
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="fixed bottom-6 right-6 bg-white border-2 border-indigo-300 rounded-full shadow-lg hover:shadow-xl transition-all p-4 z-50 group"
+        title="Comparaison d'œuvres"
+      >
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">⚖️</span>
+          <span className="text-sm font-medium text-slate-700 opacity-0 group-hover:opacity-100 transition-opacity max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap">
+            Comparer des œuvres
+          </span>
         </div>
-      </div>
+      </button>
     );
   }
 
   if (works.length === 1) {
+    // Compact badge showing 1 work selected
+    if (!isExpanded) {
+      return (
+        <button
+          onClick={() => setIsExpanded(true)}
+          className="fixed bottom-6 right-6 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all px-4 py-3 z-50 flex items-center gap-2"
+        >
+          <span className="text-xl">⚖️</span>
+          <span className="text-sm font-medium">1 œuvre · Cliquez pour comparer</span>
+          <span className="bg-white/20 rounded-full w-5 h-5 flex items-center justify-center text-xs">
+            +
+          </span>
+        </button>
+      );
+    }
+
     return (
       <div className="fixed bottom-6 right-6 bg-white border-2 border-indigo-300 rounded-2xl shadow-2xl p-6 w-96 z-50">
         <div className="flex items-center justify-between mb-4">
@@ -90,12 +107,21 @@ export default function WorkComparisonPanel() {
             <span className="text-2xl">⚖️</span>
             <h3 className="text-lg font-bold text-slate-900">Comparaison</h3>
           </div>
-          <button
-            onClick={clearComparison}
-            className="text-slate-400 hover:text-slate-600 text-xl"
-          >
-            ×
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsExpanded(false)}
+              className="text-slate-400 hover:text-slate-600 text-xl"
+              title="Réduire"
+            >
+              −
+            </button>
+            <button
+              onClick={clearComparison}
+              className="text-slate-400 hover:text-slate-600 text-xl"
+            >
+              ×
+            </button>
+          </div>
         </div>
 
         <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200">
@@ -158,7 +184,23 @@ export default function WorkComparisonPanel() {
     return insights;
   }, [comparison, works]);
 
-  // Two works selected
+  // Two works selected - show compact badge when collapsed
+  if (!isExpanded) {
+    return (
+      <button
+        onClick={() => setIsExpanded(true)}
+        className="fixed bottom-6 right-6 bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all px-4 py-3 z-50 flex items-center gap-2"
+      >
+        <span className="text-xl">⚖️</span>
+        <span className="text-sm font-medium">{comparison?.similarityPercent}% similaire</span>
+        <span className="bg-white/20 rounded-full w-5 h-5 flex items-center justify-center text-xs">
+          ↕
+        </span>
+      </button>
+    );
+  }
+
+  // Two works selected - expanded view
   return (
     <div className="fixed bottom-6 right-6 bg-white border-2 border-indigo-300 rounded-2xl shadow-2xl p-6 w-[700px] max-h-[85vh] overflow-y-auto z-50">
       <div className="flex items-center justify-between mb-4">
@@ -166,12 +208,22 @@ export default function WorkComparisonPanel() {
           <span className="text-2xl">⚖️</span>
           <h3 className="text-lg font-bold text-slate-900">Analyse comparative</h3>
         </div>
-        <button
-          onClick={clearComparison}
-          className="text-slate-400 hover:text-slate-600 text-xl"
-        >
-          ×
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="text-slate-400 hover:text-slate-600 text-xl"
+            title="Réduire"
+          >
+            −
+          </button>
+          <button
+            onClick={clearComparison}
+            className="text-slate-400 hover:text-slate-600 text-xl"
+            title="Fermer"
+          >
+            ×
+          </button>
+        </div>
       </div>
 
       {/* Similarity Score */}
