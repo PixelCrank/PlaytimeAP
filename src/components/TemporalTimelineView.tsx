@@ -3,6 +3,7 @@ import { useStore } from "../store/useStore";
 import data from "../data/works.json";
 import { buildPredicateWithCentury } from "../lib/filters";
 import { typeColor, defaultNodeColor } from "../lib/colors";
+import EmptyStateWithSuggestions from "./EmptyStateWithSuggestions";
 import type { WorkNode } from "../lib/types";
 
 export default function TemporalTimelineView() {
@@ -319,11 +320,7 @@ export default function TemporalTimelineView() {
 
         {/* Empty state */}
         {decades.length === 0 && (
-          <div className="flex items-center justify-center flex-1">
-            <p className="text-slate-500">
-              Aucune œuvre ne correspond aux filtres
-            </p>
-          </div>
+          <EmptyStateWithSuggestions />
         )}
       </div>
     </div>

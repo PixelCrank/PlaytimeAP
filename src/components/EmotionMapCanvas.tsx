@@ -7,6 +7,7 @@ import { typeColor, defaultNodeColor } from "../lib/colors";
 import { buildPredicateWithCentury } from "../lib/filters";
 import HoverPreview from "./HoverPreview";
 import WorkContextMenu from "./WorkContextMenu";
+import EmptyStateWithSuggestions from "./EmptyStateWithSuggestions";
 import type { WorkNode } from "../lib/types";
 
 export default function EmotionMapCanvas() {
@@ -146,6 +147,10 @@ export default function EmotionMapCanvas() {
           } [${d.valence.toFixed(2)}, ${d.arousal.toFixed(2)}]`
       );
   }, [filtered, setSelectedId, markVisited]);
+
+  if (filtered.length === 0) {
+    return <EmptyStateWithSuggestions />;
+  }
 
   return (
     <div className="relative w-full h-[70vh]">

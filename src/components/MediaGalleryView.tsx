@@ -4,6 +4,7 @@ import works from "../data/works.json";
 import type { WorkNode } from "../lib/types";
 import { analyzeMediaUrl, type MediaType } from "../lib/media";
 import { buildPredicateWithCentury } from "../lib/filters";
+import EmptyStateWithSuggestions from "./EmptyStateWithSuggestions";
 
 const entries = works as WorkNode[];
 
@@ -150,13 +151,7 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
       {/* Gallery Grid */}
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {sortedWorks.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-4">📭</div>
-            <p className="text-slate-600 text-lg">Aucun média disponible</p>
-            <p className="text-sm text-slate-400 mt-2">
-              Essayez de modifier vos filtres
-            </p>
-          </div>
+          <EmptyStateWithSuggestions />
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {sortedWorks.map((work) => (
