@@ -5,6 +5,7 @@ import { useStore } from "../store/useStore";
 import { analyzeMediaUrl, getMediaIcon } from "../lib/media";
 import NotesPanel from "./NotesPanel";
 import WorkContextNarrative from "./WorkContextNarrative";
+import TemporalDNAFingerprint from "./TemporalDNAFingerprint";
 
 const entries = works as WorkNode[];
 
@@ -192,6 +193,21 @@ export default function NodeDrawer() {
           </div>
         )}
         
+          {/* Temporal DNA Fingerprint */}
+          <div className="border-t pt-3 mt-3">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">🧬</span>
+              <strong className="font-semibold text-slate-900">ADN temporel</strong>
+            </div>
+            <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg p-4">
+              <TemporalDNAFingerprint work={node} size={180} showLabels={true} />
+            </div>
+            <p className="text-xs text-slate-500 mt-2 italic">
+              Empreinte unique de cette œuvre basée sur ses dimensions émotionnelles, 
+              thématiques et temporelles
+            </p>
+          </div>
+
           {/* AI Contextual Narrative */}
           <WorkContextNarrative work={node} />
           

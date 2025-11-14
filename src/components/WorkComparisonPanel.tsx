@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useStore } from "../store/useStore";
 import data from "../data/works.json";
 import type { WorkNode } from "../lib/types";
+import TemporalDNAFingerprint from "./TemporalDNAFingerprint";
 
 export default function WorkComparisonPanel() {
   const comparisonWorkIds = useStore(s => s.comparisonWorkIds);
@@ -195,6 +196,28 @@ export default function WorkComparisonPanel() {
           {comparison?.sameRealm && (
             <span className="px-2 py-1 bg-white/60 rounded">Même royaume</span>
           )}
+        </div>
+      </div>
+
+      {/* DNA Fingerprint Comparison */}
+      <div className="mb-6">
+        <h3 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <span>🧬</span>
+          Empreintes ADN temporelles
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          {works.map((work, idx) => (
+            <div key={`dna-${idx}`} className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-xl p-4 border-2 border-slate-200">
+              <div className="text-xs font-semibold text-slate-700 mb-3 text-center">
+                {work.titre.slice(0, 40)}{work.titre.length > 40 ? '...' : ''}
+              </div>
+              <TemporalDNAFingerprint work={work} size={160} showLabels={false} />
+            </div>
+          ))}
+        </div>
+        <div className="mt-3 text-xs text-slate-600 bg-blue-50 rounded-lg p-3 border border-blue-200">
+          <strong>Légende:</strong> Les formes montrent les profils uniques de chaque œuvre. 
+          Plus les formes sont similaires, plus les œuvres partagent des caractéristiques structurelles.
         </div>
       </div>
 
