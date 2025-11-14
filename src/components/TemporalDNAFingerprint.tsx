@@ -24,9 +24,9 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
         color: '#8b5cf6'
       },
       { 
-        key: 'medium', 
-        label: 'Richesse',
-        value: work.commentaire ? 0.8 : work.createur ? 0.5 : 0.2, // Content richness
+        key: 'complexity', 
+        label: 'Complexité',
+        value: Math.min(((work.emotions?.length || 0) + (work.categories?.length || 0)) / 8, 1), // Emotional + thematic complexity
         color: '#ec4899'
       },
       { 
