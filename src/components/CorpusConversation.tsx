@@ -80,17 +80,17 @@ export default function CorpusConversation() {
 
     // Filter works based on parsed criteria
     let filtered = allWorks.filter(w => {
-      if (emotions.length > 0 && !emotions.some(e => w.emotions?.includes(e))) return false;
-      if (century && w.annee) {
-        const wCentury = w.annee < 1900 ? 19 : w.annee < 2000 ? 20 : 21;
+      if (emotions.length > 0 && !emotions.some((e: string) => w.emotions?.includes(e))) return false;
+      if (century && w.anneeNum) {
+        const wCentury = w.anneeNum < 1900 ? 19 : w.anneeNum < 2000 ? 20 : 21;
         if (wCentury !== century) return false;
       }
-      if (decade && w.annee) {
-        const wDecade = Math.floor(w.annee / 10) * 10;
+      if (decade && w.anneeNum) {
+        const wDecade = Math.floor(w.anneeNum / 10) * 10;
         if (wDecade !== decade) return false;
       }
-      if (mediaTypes.length > 0 && !mediaTypes.some(m => w.type?.toLowerCase().includes(m))) return false;
-      if (categories.length > 0 && !categories.some(c => 
+      if (mediaTypes.length > 0 && !mediaTypes.some((m: string) => w.type?.toLowerCase().includes(m))) return false;
+      if (categories.length > 0 && !categories.some((c: string) => 
         w.categories?.some(wc => wc.toLowerCase().includes(c))
       )) return false;
       return true;
@@ -105,7 +105,7 @@ export default function CorpusConversation() {
       if (emotions.length > 0 && century) {
         const emotionName = emotions[0];
         const centuryWorks = allWorks.filter(w => {
-          const wCentury = w.annee ? (w.annee < 1900 ? 19 : w.annee < 2000 ? 20 : 21) : 0;
+          const wCentury = w.anneeNum ? (w.anneeNum < 1900 ? 19 : w.anneeNum < 2000 ? 20 : 21) : 0;
           return wCentury === century;
         });
         const emotionCount = centuryWorks.filter(w => w.emotions?.includes(emotionName)).length;
@@ -150,7 +150,7 @@ export default function CorpusConversation() {
       
       if (filtered.length > 0) {
         const byDecade = filtered.reduce((acc, w) => {
-          const decade = w.annee ? Math.floor(w.annee / 10) * 10 : 0;
+          const decade = w.anneeNum ? Math.floor(w.anneeNum / 10) * 10 : 0;
           acc[decade] = (acc[decade] || 0) + 1;
           return acc;
         }, {} as Record<number, number>);

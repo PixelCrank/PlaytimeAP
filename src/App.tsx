@@ -1,17 +1,12 @@
 // src/App.tsx
 import { useState, useEffect } from "react";
-import EmotionalCompass from "./components/EmotionalCompass";
 import TemporalTimelineView from "./components/TemporalTimelineView";
 import EmotionMapCanvas from "./components/EmotionMapCanvas";
 import NodeDrawer from "./components/NodeDrawer";
 import EmotionLegend from "./components/EmotionLegend";
-import TimelineSlider from "./components/TimelineSlider";
 import EmotionRangeFilter from "./components/EmotionRangeFilter";
-import JourneySelector from "./components/JourneySelector";
 import InsightsPanel from "./components/InsightsPanel";
-import MediumComparisonPanel from "./components/MediumComparisonPanel";
 import TemporalEvolutionPanel from "./components/TemporalEvolutionPanel";
-import QualitativeSearch from "./components/QualitativeSearch";
 import SerendipityExplorer from "./components/SerendipityExplorer";
 import CuratedPlaylistBuilder from "./components/CuratedPlaylistBuilder";
 import CorpusGapAnalyzer from "./components/CorpusGapAnalyzer";
@@ -19,10 +14,7 @@ import SocialExperienceGenerator from "./components/SocialExperienceGenerator";
 import MoodBasedEntry from "./components/MoodBasedEntry";
 import EmotionalTrajectoryTimeline from "./components/EmotionalTrajectoryTimeline";
 import CrossMediumRemix from "./components/CrossMediumRemix";
-import RealmComparison from "./components/RealmComparison";
-import KeywordCloud from "./components/KeywordCloud";
-import TemporalDensityHeatmap from "./components/TemporalDensityHeatmap";
-import MediumEmotionDialect from "./components/MediumEmotionDialect";
+import AnalysisHub from "./components/AnalysisHub";
 import CorpusConversation from "./components/CorpusConversation";
 import WelcomeModal from "./components/WelcomeModal";
 import CollectionPanel from "./components/CollectionPanel";
@@ -35,7 +27,10 @@ import ShareSnapshotPanel from "./components/ShareSnapshotPanel";
 import MediaGalleryView from "./components/MediaGalleryView";
 import MediaLightbox from "./components/MediaLightbox";
 import VideoPlaylistBuilder from "./components/VideoPlaylistBuilder";
-import TimelineScrubber from "./components/TimelineScrubber";
+import EmotionalClusters from "./components/EmotionalClusters";
+import MediumMoodExplorer from "./components/MediumMoodExplorer";
+import MegaCategoryFilter from "./components/MegaCategoryFilter";
+import MediumFilter from "./components/MediumFilter";
 import { useStore } from "./store/useStore";
 
 export default function App() {
@@ -53,6 +48,7 @@ export default function App() {
   const [showShareSnapshot, setShowShareSnapshot] = useState(false);
   const [lightboxWorkId, setLightboxWorkId] = useState<string | null>(null);
   const [showPlaylistBuilder, setShowPlaylistBuilder] = useState(false);
+  const [quickSearch, setQuickSearch] = useState("");
 
   useEffect(() => {
     const hasVisited = localStorage.getItem("playtime-visited");
@@ -169,40 +165,22 @@ export default function App() {
             </div>
             
             <div className="flex items-center gap-3">
-              {view !== 'gallery' && <EmotionalCompass />}
-              {view !== 'gallery' && <TimelineSlider />}
-              
-              {/* Tools Dropdown */}
+              {/* Tools Dropdown - Simplified */}
               <div className="relative group">
                 <button className="px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700 flex items-center gap-2 transition">
-                  ⚙️ Outils
+                  ⚙️ Plus
                   <span className="text-xs">▼</span>
                 </button>
                 <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl border-2 border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                   <div className="py-2">
-                    <button
-                      onClick={() => setShowVisitHistory(true)}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-3"
-                    >
-                      <span>🕰️</span>
-                      <span>Historique de visite</span>
-                    </button>
-                    <button
-                      onClick={() => setShowCustomTags(true)}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-3"
-                    >
-                      <span>🏷️</span>
-                      <span>Tags personnalisés</span>
-                    </button>
                     <InsightHistoryPanel asMenuItem={true} />
-                    <div className="border-t my-1" />
                     {view === 'gallery' && (
                       <button
                         onClick={() => setShowPlaylistBuilder(true)}
                         className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 flex items-center gap-3"
                       >
                         <span>🎬</span>
-                        <span>Créer une playlist</span>
+                        <span>Créer une playlist vidéo</span>
                       </button>
                     )}
                     <button
@@ -231,20 +209,58 @@ export default function App() {
       <div className="flex-1 flex">
         <aside className="w-80 bg-white border-r shadow-sm overflow-y-auto">
           <div className="p-5 space-y-6">
-            {/* Insights - Prominent at top */}
+            {/* Quick Search - Always visible at top */}
+            <div>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Rechercher par titre ou créateur..."
+                  value={quickSearch}
+                  onChange={(e) => {
+                    setQuickSearch(e.target.value);
+                    if (e.target.value.trim()) {
+                      setFilters({
+                        ...filters,
+                        search: e.target.value
+                      });
+                    } else {
+                      setFilters({
+                        ...filters,
+                        search: ""
+                      });
+                    }
+                  }}
+                  className="w-full px-4 py-2 pl-10 text-sm border-2 border-slate-200 rounded-lg focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
+                />
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">🔍</span>
+                {quickSearch && (
+                  <button
+                    onClick={() => {
+                      setQuickSearch("");
+                      setFilters({ ...filters, search: "" });
+                    }}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Insights - Prominent after search */}
             {view !== 'gallery' && (
               <div className="bg-gradient-to-br from-violet-100 via-purple-50 to-blue-100 rounded-xl p-4 border-2 border-violet-300 shadow-sm">
                 <InsightsPanel compact={false} />
               </div>
             )}
             
-            {/* 1. DISCOVER - Entry points */}
+            {/* 1. DISCOVER - Emotion-first exploration */}
             <div>
               <h2 className="text-base font-bold text-slate-900 mb-3 flex items-center gap-2">
-                <span className="text-xl">✨</span>
-                Explorer
+                <span className="text-xl">📍</span>
+                Découvrir
               </h2>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <button
                   onClick={() => setShowConversation(!showConversation)}
                   className="w-full flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:from-indigo-600 hover:to-purple-600 transition shadow-md"
@@ -252,105 +268,101 @@ export default function App() {
                   <span className="text-xl">💬</span>
                   <span className="font-semibold text-sm">Discuter avec le corpus</span>
                 </button>
-                <MoodBasedEntry />
+                
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Clusters émotionnels</h3>
+                  <EmotionalClusters />
+                </div>
+                
+                <div>
+                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Ambiances par médium</h3>
+                  <MediumMoodExplorer />
+                </div>
+                
                 <SerendipityExplorer />
               </div>
             </div>
             
-            {/* 2. FILTER - Core filtering (collapsed by default) */}
+            {/* 2. REFINE - Advanced filtering (collapsed by default) */}
             <div className="border-t-2 pt-5">
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="w-full flex items-center justify-between text-left hover:bg-slate-50 rounded-lg p-3 transition group"
               >
                 <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <span className="text-xl">🎯</span>
-                  Filtrer
-                  <span className="text-xs font-normal text-slate-500">({showFilters ? '2 filtres' : 'ouvrir'})</span>
+                  <span className="text-xl">🎚️</span>
+                  Affiner
+                  <span className="text-xs font-normal text-slate-500">({showFilters ? 'filtres' : 'ouvrir'})</span>
                 </h2>
                 <span className="text-slate-400 text-lg group-hover:text-slate-600">{showFilters ? "−" : "+"}</span>
               </button>
               
               {showFilters && (
                 <div className="mt-4 space-y-4">
-              {/* Période filter */}
-              <div>
-                <div>
-                  <label className="text-sm font-semibold text-slate-700 mb-2 block">Période</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    <button
-                      onClick={() => setFilters({ centuryFilter: "tous" })}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                        filters.centuryFilter === "tous"
-                          ? "bg-slate-800 text-white shadow"
-                          : "bg-slate-50 text-slate-700 hover:bg-slate-100"
-                      }`}
-                    >
-                      Toutes
-                    </button>
-                    <button
-                      onClick={() => setFilters({ centuryFilter: "XIXe" })}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                        filters.centuryFilter === "XIXe"
-                          ? "bg-amber-600 text-white shadow"
-                          : "bg-amber-50 text-amber-700 hover:bg-amber-100"
-                      }`}
-                    >
-                      XIXe
-                    </button>
-                    <button
-                      onClick={() => setFilters({ centuryFilter: "XXe" })}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition ${
-                        filters.centuryFilter === "XXe"
-                          ? "bg-teal-600 text-white shadow"
-                          : "bg-teal-50 text-teal-700 hover:bg-teal-100"
-                      }`}
-                    >
-                      XXe–XXIe
-                    </button>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Timeline Scrubber - More prominent */}
-              <div className="mb-4">
-                <TimelineScrubber />
-              </div>
-              
-              {/* Emotion filter */}
-              <EmotionRangeFilter />
+                  <EmotionRangeFilter />
+                  <MediumFilter />
+                  <MegaCategoryFilter />
                 </div>
               )}
             </div>
             
-            {/* 3. ANALYZE - Advanced tools (collapsed by default) */}
+            {/* 3. COLLECTION & TOOLS - Combined collapsed section */}
             <div className="border-t-2 pt-5">
               <button
                 onClick={() => setShowAnalysis(!showAnalysis)}
                 className="w-full flex items-center justify-between text-left hover:bg-slate-50 rounded-lg p-3 transition group"
               >
                 <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <span className="text-xl">📊</span>
-                  Analyser
-                  <span className="text-xs font-normal text-slate-500">({showAnalysis ? '5 outils' : 'ouvrir'})</span>
+                  <span className="text-xl">💾</span>
+                  Ma Collection & Outils
+                  <span className="text-xs font-normal text-slate-500">({showAnalysis ? 'ouvrir' : 'fermer'})</span>
                 </h2>
                 <span className="text-slate-400 text-lg group-hover:text-slate-600">{showAnalysis ? "−" : "+"}</span>
               </button>
               {showAnalysis && (
-                <div className="mt-3 space-y-2">
-                  <EmotionalTrajectoryTimeline />
-                  <CrossMediumRemix />
-                  <RealmComparison />
-                  <MediumEmotionDialect />
-                  <TemporalDensityHeatmap />
+                <div className="mt-3 space-y-4">
+                  {/* Collection */}
+                  <div>
+                    <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Collection</h3>
+                    <CollectionPanel />
+                    <div className="mt-2 space-y-2">
+                      <button
+                        onClick={() => setShowVisitHistory(true)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 rounded-lg flex items-center gap-3 transition"
+                      >
+                        <span>📚</span>
+                        <span>Historique</span>
+                      </button>
+                      <button
+                        onClick={() => setShowCustomTags(true)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 rounded-lg flex items-center gap-3 transition"
+                      >
+                        <span>🏷️</span>
+                        <span>Tags personnalisés</span>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Analysis Tools */}
+                  <div>
+                    <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Analyse</h3>
+                    <div className="space-y-2">
+                      <EmotionalTrajectoryTimeline />
+                      <CrossMediumRemix />
+                      <AnalysisHub />
+                    </div>
+                  </div>
+                  
+                  {/* Research Tools */}
+                  <div>
+                    <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Recherche</h3>
+                    <div className="space-y-2">
+                      <CorpusGapAnalyzer />
+                      <SocialExperienceGenerator />
+                    </div>
+                  </div>
                 </div>
               )}
-            </div>
-            
-            {/* Ma Collection - At bottom */}
-            <div className="border-t pt-5">
-              <h3 className="text-sm font-semibold text-slate-700 mb-2">Ma Collection</h3>
-              <CollectionPanel />
             </div>
           </div>
         </aside>

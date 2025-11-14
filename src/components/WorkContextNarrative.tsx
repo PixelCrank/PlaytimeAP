@@ -30,10 +30,10 @@ export default function WorkContextNarrative({ work }: Props) {
     }
 
     // 2. Temporal Context - Century positioning
-    if (work.annee) {
-      const decade = Math.floor(work.annee / 10) * 10;
+    if (work.anneeNum) {
+      const decade = Math.floor(work.anneeNum / 10) * 10;
       const sameDecade = allWorks.filter(w => 
-        w.annee && Math.floor(w.annee / 10) * 10 === decade
+        w.anneeNum && Math.floor(w.anneeNum / 10) * 10 === decade
       );
 
       if (sameDecade.length <= 5) {
@@ -41,9 +41,9 @@ export default function WorkContextNarrative({ work }: Props) {
       }
 
       // Century emotion dominance
-      const century = work.annee < 1900 ? 19 : work.annee < 2000 ? 20 : 21;
+      const century = work.anneeNum < 1900 ? 19 : work.anneeNum < 2000 ? 20 : 21;
       const centuryWorks = allWorks.filter(w => {
-        const wCentury = w.annee ? (w.annee < 1900 ? 19 : w.annee < 2000 ? 20 : 21) : 0;
+        const wCentury = w.anneeNum ? (w.anneeNum < 1900 ? 19 : w.anneeNum < 2000 ? 20 : 21) : 0;
         return wCentury === century;
       });
 
