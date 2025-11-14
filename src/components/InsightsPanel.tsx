@@ -375,6 +375,17 @@ export default function InsightsPanel({ compact = false }: { compact?: boolean }
       });
     }
     
+    // Fallback: Always provide at least one basic insight
+    if (findings.length === 0) {
+      findings.push({
+        id: 'basic-overview',
+        type: 'pattern',
+        icon: '📊',
+        message: `${stats.total} œuvres · ${stats.sortedTypes.length} médias · ${stats.sortedEmotions.length} émotions différentes`,
+        confidence: 'medium'
+      });
+    }
+
     return findings.sort((a, b) => {
       const confScore = { high: 3, medium: 2, low: 1 };
       return confScore[b.confidence] - confScore[a.confidence];
@@ -433,8 +444,13 @@ export default function InsightsPanel({ compact = false }: { compact?: boolean }
     pattern: 'bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-300 text-emerald-900',
   };
 
+  // If no insights, show nothing in compact mode (header)
+  if (compact && insights.length === 0) {
+    return null;
+  }
+
   return (
-    <div className={compact ? "space-y-3" : "flex items-center justify-between gap-4"}>
+    <div className={compact ? "max-w-md" : "flex items-center justify-between gap-4"}>
       {/* Quick stats */}
       {!compact && (
         <div className="flex flex-col gap-2 shrink-0">
