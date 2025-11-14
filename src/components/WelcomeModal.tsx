@@ -67,14 +67,13 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
           <div className="flex gap-4 items-start p-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border-2 border-blue-300">
             <div className="text-5xl shrink-0">📅</div>
             <div>
-              <h3 className="font-bold text-xl text-slate-900 mb-2">Chronologie temporelle</h3>
+              <h3 className="font-bold text-xl text-slate-900 mb-2">Chronologie</h3>
               <p className="text-sm text-slate-700 leading-relaxed">
                 Voyez les 310 œuvres organisées par décennie, de 1800 à aujourd'hui. 
-                Chaque cercle coloré représente une émotion dominante. Survolez pour voir des détails, 
-                cliquez pour explorer en profondeur.
+                Les couleurs indiquent le type de médium. Cliquez sur 🔭 Ensemble pour voir toutes les œuvres d'un coup.
               </p>
               <div className="mt-3 text-xs text-slate-600 bg-white/50 p-2 rounded">
-                💡 <strong>Astuce :</strong> Basculez l'affichage des vagues émotionnelles pour voir les tendances à travers le temps
+                💡 <strong>Astuce :</strong> Utilisez le bouton 🔭 Ensemble pour avoir une vue panoramique, ou 🔍 Détails pour explorer en profondeur
               </div>
             </div>
           </div>
@@ -82,28 +81,28 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
           <div className="flex gap-4 items-start p-5 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-300">
             <div className="text-5xl shrink-0">🎭</div>
             <div>
-              <h3 className="font-bold text-xl text-slate-900 mb-2">Carte émotionnelle</h3>
+              <h3 className="font-bold text-xl text-slate-900 mb-2">Émotions</h3>
               <p className="text-sm text-slate-700 leading-relaxed">
-                Les œuvres sont positionnées selon leur tonalité émotionnelle : 
-                <strong> positif ↔ négatif</strong> (axe horizontal) et <strong> calme ↔ intense</strong> (axe vertical). 
-                Découvrez des clusters surprenants !
+                Carte valence × arousal : les œuvres sont positionnées selon leur tonalité émotionnelle. 
+                <strong>Positif ↔ Négatif</strong> (horizontal), <strong>Calme ↔ Intense</strong> (vertical). 
+                Les couleurs indiquent le type de médium.
               </p>
               <div className="mt-3 text-xs text-slate-600 bg-white/50 p-2 rounded">
-                💡 <strong>Astuce :</strong> Les œuvres proches partagent des atmosphères similaires
+                💡 <strong>Astuce :</strong> Les œuvres proches partagent des atmosphères émotionnelles similaires
               </div>
             </div>
           </div>
 
           <div className="flex gap-4 items-start p-5 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border-2 border-amber-300">
-            <div className="text-5xl shrink-0">🖼️</div>
+            <div className="text-5xl shrink-0">🎬</div>
             <div>
-              <h3 className="font-bold text-xl text-slate-900 mb-2">Galerie médias</h3>
+              <h3 className="font-bold text-xl text-slate-900 mb-2">Galerie</h3>
               <p className="text-sm text-slate-700 leading-relaxed">
-                Explorez visuellement avec des affiches, captures d'écran, couvertures de livres et albums. 
-                Parfait pour la découverte visuelle rapide.
+                Explorez visuellement les œuvres avec leurs médias (affiches, images, vidéos). 
+                Filtrez par type de médium pour découvrir films, livres, jeux vidéo, etc.
               </p>
               <div className="mt-3 text-xs text-slate-600 bg-white/50 p-2 rounded">
-                💡 <strong>Astuce :</strong> Cliquez sur une image pour ouvrir la vue détaillée avec liens vers les médias
+                💡 <strong>Astuce :</strong> Utilisez les filtres par médium en haut pour voir seulement les films, livres ou jeux
               </div>
             </div>
           </div>

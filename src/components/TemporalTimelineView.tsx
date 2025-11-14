@@ -183,23 +183,39 @@ export default function TemporalTimelineView() {
         </div>
       </div>
 
-      {/* Emotion Trends Overlay - Horizontal wave above timeline */}
-      {showEmotionWaves && (
+      {/* Legend - Shows emotions in detailed view, medium types in zoomed out view */}
+      {(showEmotionWaves || zoomOut) && (
         <div className="sticky left-0 bg-white/90 backdrop-blur-sm border-b border-slate-200 px-6 py-3 z-10">
           <div className="flex items-center gap-2 mb-2">
-            <span className="text-xs font-semibold text-slate-700">Tendances émotionnelles</span>
+            <span className="text-xs font-semibold text-slate-700">
+              {zoomOut ? 'Types de média' : 'Tendances émotionnelles'}
+            </span>
             <span className="text-xs text-slate-500">· Cliquez sur une décennie pour filtrer</span>
           </div>
-          <div className="flex gap-4">
-            {emotionTrends.topEmotions.map(emotion => (
-              <div key={emotion} className="flex items-center gap-1.5">
-                <div 
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: emotionTrends.emotionColorMap[emotion] }}
-                />
-                <span className="text-[10px] text-slate-600 capitalize">{emotion}</span>
-              </div>
-            ))}
+          <div className="flex gap-4 flex-wrap">
+            {zoomOut ? (
+              // Show medium types in zoomed out view
+              Object.entries(typeColor).map(([type, color]) => (
+                <div key={type} className="flex items-center gap-1.5">
+                  <div 
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: color }}
+                  />
+                  <span className="text-[10px] text-slate-600">{getMediumIcon(type)} {type}</span>
+                </div>
+              ))
+            ) : (
+              // Show emotions in detailed view
+              emotionTrends.topEmotions.map(emotion => (
+                <div key={emotion} className="flex items-center gap-1.5">
+                  <div 
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: emotionTrends.emotionColorMap[emotion] }}
+                  />
+                  <span className="text-[10px] text-slate-600 capitalize">{emotion}</span>
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}

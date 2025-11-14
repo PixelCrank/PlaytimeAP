@@ -4,12 +4,14 @@ import works from "../data/works.json";
 import type { WorkNode } from "../lib/types";
 import { analyzeMediaUrl, type MediaType } from "../lib/media";
 import { buildPredicateWithCentury } from "../lib/filters";
+import { getMediumIcon } from "../lib/mediumIcons";
+import { typeColor } from "../lib/colors";
 import EmptyStateWithSuggestions from "./EmptyStateWithSuggestions";
 import WorkContextMenu from "./WorkContextMenu";
 
 const entries = works as WorkNode[];
 
-type MediaFilter = MediaType | 'all' | 'video';
+type MediumFilter = 'all' | string;
 
 export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (workId: string) => void }) {
   const filters = useStore(s => s.filters);
@@ -18,7 +20,7 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
   const bookmarked = useStore(s => s.bookmarked);
   const toggleBookmark = useStore(s => s.toggleBookmark);
   
-  const [mediaTypeFilter, setMediaTypeFilter] = useState<MediaFilter>('all');
+  const [mediumFilter, setMediumFilter] = useState<MediumFilter>('all');
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'emotion'>('date');
   const [contextMenu, setContextMenu] = useState<{ workId: string; x: number; y: number } | null>(null);
 
@@ -34,14 +36,11 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
       .filter(w => w.mediaInfo !== null);
   }, [filters, centuryFilter]);
 
-  // Apply media type filter
+  // Apply medium type filter
   const filteredByType = useMemo(() => {
-    if (mediaTypeFilter === 'all') return worksWithMedia;
-    if (mediaTypeFilter === 'video') {
-      return worksWithMedia.filter(w => w.mediaInfo?.type === 'youtube' || w.mediaInfo?.type === 'vimeo');
-    }
-    return worksWithMedia.filter(w => w.mediaInfo?.type === mediaTypeFilter);
-  }, [worksWithMedia, mediaTypeFilter]);
+    if (mediumFilter === 'all') return worksWithMedia;
+    return worksWithMedia.filter(w => w.type === mediumFilter);
+  }, [worksWithMedia, mediumFilter]);
 
   // Sort works
   const sortedWorks = useMemo(() => {
@@ -65,19 +64,22 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
     }
   }, [filteredByType, sortBy]);
 
-  const mediaTypeCounts = useMemo(() => {
-    const counts = { video: 0, image: 0, webpage: 0 };
+  // Get unique medium types from filtered works and their counts
+  const mediumCounts = useMemo(() => {
+    const counts = new Map<string, number>();
     worksWithMedia.forEach(w => {
-      if (w.mediaInfo?.type === 'youtube' || w.mediaInfo?.type === 'vimeo') {
-        counts.video++;
-      } else if (w.mediaInfo?.type === 'image') {
-        counts.image++;
-      } else if (w.mediaInfo?.type === 'webpage') {
-        counts.webpage++;
-      }
+      const type = w.type || 'Autre';
+      counts.set(type, (counts.get(type) || 0) + 1);
     });
     return counts;
   }, [worksWithMedia]);
+
+  // Get all unique medium types sorted by count
+  const mediumTypes = useMemo(() => {
+    return Array.from(mediumCounts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([type]) => type);
+  }, [mediumCounts]);
 
   return (
     <div className="h-full flex flex-col bg-slate-50">
@@ -105,48 +107,37 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
           </div>
         </div>
 
-        {/* Media Type Filters */}
-        <div className="flex gap-2">
+        {/* Medium Type Filters */}
+        <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setMediaTypeFilter('all')}
+            onClick={() => setMediumFilter('all')}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-              mediaTypeFilter === 'all'
-                ? 'bg-violet-500 text-white'
+              mediumFilter === 'all'
+                ? 'bg-violet-600 text-white shadow-md'
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
             Tous ({worksWithMedia.length})
           </button>
-          <button
-            onClick={() => setMediaTypeFilter('video')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-              mediaTypeFilter === 'video'
-                ? 'bg-red-500 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            🎥 Vidéos ({mediaTypeCounts.video})
-          </button>
-          <button
-            onClick={() => setMediaTypeFilter('image')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-              mediaTypeFilter === 'image'
-                ? 'bg-blue-500 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            🖼️ Images ({mediaTypeCounts.image})
-          </button>
-          <button
-            onClick={() => setMediaTypeFilter('webpage')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-              mediaTypeFilter === 'webpage'
-                ? 'bg-green-500 text-white'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            🔗 Pages web ({mediaTypeCounts.webpage})
-          </button>
+          {mediumTypes.map((type) => {
+            const count = mediumCounts.get(type) || 0;
+            const color = typeColor[type] || '#64748b';
+            const isActive = mediumFilter === type;
+            return (
+              <button
+                key={type}
+                onClick={() => setMediumFilter(type)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  isActive
+                    ? 'text-white shadow-md'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                }`}
+                style={isActive ? { backgroundColor: color } : {}}
+              >
+                {getMediumIcon(type)} {type} ({count})
+              </button>
+            );
+          })}
         </div>
       </div>
 

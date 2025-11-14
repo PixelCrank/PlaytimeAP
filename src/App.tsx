@@ -161,7 +161,7 @@ export default function App() {
                   Playtime
                 </h1>
                 <p className="text-xs text-slate-500">
-                  620 œuvres · 3 visages du temps
+                  310 œuvres sur le temps dans la culture
                 </p>
               </div>
               
@@ -368,7 +368,6 @@ export default function App() {
                 <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
                   <span className="text-xl">💾</span>
                   Ma Collection & Outils
-                  <span className="text-xs font-normal text-slate-500">({showAnalysis ? 'ouvrir' : 'fermer'})</span>
                 </h2>
                 <span className="text-slate-400 text-lg group-hover:text-slate-600">{showAnalysis ? "−" : "+"}</span>
               </button>
@@ -427,7 +426,7 @@ export default function App() {
             ) : view === "emotion" ? (
               <>
                 <EmotionMapCanvas />
-                <div className="absolute bottom-4 right-4">
+                <div className="absolute bottom-6 left-6 right-6 z-10">
                   <EmotionLegend />
                 </div>
               </>
