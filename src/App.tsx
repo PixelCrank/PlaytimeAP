@@ -23,6 +23,7 @@ import RealmComparison from "./components/RealmComparison";
 import KeywordCloud from "./components/KeywordCloud";
 import TemporalDensityHeatmap from "./components/TemporalDensityHeatmap";
 import MediumEmotionDialect from "./components/MediumEmotionDialect";
+import CorpusConversation from "./components/CorpusConversation";
 import WelcomeModal from "./components/WelcomeModal";
 import CollectionPanel from "./components/CollectionPanel";
 import JourneyBuilder from "./components/JourneyBuilder";
@@ -46,6 +47,7 @@ export default function App() {
   const [showResearch, setShowResearch] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [showConversation, setShowConversation] = useState(false);
   const [showVisitHistory, setShowVisitHistory] = useState(false);
   const [showCustomTags, setShowCustomTags] = useState(false);
   const [showShareSnapshot, setShowShareSnapshot] = useState(false);
@@ -243,6 +245,13 @@ export default function App() {
                 Explorer
               </h2>
               <div className="space-y-2">
+                <button
+                  onClick={() => setShowConversation(!showConversation)}
+                  className="w-full flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-lg hover:from-indigo-600 hover:to-purple-600 transition shadow-md"
+                >
+                  <span className="text-xl">💬</span>
+                  <span className="font-semibold text-sm">Discuter avec le corpus</span>
+                </button>
                 <MoodBasedEntry />
                 <SerendipityExplorer />
               </div>
@@ -369,6 +378,27 @@ export default function App() {
       <WorkComparisonPanel />
 
       {/* Personal Layer Modals */}
+      {showConversation && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b">
+              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span>💬</span>
+                Conversation avec le corpus
+              </h2>
+              <button
+                onClick={() => setShowConversation(false)}
+                className="text-slate-400 hover:text-slate-600 text-xl"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <CorpusConversation />
+            </div>
+          </div>
+        </div>
+      )}
       {showVisitHistory && <VisitHistoryPanel onClose={() => setShowVisitHistory(false)} />}
       {showCustomTags && <CustomTagsManager onClose={() => setShowCustomTags(false)} />}
       {showShareSnapshot && <ShareSnapshotPanel onClose={() => setShowShareSnapshot(false)} />}
