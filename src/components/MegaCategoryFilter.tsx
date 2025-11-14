@@ -13,7 +13,7 @@ const megaCategories = [
       "temps et sacré"
     ],
     color: "from-blue-400 to-purple-400",
-    count: 213
+    count: 203
   },
   {
     id: "philosophical",
@@ -29,7 +29,7 @@ const megaCategories = [
       "temps écologique"
     ],
     color: "from-cyan-400 to-blue-500",
-    count: 155
+    count: 129
   },
   {
     id: "altered",
@@ -42,7 +42,7 @@ const megaCategories = [
       "temps et rêve"
     ],
     color: "from-orange-400 to-pink-500",
-    count: 178
+    count: 164
   }
 ];
 

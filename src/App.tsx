@@ -246,6 +246,28 @@ export default function App() {
                 )}
               </div>
             </div>
+            
+            {/* Clear All Filters */}
+            {(filters.emotions.length > 0 || filters.types.length > 0 || filters.categories.length > 0 || filters.search) && (
+              <button
+                onClick={() => {
+                  setQuickSearch("");
+                  setFilters({
+                    types: [],
+                    categories: [],
+                    emotions: [],
+                    yearRange: null,
+                    search: "",
+                    realmFilter: "tous",
+                    centuryFilter: "tous"
+                  });
+                }}
+                className="w-full px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2"
+              >
+                <span>🔄</span>
+                <span>Réinitialiser tous les filtres</span>
+              </button>
+            )}
 
             {/* Insights - Prominent after search */}
             {view !== 'gallery' && (
