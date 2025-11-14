@@ -2,23 +2,19 @@
 import { useState, useEffect } from "react";
 import TemporalTimelineView from "./components/TemporalTimelineView";
 import EmotionMapCanvas from "./components/EmotionMapCanvas";
-import NodeDrawer from "./components/NodeDrawer";
+import WorkDetailModal from "./components/WorkDetailModal";
 import EmotionLegend from "./components/EmotionLegend";
 import EmotionRangeFilter from "./components/EmotionRangeFilter";
 import InsightsPanel from "./components/InsightsPanel";
-import TemporalEvolutionPanel from "./components/TemporalEvolutionPanel";
 import SerendipityExplorer from "./components/SerendipityExplorer";
-import CuratedPlaylistBuilder from "./components/CuratedPlaylistBuilder";
 import CorpusGapAnalyzer from "./components/CorpusGapAnalyzer";
 import SocialExperienceGenerator from "./components/SocialExperienceGenerator";
-import MoodBasedEntry from "./components/MoodBasedEntry";
 import EmotionalTrajectoryTimeline from "./components/EmotionalTrajectoryTimeline";
 import CrossMediumRemix from "./components/CrossMediumRemix";
 import AnalysisHub from "./components/AnalysisHub";
 import CorpusConversation from "./components/CorpusConversation";
 import WelcomeModal from "./components/WelcomeModal";
 import CollectionPanel from "./components/CollectionPanel";
-import JourneyBuilder from "./components/JourneyBuilder";
 import InsightHistoryPanel from "./components/InsightHistoryPanel";
 import WorkComparisonPanel from "./components/WorkComparisonPanel";
 import VisitHistoryPanel from "./components/VisitHistoryPanel";
@@ -41,7 +37,6 @@ export default function App() {
   
   const [view, setView] = useState<"constellation" | "emotion" | "gallery">("constellation");
   const [showWelcome, setShowWelcome] = useState(false);
-  const [showResearch, setShowResearch] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showConversation, setShowConversation] = useState(false);
@@ -440,7 +435,7 @@ export default function App() {
               <MediaGalleryView onOpenLightbox={(workId) => setLightboxWorkId(workId)} />
             )}
           </div>
-          <NodeDrawer />
+          <WorkDetailModal />
         </main>
       </div>
 

@@ -34,10 +34,6 @@ export default function WorldCanvas() {
     const height = ref.current?.clientHeight ?? 600;
 
     const nodes = filtered.map(d => ({ ...d }));
-
-    // Account for NodeDrawer on right side - shift centers left slightly
-    const effectiveWidth = width - 100; // Less space reservation
-    const xOffset = 0; // Use full left edge
     
     const centers: Record<string, [number, number]> = {
       human: [width/2, height*0.6],

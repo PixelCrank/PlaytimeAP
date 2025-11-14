@@ -9,46 +9,101 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
 
   const steps = [
     {
-      title: "Explorez 620 œuvres sur le temps",
-      description: "Trois façons de naviguer dans le corpus",
-      emoji: "🌟",
+      title: "Bienvenue dans Playtime",
+      description: "Une exploration visuelle du temps dans la culture",
+      emoji: "⏳",
       content: (
         <div className="space-y-6">
           <p className="text-slate-700 text-lg leading-relaxed">
-            Bienvenue dans <strong className="text-slate-900">Playtime</strong>, une exploration de comment la littérature, 
-            le cinéma, la philosophie, les jeux vidéo, la musique et l'art représentent le temps.
+            <strong className="text-slate-900">Playtime</strong> réunit <strong className="text-indigo-600">310 œuvres</strong> — 
+            films, livres, jeux vidéo, musique, philosophie et art — qui explorent notre relation au temps.
           </p>
-          
-          <div className="space-y-4">
-            <div className="flex gap-4 items-start p-4 bg-blue-50 rounded-xl border-2 border-blue-200">
-              <div className="text-4xl">📅</div>
-              <div>
-                <h3 className="font-bold text-lg text-slate-900 mb-1">Chronologie</h3>
-                <p className="text-sm text-slate-600">
-                  Parcourez les œuvres décennie par décennie, de 1800 à aujourd'hui. 
-                  Découvrez comment les émotions et thématiques évoluent dans le temps.
-                </p>
+
+          <div className="p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl border-2 border-indigo-200">
+            <p className="text-slate-700 leading-relaxed">
+              Comment la littérature représente-t-elle la mémoire ? Quelles émotions les films évoquent-ils 
+              face au temps qui passe ? Comment les jeux vidéo manipulent-ils notre perception temporelle ?
+            </p>
+            <p className="text-slate-600 text-sm mt-3 italic">
+              Cette plateforme vous permet d'explorer ces questions à travers trois visualisations interactives.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="text-center p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">📚</div>
+              <div className="text-xs font-semibold text-slate-700">Littérature</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">🎬</div>
+              <div className="text-xs font-semibold text-slate-700">Cinéma</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">🎮</div>
+              <div className="text-xs font-semibold text-slate-700">Jeux vidéo</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">🎵</div>
+              <div className="text-xs font-semibold text-slate-700">Musique</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">🧠</div>
+              <div className="text-xs font-semibold text-slate-700">Philosophie</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">🎨</div>
+              <div className="text-xs font-semibold text-slate-700">Art visuel</div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Trois façons d'explorer",
+      description: "Changez de vue pour découvrir différentes perspectives",
+      emoji: "🗺️",
+      content: (
+        <div className="space-y-4">
+          <div className="flex gap-4 items-start p-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl border-2 border-blue-300">
+            <div className="text-5xl shrink-0">📅</div>
+            <div>
+              <h3 className="font-bold text-xl text-slate-900 mb-2">Chronologie temporelle</h3>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Voyez les 310 œuvres organisées par décennie, de 1800 à aujourd'hui. 
+                Chaque cercle coloré représente une émotion dominante. Survolez pour voir des détails, 
+                cliquez pour explorer en profondeur.
+              </p>
+              <div className="mt-3 text-xs text-slate-600 bg-white/50 p-2 rounded">
+                💡 <strong>Astuce :</strong> Basculez l'affichage des vagues émotionnelles pour voir les tendances à travers le temps
               </div>
             </div>
+          </div>
 
-            <div className="flex gap-4 items-start p-4 bg-purple-50 rounded-xl border-2 border-purple-200">
-              <div className="text-4xl">🎭</div>
-              <div>
-                <h3 className="font-bold text-lg text-slate-900 mb-1">Carte émotionnelle</h3>
-                <p className="text-sm text-slate-600">
-                  Visualisez les œuvres selon leurs tonalités émotionnelles : tristesse, 
-                  fascination, vigilance, nostalgie, tension...
-                </p>
+          <div className="flex gap-4 items-start p-5 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border-2 border-purple-300">
+            <div className="text-5xl shrink-0">🎭</div>
+            <div>
+              <h3 className="font-bold text-xl text-slate-900 mb-2">Carte émotionnelle</h3>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Les œuvres sont positionnées selon leur tonalité émotionnelle : 
+                <strong> positif ↔ négatif</strong> (axe horizontal) et <strong> calme ↔ intense</strong> (axe vertical). 
+                Découvrez des clusters surprenants !
+              </p>
+              <div className="mt-3 text-xs text-slate-600 bg-white/50 p-2 rounded">
+                💡 <strong>Astuce :</strong> Les œuvres proches partagent des atmosphères similaires
               </div>
             </div>
+          </div>
 
-            <div className="flex gap-4 items-start p-4 bg-amber-50 rounded-xl border-2 border-amber-200">
-              <div className="text-4xl">🖼️</div>
-              <div>
-                <h3 className="font-bold text-lg text-slate-900 mb-1">Galerie médias</h3>
-                <p className="text-sm text-slate-600">
-                  257 œuvres avec images, vidéos, bandes-annonces et extraits à explorer visuellement.
-                </p>
+          <div className="flex gap-4 items-start p-5 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border-2 border-amber-300">
+            <div className="text-5xl shrink-0">🖼️</div>
+            <div>
+              <h3 className="font-bold text-xl text-slate-900 mb-2">Galerie médias</h3>
+              <p className="text-sm text-slate-700 leading-relaxed">
+                Explorez visuellement avec des affiches, captures d'écran, couvertures de livres et albums. 
+                Parfait pour la découverte visuelle rapide.
+              </p>
+              <div className="mt-3 text-xs text-slate-600 bg-white/50 p-2 rounded">
+                💡 <strong>Astuce :</strong> Cliquez sur une image pour ouvrir la vue détaillée avec liens vers les médias
               </div>
             </div>
           </div>
@@ -56,90 +111,145 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
       ),
     },
     {
-      title: "Filtrez et analysez",
-      description: "Des outils puissants pour comprendre le corpus",
+      title: "Filtrez et découvrez",
+      description: "Affinez votre exploration avec des outils intelligents",
       emoji: "🔍",
       content: (
-        <div className="space-y-4">
-          <div className="p-4 border-2 border-slate-200 rounded-lg bg-slate-50">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">🎯</span>
-              <h3 className="font-bold text-slate-900">Filtrer</h3>
+        <div className="space-y-5">
+          <div className="p-5 border-2 border-indigo-200 rounded-xl bg-gradient-to-br from-indigo-50 to-white">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-3xl">🎯</span>
+              <h3 className="font-bold text-lg text-slate-900">Recherche et filtres</h3>
             </div>
-            <p className="text-sm text-slate-600">
-              Affinez par période (XIXᵉ, XXᵉ, XXIᵉ siècle) et par émotions 
-              (tristesse, fascination, nostalgie...). Combinez les filtres pour découvrir des patterns.
+            <p className="text-sm text-slate-700 mb-3 leading-relaxed">
+              Utilisez la barre de recherche pour trouver une œuvre par titre ou créateur. 
+              Combinez les filtres par <strong>émotion</strong>, <strong>médium</strong>, et <strong>catégorie</strong> pour affiner.
             </p>
-          </div>
-          
-          <div className="p-4 border-2 border-slate-200 rounded-lg bg-slate-50">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">📊</span>
-              <h3 className="font-bold text-slate-900">Analyser</h3>
+            <div className="bg-white p-3 rounded-lg text-xs text-slate-600">
+              <strong>Exemple :</strong> Filtrez par "nostalgie" + "cinéma" + "XIXᵉ siècle" pour découvrir 
+              des films nostalgiques sur cette époque
             </div>
-            <p className="text-sm text-slate-600">
-              <strong>Insights</strong> découvre automatiquement des patterns cachés. 
-              <strong>Comparer</strong> permet d'analyser côte à côte deux œuvres avec diagrammes de Venn et analyse AI.
-            </p>
           </div>
 
-          <div className="p-4 border-2 border-slate-200 rounded-lg bg-slate-50">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl">⭐</span>
-              <h3 className="font-bold text-slate-900">Collection personnelle</h3>
+          <div className="p-5 border-2 border-purple-200 rounded-xl bg-gradient-to-br from-purple-50 to-white">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-3xl">🌀</span>
+              <h3 className="font-bold text-lg text-slate-900">Clusters émotionnels</h3>
             </div>
-            <p className="text-sm text-slate-600">
-              Sauvegardez vos œuvres favorites, ajoutez des notes, construisez des parcours thématiques. 
-              Clic-droit sur une œuvre pour l'ajouter.
+            <p className="text-sm text-slate-700 mb-3 leading-relaxed">
+              Notre algorithme a identifié 6 groupes d'œuvres partageant des combinaisons émotionnelles uniques : 
+              <em>Mélancolie sombre</em>, <em>Contemplatif</em>, <em>Résilient</em>, etc.
+            </p>
+            <div className="bg-white p-3 rounded-lg text-xs text-slate-600">
+              Cliquez sur un cluster dans la barre latérale pour explorer ces familles émotionnelles
+            </div>
+          </div>
+
+          <div className="p-5 border-2 border-green-200 rounded-xl bg-gradient-to-br from-green-50 to-white">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-3xl">💡</span>
+              <h3 className="font-bold text-lg text-slate-900">Insights automatiques</h3>
+            </div>
+            <p className="text-sm text-slate-700 leading-relaxed">
+              L'application détecte automatiquement des patterns dans vos sélections : 
+              médium dominant, émotion récurrente, période temporelle, etc. Les insights apparaissent dans l'en-tête.
             </p>
           </div>
         </div>
       ),
     },
     {
-      title: "Découvrez des connexions",
-      description: "L'intelligence artificielle vous guide",
-      emoji: "🧭",
+      title: "Explorez chaque œuvre",
+      description: "Découvrez les connexions et contextes",
+      emoji: "✨",
       content: (
-        <div className="space-y-4">
-          <div className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-300">
+        <div className="space-y-5">
+          <div className="p-6 bg-gradient-to-br from-slate-50 to-white rounded-xl border-2 border-slate-300">
             <div className="text-center mb-4">
-              <div className="text-5xl mb-3">🧠</div>
-              <h3 className="font-bold text-blue-900 text-xl mb-2">Narratives contextuelles</h3>
+              <div className="text-5xl mb-2">🎯</div>
+              <h3 className="font-bold text-slate-900 text-xl">Cliquez sur une œuvre</h3>
             </div>
-            <p className="text-sm text-blue-800 leading-relaxed">
-              Lorsque vous sélectionnez une œuvre, l'application analyse automatiquement sa position 
-              unique dans le corpus : combinaisons rares, œuvres similaires, patterns temporels, 
-              positionnement émotionnel...
+            <p className="text-sm text-slate-700 text-center leading-relaxed">
+              Une fenêtre modale s'ouvre avec toutes les informations : émotions, catégories, commentaires, 
+              liens vers médias, et une section <strong>"Œuvres similaires"</strong> générée intelligemment.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 text-center">
-            <div className="p-3 bg-purple-50 rounded-lg">
-              <div className="text-2xl mb-1">🔮</div>
-              <div className="text-xs font-semibold text-purple-900">Rareté</div>
-              <div className="text-[10px] text-purple-700">Combinaisons uniques</div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
+              <div className="text-2xl mb-2">🧬</div>
+              <div className="text-xs font-semibold text-purple-900 mb-1">DNA Temporel</div>
+              <div className="text-[10px] text-purple-700 leading-relaxed">
+                Diagramme radar montrant 4 dimensions : émotions, catégories, médias, complexité
+              </div>
             </div>
-            <div className="p-3 bg-green-50 rounded-lg">
-              <div className="text-2xl mb-1">🔗</div>
-              <div className="text-xs font-semibold text-green-900">Clusters</div>
-              <div className="text-[10px] text-green-700">Œuvres connexes</div>
+            <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="text-2xl mb-2">🔗</div>
+              <div className="text-xs font-semibold text-blue-900 mb-1">Œuvres similaires</div>
+              <div className="text-[10px] text-blue-700 leading-relaxed">
+                4 recommandations basées sur émotions partagées, catégories, médium et proximité temporelle
+              </div>
             </div>
-            <div className="p-3 bg-amber-50 rounded-lg">
-              <div className="text-2xl mb-1">⏳</div>
-              <div className="text-xs font-semibold text-amber-900">Contexte</div>
-              <div className="text-[10px] text-amber-700">Position temporelle</div>
+            <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+              <div className="text-2xl mb-2">📝</div>
+              <div className="text-xs font-semibold text-amber-900 mb-1">Contexte narratif</div>
+              <div className="text-[10px] text-amber-700 leading-relaxed">
+                Description générée analysant la position unique de l'œuvre dans le corpus
+              </div>
             </div>
-            <div className="p-3 bg-pink-50 rounded-lg">
-              <div className="text-2xl mb-1">📊</div>
-              <div className="text-xs font-semibold text-pink-900">Patterns</div>
-              <div className="text-[10px] text-pink-700">Trends émotionnels</div>
+            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <div className="text-2xl mb-2">⭐</div>
+              <div className="text-xs font-semibold text-green-900 mb-1">Sauvegardez</div>
+              <div className="text-[10px] text-green-700 leading-relaxed">
+                Ajoutez aux favoris, créez des notes personnelles, construisez votre collection
+              </div>
             </div>
           </div>
-          
-          <p className="text-xs text-slate-500 text-center italic">
-            Chaque œuvre révèle une histoire unique dans la constellation du temps
-          </p>
+        </div>
+      ),
+    },
+    {
+      title: "Prêt à explorer ?",
+      description: "Votre voyage à travers le temps commence maintenant",
+      emoji: "🚀",
+      content: (
+        <div className="space-y-6">
+          <div className="p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 rounded-2xl border-2 border-indigo-300">
+            <div className="text-center">
+              <div className="text-6xl mb-4">⏳</div>
+              <h3 className="text-2xl font-bold text-slate-900 mb-3">310 œuvres vous attendent</h3>
+              <p className="text-slate-700 leading-relaxed">
+                Commencez par la chronologie pour voir l'évolution historique, 
+                explorez la carte émotionnelle pour trouver des atmosphères, 
+                ou plongez dans la galerie pour une découverte visuelle.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">🔍</div>
+              <div className="text-xs font-bold text-slate-900">Recherchez</div>
+              <div className="text-[10px] text-slate-600 mt-1">Par titre, créateur, émotion</div>
+            </div>
+            <div className="p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">🎨</div>
+              <div className="text-xs font-bold text-slate-900">Filtrez</div>
+              <div className="text-[10px] text-slate-600 mt-1">Combinez médiums et émotions</div>
+            </div>
+            <div className="p-4 bg-white rounded-lg border-2 border-slate-200">
+              <div className="text-3xl mb-2">💾</div>
+              <div className="text-xs font-bold text-slate-900">Sauvegardez</div>
+              <div className="text-[10px] text-slate-600 mt-1">Créez votre collection</div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-yellow-50 to-amber-50 p-4 rounded-xl border-2 border-yellow-300">
+            <p className="text-sm text-center text-amber-900">
+              <strong>💡 Astuce finale :</strong> Cliquez sur le <strong>❓</strong> dans l'en-tête 
+              pour revenir à ce guide à tout moment
+            </p>
+          </div>
         </div>
       ),
     },
