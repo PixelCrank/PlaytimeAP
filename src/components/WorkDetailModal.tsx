@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import works from "../data/works.json";
 import type { WorkNode } from "../lib/types";
 import { useStore } from "../store/useStore";
@@ -50,25 +50,69 @@ export default function WorkDetailModal() {
   const node = useMemo(() => entries.find(w => w.id === selectedId) ?? null, [selectedId]);
   
   const [showEmbed, setShowEmbed] = useState(false);
+  const [similarWorks, setSimilarWorks] = useState<WorkNode[]>([]);
+  const [loadingSimilar, setLoadingSimilar] = useState(false);
   
   const mediaInfo = useMemo(() => {
     if (!node || !node.lien || node.lien.trim() === '') return null;
     return analyzeMediaUrl(node.lien);
   }, [node?.lien]);
 
-  // Find similar works
-  const similarWorks = useMemo(() => {
-    if (!node) return [];
+  // Lazy load similar works calculation
+  useEffect(() => {
+    if (!node) {
+      setSimilarWorks([]);
+      return;
+    }
     
-    const scored = entries
-      .filter(w => w.id !== node.id)
-      .map(w => ({ work: w, score: calculateSimilarity(node, w) }))
-      .filter(({ score }) => score > 2) // Only works with decent similarity
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 4);
+    setLoadingSimilar(true);
     
-    return scored.map(s => s.work);
+    // Use setTimeout to defer calculation and show loading state
+    const timer = setTimeout(() => {
+      const scored = entries
+        .filter(w => w.id !== node.id)
+        .map(w => ({ work: w, score: calculateSimilarity(node, w) }))
+        .filter(({ score }) => score > 2)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 4);
+      
+      setSimilarWorks(scored.map(s => s.work));
+      setLoadingSimilar(false);
+    }, 100);
+    
+    return () => clearTimeout(timer);
   }, [node]);
+
+  // ESC key handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedId(null);
+      }
+      
+      // Arrow key navigation through similar works
+      if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && similarWorks.length > 0) {
+        const currentIndex = similarWorks.findIndex(w => w.id === selectedId);
+        
+        if (e.key === 'ArrowRight') {
+          // If current work is in similar list, go to next, otherwise go to first
+          const nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % similarWorks.length;
+          setSelectedId(similarWorks[nextIndex].id);
+        } else if (e.key === 'ArrowLeft') {
+          // If current work is in similar list, go to previous, otherwise go to last
+          const prevIndex = currentIndex === -1 
+            ? similarWorks.length - 1 
+            : (currentIndex - 1 + similarWorks.length) % similarWorks.length;
+          setSelectedId(similarWorks[prevIndex].id);
+        }
+      }
+    };
+    
+    if (node) {
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [node, similarWorks, selectedId, setSelectedId]);
 
   if (!node) return null;
 
@@ -78,6 +122,9 @@ export default function WorkDetailModal() {
     <div 
       className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
       onClick={() => setSelectedId(null)}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
     >
       <div 
         className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
@@ -94,7 +141,7 @@ export default function WorkDetailModal() {
                 <span className="text-xs text-slate-500">📅 {node.annee}</span>
               )}
             </div>
-            <h2 className="text-2xl font-bold text-slate-900 leading-tight">{node.titre}</h2>
+            <h2 id="modal-title" className="text-2xl font-bold text-slate-900 leading-tight">{node.titre}</h2>
             {node.createur && (
               <p className="text-sm text-slate-600 mt-1">{node.createur}</p>
             )}
@@ -125,6 +172,22 @@ export default function WorkDetailModal() {
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
+          {/* Keyboard shortcuts hint */}
+          <div className="mb-4 px-4 py-2 bg-slate-50 rounded-lg border border-slate-200 text-center">
+            <span className="text-xs text-slate-500">
+              <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-[10px] font-mono">ESC</kbd> pour fermer
+              {similarWorks.length > 0 && (
+                <>
+                  {' • '}
+                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-[10px] font-mono">←</kbd>
+                  {' '}
+                  <kbd className="px-1.5 py-0.5 bg-white border border-slate-300 rounded text-[10px] font-mono">→</kbd>
+                  {' '}œuvres similaires
+                </>
+              )}
+            </span>
+          </div>
+          
           <div className="grid grid-cols-3 gap-6">
             {/* Left Column - Main Info */}
             <div className="col-span-2 space-y-6">
@@ -201,9 +264,29 @@ export default function WorkDetailModal() {
               </div>
 
               {/* Similar Works */}
-              {similarWorks.length > 0 && (
-                <div>
-                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Œuvres similaires</h3>
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Œuvres similaires</h3>
+                  {!loadingSimilar && similarWorks.length > 0 && (
+                    <span className="text-[10px] text-slate-400">← → pour naviguer</span>
+                  )}
+                </div>
+                
+                {loadingSimilar ? (
+                  // Loading skeleton
+                  <div className="space-y-2">
+                    {[1, 2, 3, 4].map(i => (
+                      <div key={i} className="p-3 bg-slate-50 rounded-lg animate-pulse">
+                        <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
+                        <div className="h-3 bg-slate-200 rounded w-1/2 mb-2"></div>
+                        <div className="flex gap-1">
+                          <div className="h-4 bg-slate-200 rounded w-12"></div>
+                          <div className="h-4 bg-slate-200 rounded w-12"></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : similarWorks.length > 0 ? (
                   <div className="space-y-2">
                     {similarWorks.map(work => (
                       <button
@@ -227,8 +310,10 @@ export default function WorkDetailModal() {
                       </button>
                     ))}
                   </div>
-                </div>
-              )}
+                ) : (
+                  <p className="text-xs text-slate-400 italic">Aucune œuvre similaire trouvée</p>
+                )}
+              </div>
             </div>
           </div>
         </div>

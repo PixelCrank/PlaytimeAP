@@ -27,37 +27,26 @@ export default function EmotionMapCanvas() {
     [all, filters, centuryFilter]
   );
 
-  useEffect(() => {
-    const svgEl = ref.current;
-    if (!svgEl) return;
-
-    const width = svgEl.clientWidth || 900;
-    const height = svgEl.clientHeight || 600;
-
+  // Memoize node positions with collision detection - only recalculate when filtered works change
+  const nodesWithPositions = useMemo(() => {
     const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+    const width = 900; // Use fixed width for calculation
+    const height = 600;
     const innerW = width - margin.left - margin.right;
     const innerH = height - margin.top - margin.bottom;
 
-    const svg = d3.select(svgEl);
-    svg.selectAll("*").remove();
-
-    const g = svg
-      .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
-
-    // build data with coords
+    // Build data with coords
     const nodes = filtered.map((w) => {
       const { valence, arousal } = emotionsToCoords(w.emotions);
-      return { ...w, valence, arousal, fx: null, fy: null }; // fx, fy for force simulation
+      return { ...w, valence, arousal, fx: null, fy: null };
     });
 
-    // scales: valence -1..1 → x 0..innerW
+    // Scales
     const x = d3
       .scaleLinear()
       .domain([-1, 1])
       .range([0, innerW]);
 
-    // arousal -1..1 → y innerH..0 (so calm is bottom, intense at top)
     const y = d3
       .scaleLinear()
       .domain([-1, 1])
@@ -80,6 +69,38 @@ export default function EmotionMapCanvas() {
     for (let i = 0; i < 120; i++) {
       simulation.tick();
     }
+
+    return nodes;
+  }, [filtered]);
+
+  useEffect(() => {
+    const svgEl = ref.current;
+    if (!svgEl) return;
+
+    const width = svgEl.clientWidth || 900;
+    const height = svgEl.clientHeight || 600;
+
+    const margin = { top: 40, right: 40, bottom: 60, left: 60 };
+    const innerW = width - margin.left - margin.right;
+    const innerH = height - margin.top - margin.bottom;
+
+    const svg = d3.select(svgEl);
+    svg.selectAll("*").remove();
+
+    const g = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Scales for current viewport
+    const x = d3
+      .scaleLinear()
+      .domain([-1, 1])
+      .range([0, innerW]);
+
+    const y = d3
+      .scaleLinear()
+      .domain([-1, 1])
+      .range([innerH, 0]);
 
     // Grid lines for better readability
     const gridValues = [-1, -0.5, 0, 0.5, 1];
@@ -150,10 +171,10 @@ export default function EmotionMapCanvas() {
       .attr("class", "text-sm fill-slate-800 font-semibold")
       .text("Intensité");
 
-    // nodes - use simulation-adjusted positions
+    // nodes - use memoized simulation-adjusted positions
     const circles = g
   .selectAll("circle")
-  .data(nodes)
+  .data(nodesWithPositions)
   .enter()
   .append("circle")
   .attr("cx", (d: any) => d.x)
