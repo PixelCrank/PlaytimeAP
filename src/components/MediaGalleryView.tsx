@@ -5,6 +5,7 @@ import type { WorkNode } from "../lib/types";
 import { analyzeMediaUrl, type MediaType } from "../lib/media";
 import { buildPredicateWithCentury } from "../lib/filters";
 import EmptyStateWithSuggestions from "./EmptyStateWithSuggestions";
+import WorkContextMenu from "./WorkContextMenu";
 
 const entries = works as WorkNode[];
 
@@ -19,6 +20,7 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
   
   const [mediaTypeFilter, setMediaTypeFilter] = useState<MediaFilter>('all');
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'emotion'>('date');
+  const [contextMenu, setContextMenu] = useState<{ workId: string; x: number; y: number } | null>(null);
 
   // Filter works with media links
   const worksWithMedia = useMemo(() => {
@@ -159,6 +161,10 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
                 key={work.id}
                 className="group relative bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all cursor-pointer border-2 border-transparent hover:border-violet-400"
                 onClick={() => onOpenLightbox(work.id)}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  setContextMenu({ workId: work.id, x: e.clientX, y: e.clientY });
+                }}
               >
                 {/* Thumbnail */}
                 <div className="aspect-video bg-slate-200 relative overflow-hidden">
@@ -234,6 +240,16 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
           </div>
         )}
       </div>
+
+      {/* Context menu */}
+      {contextMenu && (
+        <WorkContextMenu
+          workId={contextMenu.workId}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </div>
   );
 }

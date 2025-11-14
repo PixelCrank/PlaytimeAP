@@ -4,6 +4,7 @@ import data from "../data/works.json";
 import { buildPredicateWithCentury } from "../lib/filters";
 import { typeColor, defaultNodeColor } from "../lib/colors";
 import EmptyStateWithSuggestions from "./EmptyStateWithSuggestions";
+import WorkContextMenu from "./WorkContextMenu";
 import type { WorkNode } from "../lib/types";
 
 export default function TemporalTimelineView() {
@@ -15,6 +16,8 @@ export default function TemporalTimelineView() {
   const setFilters = useStore(s => s.setFilters);
   const [hoveredWork, setHoveredWork] = useState<WorkNode | null>(null);
   const [showEmotionWaves, setShowEmotionWaves] = useState(true);
+  const [zoomOut, setZoomOut] = useState(false);
+  const [contextMenu, setContextMenu] = useState<{ workId: string; x: number; y: number } | null>(null);
 
   const all = data as any[];
   const filtered = useMemo(
@@ -152,17 +155,30 @@ export default function TemporalTimelineView() {
               {filtered.length} œuvres · {minYear} à {maxYear}
             </p>
           </div>
-          <button
-            onClick={() => setShowEmotionWaves(!showEmotionWaves)}
-            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-              showEmotionWaves 
-                ? 'bg-violet-100 text-violet-700 hover:bg-violet-200' 
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-            }`}
-            title={showEmotionWaves ? "Masquer les vagues émotionnelles" : "Afficher les vagues émotionnelles"}
-          >
-            {showEmotionWaves ? '👁️ Vagues' : '👁️‍🗨️ Vagues'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setZoomOut(!zoomOut)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                zoomOut
+                  ? 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' 
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+              title={zoomOut ? "Vue détaillée" : "Vue d'ensemble"}
+            >
+              {zoomOut ? '🔍 Détails' : '🔭 Ensemble'}
+            </button>
+            <button
+              onClick={() => setShowEmotionWaves(!showEmotionWaves)}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                showEmotionWaves 
+                  ? 'bg-violet-100 text-violet-700 hover:bg-violet-200' 
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+              title={showEmotionWaves ? "Masquer les vagues émotionnelles" : "Afficher les vagues émotionnelles"}
+            >
+              {showEmotionWaves ? '👁️ Vagues' : '👁️‍🗨️ Vagues'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -188,35 +204,49 @@ export default function TemporalTimelineView() {
       )}
 
       {/* Horizontal timeline */}
-      <div className="flex h-[calc(100%-160px)] p-6 gap-8">
+      <div className={`flex h-[calc(100%-160px)] p-6 ${zoomOut ? 'gap-2' : 'gap-8'}`}>
         {decades.map(({ decade, works, count }) => {
           const decadeEmotions = emotionTrends.decadeEmotions.get(decade) || {};
           const densityPercent = (count / maxDecadeCount) * 100;
 
           return (
-            <div key={decade} className="flex-shrink-0 flex flex-col" style={{ width: '220px' }}>
+            <div key={decade} className="flex-shrink-0 flex flex-col" style={{ width: zoomOut ? '80px' : '220px' }}>
               {/* Decade marker with density bar and click interaction */}
               <div 
-                className="sticky top-0 bg-slate-900 text-white px-3 py-2 rounded-lg mb-2 shadow-lg z-10 cursor-pointer hover:bg-slate-800 transition-colors group"
+                className={`sticky top-0 bg-slate-900 text-white rounded-lg mb-2 shadow-lg z-10 cursor-pointer hover:bg-slate-800 transition-colors group ${
+                  zoomOut ? 'px-1 py-1' : 'px-3 py-2'
+                }`}
                 onClick={() => handleDecadeClick(decade)}
+                title={zoomOut ? `${decade}s: ${count} œuvres` : ''}
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="text-xl font-bold">{decade}s</div>
-                  <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">🔍</span>
-                </div>
-                <div className="text-xs opacity-75 mb-1">{count} œuvres</div>
-                
-                {/* Density bar */}
-                <div className="w-full h-1 bg-slate-700 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-blue-400 to-purple-400 transition-all duration-300"
-                    style={{ width: `${densityPercent}%` }}
-                  />
-                </div>
+                {zoomOut ? (
+                  // Compact view
+                  <>
+                    <div className="text-xs font-bold text-center">{decade}s</div>
+                    <div className="text-[9px] text-center opacity-75">{count}</div>
+                  </>
+                ) : (
+                  // Detailed view
+                  <>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="text-xl font-bold">{decade}s</div>
+                      <span className="text-xs opacity-0 group-hover:opacity-100 transition-opacity">🔍</span>
+                    </div>
+                    <div className="text-xs opacity-75 mb-1">{count} œuvres</div>
+                    
+                    {/* Density bar */}
+                    <div className="w-full h-1 bg-slate-700 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-blue-400 to-purple-400 transition-all duration-300"
+                        style={{ width: `${densityPercent}%` }}
+                      />
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Emotion wave visualization for this decade */}
-              {showEmotionWaves && (
+              {showEmotionWaves && !zoomOut && (
                 <div className="bg-white/50 backdrop-blur-sm rounded-lg p-2 mb-2 border border-slate-200">
                   <div className="flex flex-wrap gap-1">
                     {emotionTrends.topEmotions.map(emotion => {
@@ -244,7 +274,7 @@ export default function TemporalTimelineView() {
               )}
 
             {/* Works stack for this decade */}
-            <div className="flex-1 overflow-y-auto space-y-3 pb-4">
+            <div className={`flex-1 overflow-y-auto pb-4 ${zoomOut ? 'space-y-1' : 'space-y-3'}`}>
               {works
                 .sort((a: any, b: any) => (a.annee || 0) - (b.annee || 0))
                 .map((work: any) => {
@@ -270,11 +300,43 @@ export default function TemporalTimelineView() {
                       return colorMap[e] || '#64748b';
                     }) || [];
 
-                    return (
+                    return zoomOut ? (
+                      // Zoomed out: tiny dots with tooltips
+                      <div
+                        key={work.id}
+                        className="group cursor-pointer"
+                        onClick={() => handleWorkClick(work)}
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          setContextMenu({ workId: work.id, x: e.clientX, y: e.clientY });
+                        }}
+                        onMouseEnter={() => setHoveredWork(work)}
+                        onMouseLeave={() => setHoveredWork(null)}
+                        title={`${work.titre} (${work.annee || '?'})`}
+                      >
+                        <div className="flex items-center gap-1">
+                          <div 
+                            className="w-2 h-2 rounded-full transition-all duration-150 group-hover:w-3 group-hover:h-3 shadow-sm"
+                            style={{ 
+                              backgroundColor: typeColor[work.type] || defaultNodeColor,
+                              boxShadow: isBookmarked ? '0 0 0 2px #fbbf24' : 'none'
+                            }}
+                          />
+                          <div className="text-[8px] text-slate-600 truncate group-hover:text-blue-600 max-w-[60px]">
+                            {work.titre}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      // Normal view: full cards
                       <div
                         key={work.id}
                         className="relative group cursor-pointer bg-white rounded-md shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden border border-slate-200 hover:border-blue-400"
                         onClick={() => handleWorkClick(work)}
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          setContextMenu({ workId: work.id, x: e.clientX, y: e.clientY });
+                        }}
                         onMouseEnter={() => setHoveredWork(work)}
                         onMouseLeave={() => setHoveredWork(null)}
                       >
@@ -343,6 +405,16 @@ export default function TemporalTimelineView() {
           <EmptyStateWithSuggestions />
         )}
       </div>
+
+      {/* Context menu */}
+      {contextMenu && (
+        <WorkContextMenu
+          workId={contextMenu.workId}
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </div>
   );
 }
