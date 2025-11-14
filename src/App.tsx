@@ -36,6 +36,8 @@ import { useStore } from "./store/useStore";
 export default function App() {
   const filters = useStore((state) => state.filters);
   const setFilters = useStore((state) => state.setFilters);
+  const realm = useStore((state) => state.realm);
+  const centuryFilter = useStore((state) => state.centuryFilter);
   
   const [view, setView] = useState<"constellation" | "emotion" | "gallery">("constellation");
   const [showWelcome, setShowWelcome] = useState(false);
@@ -112,6 +114,44 @@ export default function App() {
       });
     }
   }, []);
+
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+    
+    if (filters.types.length > 0) {
+      params.set('types', filters.types.join(','));
+    }
+    
+    if (filters.categories.length > 0) {
+      params.set('categories', filters.categories.join(','));
+    }
+    
+    if (filters.emotions.length > 0) {
+      params.set('emotions', filters.emotions.join(','));
+    }
+    
+    if (filters.yearRange) {
+      params.set('yearMin', String(filters.yearRange[0]));
+      params.set('yearMax', String(filters.yearRange[1]));
+    }
+    
+    if (filters.search) {
+      params.set('search', filters.search);
+    }
+    
+    if (realm) {
+      params.set('realm', realm);
+    }
+    
+    if (centuryFilter !== null) {
+      params.set('century', String(centuryFilter));
+    }
+    
+    const queryString = params.toString();
+    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
+    window.history.replaceState({}, '', newUrl);
+  }, [filters, realm, centuryFilter]);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">

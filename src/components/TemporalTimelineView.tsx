@@ -14,6 +14,7 @@ export default function TemporalTimelineView() {
   const bookmarked = useStore(s => s.bookmarked);
   const setFilters = useStore(s => s.setFilters);
   const [hoveredWork, setHoveredWork] = useState<WorkNode | null>(null);
+  const [showEmotionWaves, setShowEmotionWaves] = useState(true);
 
   const all = data as any[];
   const filtered = useMemo(
@@ -144,30 +145,47 @@ export default function TemporalTimelineView() {
     <div className="w-full h-full overflow-x-auto overflow-y-hidden bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header - fixed at top */}
       <div className="sticky left-0 bg-slate-50/95 backdrop-blur-sm border-b border-slate-200 px-6 py-3 z-20">
-        <h2 className="text-lg font-bold text-slate-900">Chronologie temporelle</h2>
-        <p className="text-xs text-slate-600">
-          {filtered.length} œuvres · {minYear} à {maxYear}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Chronologie temporelle</h2>
+            <p className="text-xs text-slate-600">
+              {filtered.length} œuvres · {minYear} à {maxYear}
+            </p>
+          </div>
+          <button
+            onClick={() => setShowEmotionWaves(!showEmotionWaves)}
+            className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              showEmotionWaves 
+                ? 'bg-violet-100 text-violet-700 hover:bg-violet-200' 
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+            title={showEmotionWaves ? "Masquer les vagues émotionnelles" : "Afficher les vagues émotionnelles"}
+          >
+            {showEmotionWaves ? '👁️ Vagues' : '👁️‍🗨️ Vagues'}
+          </button>
+        </div>
       </div>
 
       {/* Emotion Trends Overlay - Horizontal wave above timeline */}
-      <div className="sticky left-0 bg-white/90 backdrop-blur-sm border-b border-slate-200 px-6 py-3 z-10">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-xs font-semibold text-slate-700">Tendances émotionnelles</span>
-          <span className="text-xs text-slate-500">· Cliquez sur une décennie pour filtrer</span>
+      {showEmotionWaves && (
+        <div className="sticky left-0 bg-white/90 backdrop-blur-sm border-b border-slate-200 px-6 py-3 z-10">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-semibold text-slate-700">Tendances émotionnelles</span>
+            <span className="text-xs text-slate-500">· Cliquez sur une décennie pour filtrer</span>
+          </div>
+          <div className="flex gap-4">
+            {emotionTrends.topEmotions.map(emotion => (
+              <div key={emotion} className="flex items-center gap-1.5">
+                <div 
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: emotionTrends.emotionColorMap[emotion] }}
+                />
+                <span className="text-[10px] text-slate-600 capitalize">{emotion}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex gap-4">
-          {emotionTrends.topEmotions.map(emotion => (
-            <div key={emotion} className="flex items-center gap-1.5">
-              <div 
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: emotionTrends.emotionColorMap[emotion] }}
-              />
-              <span className="text-[10px] text-slate-600 capitalize">{emotion}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+      )}
 
       {/* Horizontal timeline */}
       <div className="flex h-[calc(100%-160px)] p-6 gap-8">
@@ -198,30 +216,32 @@ export default function TemporalTimelineView() {
               </div>
 
               {/* Emotion wave visualization for this decade */}
-              <div className="bg-white/50 backdrop-blur-sm rounded-lg p-2 mb-2 border border-slate-200">
-                <div className="flex flex-wrap gap-1">
-                  {emotionTrends.topEmotions.map(emotion => {
-                    const emotionCount = decadeEmotions[emotion] || 0;
-                    const emotionPercent = count > 0 ? (emotionCount / count) * 100 : 0;
-                    
-                    return (
-                      <div 
-                        key={emotion}
-                        className="group/emotion relative"
-                        title={`${emotion}: ${emotionCount} (${emotionPercent.toFixed(0)}%)`}
-                      >
+              {showEmotionWaves && (
+                <div className="bg-white/50 backdrop-blur-sm rounded-lg p-2 mb-2 border border-slate-200">
+                  <div className="flex flex-wrap gap-1">
+                    {emotionTrends.topEmotions.map(emotion => {
+                      const emotionCount = decadeEmotions[emotion] || 0;
+                      const emotionPercent = count > 0 ? (emotionCount / count) * 100 : 0;
+                      
+                      return (
                         <div 
-                          className="w-6 h-6 rounded-full transition-all duration-200 hover:scale-125"
-                          style={{ 
-                            backgroundColor: emotionTrends.emotionColorMap[emotion],
-                            opacity: emotionPercent > 0 ? 0.3 + (emotionPercent / 100) * 0.7 : 0.1
-                          }}
-                        />
-                      </div>
-                    );
-                  })}
+                          key={emotion}
+                          className="group/emotion relative"
+                          title={`${emotion}: ${emotionCount} (${emotionPercent.toFixed(0)}%)`}
+                        >
+                          <div 
+                            className="w-6 h-6 rounded-full transition-all duration-200 hover:scale-125"
+                            style={{ 
+                              backgroundColor: emotionTrends.emotionColorMap[emotion],
+                              opacity: emotionPercent > 0 ? 0.3 + (emotionPercent / 100) * 0.7 : 0.1
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
+              )}
 
             {/* Works stack for this decade */}
             <div className="flex-1 overflow-y-auto space-y-3 pb-4">
