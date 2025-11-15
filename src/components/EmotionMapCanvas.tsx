@@ -171,6 +171,50 @@ export default function EmotionMapCanvas() {
       .attr("class", "text-sm fill-slate-800 font-semibold")
       .text("Intensité");
 
+    // Emotion labels positioned on the map
+    const emotionLabels = [
+      { name: "tristesse", emoji: "😢", valence: -0.7, arousal: -0.3 },
+      { name: "nostalgie", emoji: "🕰️", valence: -0.4, arousal: -0.5 },
+      { name: "joie", emoji: "😊", valence: 0.8, arousal: 0.5 },
+      { name: "sérénité", emoji: "🧘", valence: 0.5, arousal: -0.6 },
+      { name: "peur", emoji: "😨", valence: -0.6, arousal: 0.7 },
+      { name: "colère", emoji: "😠", valence: -0.5, arousal: 0.8 },
+      { name: "surprise", emoji: "😲", valence: 0, arousal: 0.7 },
+      { name: "fascination", emoji: "🌟", valence: 0.6, arousal: 0.6 },
+      { name: "tension", emoji: "😬", valence: -0.3, arousal: 0.5 },
+      { name: "confiance", emoji: "🤝", valence: 0.6, arousal: -0.2 },
+    ];
+
+    const emotionLabelGroups = g.selectAll(".emotion-label")
+      .data(emotionLabels)
+      .enter()
+      .append("g")
+      .attr("class", "emotion-label")
+      .attr("transform", (d: any) => `translate(${x(d.valence)}, ${y(d.arousal)})`)
+      .attr("opacity", 0.4)
+      .style("pointer-events", "none");
+
+    // Background circle for better readability
+    emotionLabelGroups.append("circle")
+      .attr("r", 18)
+      .attr("fill", "white")
+      .attr("stroke", "#e2e8f0")
+      .attr("stroke-width", 1.5);
+
+    // Emoji icon
+    emotionLabelGroups.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", "0.35em")
+      .attr("class", "text-base")
+      .text((d: any) => d.emoji);
+
+    // Label text below
+    emotionLabelGroups.append("text")
+      .attr("y", 26)
+      .attr("text-anchor", "middle")
+      .attr("class", "text-[10px] fill-slate-600 font-medium")
+      .text((d: any) => d.name);
+
     // nodes - use memoized simulation-adjusted positions
     const circles = g
   .selectAll("circle")

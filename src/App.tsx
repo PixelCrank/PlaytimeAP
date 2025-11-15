@@ -50,6 +50,8 @@ export default function App() {
   const [showAnalysisHub, setShowAnalysisHub] = useState(false);
   const [showCorpusGap, setShowCorpusGap] = useState(false);
   const [showSocialExperience, setShowSocialExperience] = useState(false);
+  const [showEmotionalClusters, setShowEmotionalClusters] = useState(false);
+  const [showMediumMood, setShowMediumMood] = useState(false);
   const [quickSearch, setQuickSearch] = useState("");
 
   useEffect(() => {
@@ -416,14 +418,36 @@ export default function App() {
                   <span className="font-semibold text-sm">Discuter avec le corpus</span>
                 </button>
                 
+                {/* Clusters émotionnels - Collapsible */}
                 <div>
-                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Clusters émotionnels</h3>
-                  <EmotionalClusters />
+                  <button
+                    onClick={() => setShowEmotionalClusters(!showEmotionalClusters)}
+                    className="w-full flex items-center justify-between text-left hover:bg-slate-50 rounded-lg px-3 py-2 transition group"
+                  >
+                    <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Clusters émotionnels</h3>
+                    <span className="text-slate-400 text-sm group-hover:text-slate-600">{showEmotionalClusters ? "−" : "+"}</span>
+                  </button>
+                  {showEmotionalClusters && (
+                    <div className="mt-2">
+                      <EmotionalClusters />
+                    </div>
+                  )}
                 </div>
                 
+                {/* Ambiances par médium - Collapsible */}
                 <div>
-                  <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Ambiances par médium</h3>
-                  <MediumMoodExplorer />
+                  <button
+                    onClick={() => setShowMediumMood(!showMediumMood)}
+                    className="w-full flex items-center justify-between text-left hover:bg-slate-50 rounded-lg px-3 py-2 transition group"
+                  >
+                    <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide">Ambiances par médium</h3>
+                    <span className="text-slate-400 text-sm group-hover:text-slate-600">{showMediumMood ? "−" : "+"}</span>
+                  </button>
+                  {showMediumMood && (
+                    <div className="mt-2">
+                      <MediumMoodExplorer />
+                    </div>
+                  )}
                 </div>
                 
                 <button

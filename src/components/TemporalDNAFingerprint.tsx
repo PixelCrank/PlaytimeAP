@@ -113,33 +113,45 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
                 strokeWidth="1"
               />
               
-              {/* Labels */}
+              {/* Labels - Always show icons */}
+              <g className="cursor-help">
+                {/* Label background */}
+                <circle
+                  cx={endX}
+                  cy={endY}
+                  r="18"
+                  fill="white"
+                  stroke={dim.color}
+                  strokeWidth="2"
+                  opacity="0.95"
+                />
+                
+                {/* Icon as label */}
+                <text
+                  x={endX}
+                  y={endY}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  className="text-[14px]"
+                >
+                  {dim.icon}
+                </text>
+                
+                {/* Tooltip on hover */}
+                <title>{dim.label}: {dim.description}</title>
+              </g>
+              
+              {/* Text label outside icon - only if showLabels */}
               {showLabels && (
-                <g className="cursor-help">
-                  {/* Label background */}
-                  <circle
-                    cx={endX}
-                    cy={endY}
-                    r="18"
-                    fill="white"
-                    stroke={dim.color}
-                    strokeWidth="2"
-                  />
-                  
-                  {/* Icon as label */}
-                  <text
-                    x={endX}
-                    y={endY}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    className="text-[14px]"
-                  >
-                    {dim.icon}
-                  </text>
-                  
-                  {/* Tooltip on hover */}
-                  <title>{dim.label}: {dim.description}</title>
-                </g>
+                <text
+                  x={endX + (endX > center ? 25 : -25)}
+                  y={endY}
+                  textAnchor={endX > center ? "start" : "end"}
+                  dominantBaseline="middle"
+                  className="text-[10px] fill-slate-600 font-medium pointer-events-none"
+                >
+                  {dim.label}
+                </text>
               )}
             </g>
           );
@@ -155,7 +167,7 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
           strokeLinejoin="round"
         />
 
-        {/* Data points */}
+        {/* Data points with hover effects */}
         {fingerprint.map((dim, i) => {
           const angle = (i * angleStep) - (Math.PI / 2);
           const radius = dim.value * maxRadius;
@@ -163,15 +175,19 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
           const y = center + radius * Math.sin(angle);
           
           return (
-            <circle
-              key={`${dim.key}-point`}
-              cx={x}
-              cy={y}
-              r="4"
-              fill={dim.color}
-              stroke="white"
-              strokeWidth="2"
-            />
+            <g key={`${dim.key}-point`} className="cursor-help">
+              <circle
+                cx={x}
+                cy={y}
+                r="5"
+                fill={dim.color}
+                stroke="white"
+                strokeWidth="2"
+                className="transition-all hover:r-7"
+              >
+                <title>{dim.icon} {dim.label}: {Math.round(dim.value * 100)}%</title>
+              </circle>
+            </g>
           );
         })}
 
