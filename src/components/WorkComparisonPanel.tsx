@@ -24,6 +24,56 @@ export default function WorkComparisonPanel() {
     }
   }, [comparisonWorkIds, works.length, clearComparison]);
 
+  // Generate contextual insights - must be before any returns (Rules of Hooks)
+  const generateInsights = useMemo(() => {
+    if (works.length < 2) return [];
+    
+    const [work1, work2] = works;
+    if (!work1 || !work2) return [];
+    
+    const insights: string[] = [];
+    
+    // Calculate comparison data inline for insights
+    const emotions1 = new Set(work1.emotions || []);
+    const emotions2 = new Set(work2.emotions || []);
+    const sharedEmotions = [...emotions1].filter(e => emotions2.has(e));
+    const sameMedium = work1.type === work2.type;
+    const sameRealm = work1.realm === work2.realm;
+    
+    const year1 = work1.annee ? parseInt(work1.annee.match(/\d{4}/)?.[0] || '0') : 0;
+    const year2 = work2.annee ? parseInt(work2.annee.match(/\d{4}/)?.[0] || '0') : 0;
+    const temporalDistance = year1 && year2 ? Math.abs(year1 - year2) : null;
+    
+    // Temporal insights
+    if (temporalDistance) {
+      if (temporalDistance < 10) {
+        insights.push(`Ces œuvres sont contemporaines (${temporalDistance} ans d'écart) et reflètent probablement les mêmes contextes culturels.`);
+      } else if (temporalDistance > 100) {
+        insights.push(`Malgré ${temporalDistance} ans de distance, ces œuvres dialoguent à travers le temps sur des préoccupations similaires.`);
+      }
+    }
+    
+    // Cross-medium insights
+    if (!sameMedium) {
+      insights.push(`Cette comparaison trans-média entre ${work1.type} et ${work2.type} révèle comment différents médiums explorent des territoires émotionnels similaires.`);
+    }
+    
+    // Emotional resonance
+    if (sharedEmotions.length >= 2) {
+      insights.push(`L'intersection émotionnelle (${sharedEmotions.join(', ')}) suggère une résonance profonde dans leur rapport au temps.`);
+    }
+    
+    // Realm insights
+    if (sameRealm) {
+      const realmLabels = { cosmic: 'cosmique', human: 'humain', disrupted: 'dérangé' };
+      insights.push(`Les deux œuvres appartiennent au monde ${realmLabels[work1.realm as keyof typeof realmLabels]}, partageant une vision similaire de la temporalité.`);
+    } else {
+      insights.push(`Ces œuvres explorent des "mondes du temps" différents (${work1.realm} vs ${work2.realm}), offrant des perspectives complémentaires.`);
+    }
+    
+    return insights;
+  }, [works]);
+
   const comparison = useMemo(() => {
     if (works.length < 2) return null;
 
@@ -157,46 +207,6 @@ export default function WorkComparisonPanel() {
       </div>
     );
   }
-
-  // Generate contextual insights
-  const generateInsights = useMemo(() => {
-    if (!comparison || works.length < 2) return [];
-    
-    const insights: string[] = [];
-    const [work1, work2] = works;
-    
-    // Safety check
-    if (!work1 || !work2) return [];
-    
-    // Temporal insights
-    if (comparison.temporalDistance) {
-      if (comparison.temporalDistance < 10) {
-        insights.push(`Ces œuvres sont contemporaines (${comparison.temporalDistance} ans d'écart) et reflètent probablement les mêmes contextes culturels.`);
-      } else if (comparison.temporalDistance > 100) {
-        insights.push(`Malgré ${comparison.temporalDistance} ans de distance, ces œuvres dialoguent à travers le temps sur des préoccupations similaires.`);
-      }
-    }
-    
-    // Cross-medium insights
-    if (!comparison.sameMedium) {
-      insights.push(`Cette comparaison trans-média entre ${work1.type} et ${work2.type} révèle comment différents médiums explorent des territoires émotionnels similaires.`);
-    }
-    
-    // Emotional resonance
-    if (comparison.sharedEmotions.length >= 2) {
-      insights.push(`L'intersection émotionnelle (${comparison.sharedEmotions.join(', ')}) suggère une résonance profonde dans leur rapport au temps.`);
-    }
-    
-    // Realm insights
-    if (comparison.sameRealm) {
-      const realmLabels = { cosmic: 'cosmique', human: 'humain', disrupted: 'dérangé' };
-      insights.push(`Les deux œuvres appartiennent au monde ${realmLabels[work1.realm as keyof typeof realmLabels]}, partageant une vision similaire de la temporalité.`);
-    } else {
-      insights.push(`Ces œuvres explorent des "mondes du temps" différents (${work1.realm} vs ${work2.realm}), offrant des perspectives complémentaires.`);
-    }
-    
-    return insights;
-  }, [comparison, comparisonWorkIds]);
 
   // Two works selected - show compact badge when collapsed
   if (!isExpanded) {
