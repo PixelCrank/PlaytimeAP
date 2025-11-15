@@ -122,20 +122,20 @@ export default function WorkDetailModal() {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200"
       onClick={() => setSelectedId(null)}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
     >
       <div 
-        className="bg-white rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
+        className="bg-white rounded-xl sm:rounded-2xl shadow-2xl max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-slate-50 to-white shrink-0">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b bg-gradient-to-r from-slate-50 to-white shrink-0">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 bg-slate-100 px-2 py-1 rounded flex items-center gap-1.5">
                 <span>{getMediumIcon(node.type)}</span>
                 <span>{node.type}</span>
@@ -144,9 +144,9 @@ export default function WorkDetailModal() {
                 <span className="text-xs text-slate-500">📅 {node.annee}</span>
               )}
             </div>
-            <h2 id="modal-title" className="text-2xl font-bold text-slate-900 leading-tight">{node.titre}</h2>
+            <h2 id="modal-title" className="text-lg sm:text-2xl font-bold text-slate-900 leading-tight truncate sm:whitespace-normal">{node.titre}</h2>
             {node.createur && (
-              <p className="text-sm text-slate-600 mt-1">{node.createur}</p>
+              <p className="text-sm text-slate-600 mt-1 truncate">{node.createur}</p>
             )}
           </div>
           

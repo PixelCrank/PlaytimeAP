@@ -40,6 +40,7 @@ export default function App() {
   const [showFilters, setShowFilters] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [showConversation, setShowConversation] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
   const [showVisitHistory, setShowVisitHistory] = useState(false);
   const [showCustomTags, setShowCustomTags] = useState(false);
   const [showShareSnapshot, setShowShareSnapshot] = useState(false);
@@ -153,61 +154,77 @@ export default function App() {
       {showWelcome && <WelcomeModal onClose={() => setShowWelcome(false)} />}
       
       <header className="bg-white border-b shadow-sm sticky top-0 z-40">
-        <div className="px-6 py-3">
+        <div className="px-4 md:px-6 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
+              {/* Mobile hamburger menu */}
+              <button
+                onClick={() => setShowSidebar(!showSidebar)}
+                className="lg:hidden p-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition"
+                aria-label="Toggle menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              
               <div>
-                <h1 className="text-xl font-bold text-slate-900">
+                <h1 className="text-lg md:text-xl font-bold text-slate-900">
                   Playtime
                 </h1>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 hidden sm:block">
                   310 œuvres sur le temps dans la culture
                 </p>
               </div>
-              
-              <div className="flex items-center gap-1 border rounded-lg p-1 bg-slate-50">
-                <button
-                  onClick={() => setView("constellation")}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
-                    view === "constellation"
-                      ? "bg-white shadow-sm text-slate-900"
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  📅 Chronologie
-                </button>
-                <button
-                  onClick={() => setView("emotion")}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
-                    view === "emotion" 
-                      ? "bg-white shadow-sm text-slate-900" 
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  🎭 Émotions
-                </button>
-                <button
-                  onClick={() => setView("gallery")}
-                  className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
-                    view === "gallery" 
-                      ? "bg-white shadow-sm text-slate-900" 
-                      : "text-slate-600 hover:text-slate-900"
-                  }`}
-                >
-                  🎬 Galerie
-                </button>
-              </div>
             </div>
             
-            <div className="flex items-center gap-3">
-              {/* Insights Panel - Compact Header Version */}
-              <InsightsPanel compact={true} />
+            {/* View switcher - horizontal on desktop, moved to sidebar on mobile */}
+            <div className="hidden md:flex items-center gap-1 border rounded-lg p-1 bg-slate-50">
+              <button
+                onClick={() => setView("constellation")}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
+                  view === "constellation"
+                    ? "bg-white shadow-sm text-slate-900"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                📅 Chronologie
+              </button>
+              <button
+                onClick={() => setView("emotion")}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
+                  view === "emotion" 
+                    ? "bg-white shadow-sm text-slate-900" 
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                🎭 Émotions
+              </button>
+              <button
+                onClick={() => setView("gallery")}
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition ${
+                  view === "gallery" 
+                    ? "bg-white shadow-sm text-slate-900" 
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                🎬 Galerie
+              </button>
+            </div>
+            
+            <div className="flex items-center gap-2 md:gap-3">
+              {/* Insights Panel - Compact Header Version (hidden on mobile) */}
+              <div className="hidden sm:block">
+                <InsightsPanel compact={true} />
+              </div>
               
               {/* Tools Dropdown - Simplified */}
               <div className="relative group">
-                <button className="px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700 flex items-center gap-2 transition">
-                  ⚙️ Plus
-                  <span className="text-xs">▼</span>
+                <button className="px-3 md:px-4 py-2 text-sm bg-slate-100 hover:bg-slate-200 rounded-lg font-medium text-slate-700 flex items-center gap-1 md:gap-2 transition">
+                  <span className="hidden sm:inline">⚙️</span>
+                  <span className="sm:hidden text-lg">⚙️</span>
+                  <span className="hidden md:inline">Plus</span>
+                  <span className="text-xs hidden md:inline">▼</span>
                 </button>
                 <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-lg shadow-xl border-2 border-slate-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
                   <div className="py-2">
@@ -234,19 +251,92 @@ export default function App() {
               
               <button
                 onClick={() => setShowWelcome(true)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition"
-                title="Aide"
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition text-lg md:text-base"
+                title="Guide d'utilisation"
               >
                 ❓
               </button>
+              
+              <a
+                href="/documentation.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:block p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition"
+                title="Documentation complète"
+              >
+                📚
+              </a>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="flex-1 flex">
-        <aside className="w-80 bg-white border-r shadow-sm overflow-y-auto">
-          <div className="p-5 space-y-6">
+      <div className="flex-1 flex relative">
+        {/* Mobile sidebar overlay */}
+        {showSidebar && (
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-40"
+            onClick={() => setShowSidebar(false)}
+          />
+        )}
+        
+        {/* Sidebar - slide in on mobile, always visible on desktop */}
+        <aside className={`
+          fixed lg:relative inset-y-0 left-0 z-40
+          w-80 max-w-[85vw] bg-white border-r shadow-sm overflow-y-auto
+          transition-transform duration-300 ease-in-out
+          ${
+            showSidebar 
+              ? 'translate-x-0' 
+              : '-translate-x-full lg:translate-x-0'
+          }
+        `}>
+          <div className="p-4 md:p-5 space-y-6">
+            {/* Mobile view switcher */}
+            <div className="md:hidden">
+              <div className="flex flex-col gap-2 border rounded-lg p-2 bg-slate-50">
+                <button
+                  onClick={() => {
+                    setView("constellation");
+                    setShowSidebar(false);
+                  }}
+                  className={`px-4 py-3 rounded-md text-sm font-medium transition ${
+                    view === "constellation"
+                      ? "bg-white shadow-sm text-slate-900"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  📅 Chronologie
+                </button>
+                <button
+                  onClick={() => {
+                    setView("emotion");
+                    setShowSidebar(false);
+                  }}
+                  className={`px-4 py-3 rounded-md text-sm font-medium transition ${
+                    view === "emotion" 
+                      ? "bg-white shadow-sm text-slate-900" 
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  🎭 Émotions
+                </button>
+                <button
+                  onClick={() => {
+                    setView("gallery");
+                    setShowSidebar(false);
+                  }}
+                  className={`px-4 py-3 rounded-md text-sm font-medium transition ${
+                    view === "gallery" 
+                      ? "bg-white shadow-sm text-slate-900" 
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  🎬 Galerie
+                </button>
+              </div>
+            </div>
+            
             {/* Quick Search - Always visible at top */}
             <div>
               <div className="relative">
@@ -419,7 +509,7 @@ export default function App() {
           </div>
         </aside>
 
-        <main className="flex-1 relative">
+        <main className="flex-1 relative lg:ml-0">
           <div className="absolute inset-0">
             {view === "constellation" ? (
               <TemporalTimelineView />
@@ -443,12 +533,13 @@ export default function App() {
 
       {/* Personal Layer Modals */}
       {showConversation && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl h-[80vh] flex flex-col">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-3xl h-[90vh] sm:h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
                 <span>💬</span>
-                Conversation avec le corpus
+                <span className="hidden sm:inline">Conversation avec le corpus</span>
+                <span className="sm:hidden">Corpus</span>
               </h2>
               <button
                 onClick={() => setShowConversation(false)}
@@ -476,8 +567,8 @@ export default function App() {
       )}
       {showPlaylistBuilder && <VideoPlaylistBuilder onClose={() => setShowPlaylistBuilder(false)} />}
 
-      <footer className="border-t bg-white px-6 py-3 flex items-center justify-between text-xs text-slate-500">
-        <span>© 2025 Crank Studio · Playtime v1.0</span>
+      <footer className="border-t bg-white px-4 md:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+        <span className="text-center sm:text-left">© 2025 Crank Studio · Playtime v1.0</span>
         <button
           onClick={() => setShowWelcome(true)}
           className="text-slate-400 hover:text-slate-600 transition"

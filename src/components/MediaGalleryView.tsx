@@ -84,21 +84,21 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
   return (
     <div className="h-full flex flex-col bg-slate-50">
       {/* Filter Bar */}
-      <div className="bg-white border-b px-6 py-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h2 className="text-lg font-bold text-slate-800">🎬 Galerie Média</h2>
-            <span className="text-sm text-slate-500">
+      <div className="bg-white border-b px-4 md:px-6 py-3 md:py-4 space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
+            <h2 className="text-base md:text-lg font-bold text-slate-800">🎬 Galerie Média</h2>
+            <span className="text-xs md:text-sm text-slate-500">
               {sortedWorks.length} œuvre{sortedWorks.length > 1 ? 's' : ''}
             </span>
           </div>
           
           <div className="flex items-center gap-2">
-            <label className="text-sm text-slate-600">Trier par:</label>
+            <label className="text-xs md:text-sm text-slate-600">Trier:</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as any)}
-              className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+              className="px-2 md:px-3 py-1.5 text-xs md:text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
             >
               <option value="date">Date</option>
               <option value="title">Titre</option>

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playtime - Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #1e293b;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 3rem 3rem 2rem;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            font-size: 1.125rem;
+            opacity: 0.95;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 3rem;
+        }
+        
+        .toc {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            margin-bottom: 3rem;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .toc h2 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+        
+        .toc ul {
+            list-style: none;
+        }
+        
+        .toc li {
+            padding: 0.5rem 0;
+        }
+        
+        .toc a {
+            color: #6366f1;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .toc a:hover {
+            color: #8b5cf6;
+            padding-left: 0.5rem;
+        }
+        
+        section {
+            margin-bottom: 4rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 3px solid #6366f1;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #334155;
+            margin: 2rem 0 1rem;
+        }
+        
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #475569;
+            margin: 1.5rem 0 0.75rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            color: #475569;
+            font-size: 1.0625rem;
+        }
+        
+        ul, ol {
+            margin: 1rem 0 1rem 2rem;
+            color: #475569;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        strong {
+            color: #0f172a;
+            font-weight: 600;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+        }
+        
+        .success-box {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left: 4px solid #10b981;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+        }
+        
+        .warning-box {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 4px solid #ef4444;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .feature-card {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            border-color: #6366f1;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+            transform: translateY(-4px);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+        
+        .feature-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .feature-desc {
+            font-size: 0.9375rem;
+            color: #64748b;
+            margin: 0;
+        }
+        
+        code {
+            background: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #be185d;
+        }
+        
+        .back-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 2rem;
+            transition: all 0.3s;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .header {
+                padding: 2rem 1.5rem;
+            }
+            
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .content {
+                padding: 2rem 1.5rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏳ Playtime</h1>
+            <p>Documentation complète du projet</p>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <span class="stat-number">310</span>
+                    <span class="stat-label">Œuvres</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">Types de média</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">3</span>
+                    <span class="stat-label">Vues interactives</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="toc">
+                <h2>📑 Table des matières</h2>
+                <ul>
+                    <li><a href="#overview">Aperçu du projet</a></li>
+                    <li><a href="#insights">Insights du dataset</a></li>
+                    <li><a href="#features">Ce qui fonctionne bien</a></li>
+                    <li><a href="#technical">Points techniques</a></li>
+                    <li><a href="#ux">Innovations UX</a></li>
+                    <li><a href="#removed">Fonctionnalités retirées</a></li>
+                    <li><a href="#ai">Intégration IA/LLM</a></li>
+                    <li><a href="#future">Potentiel futur</a></li>
+                </ul>
+            </div>
+            
+            <section id="overview">
+                <h2>📖 Aperçu du projet</h2>
+                
+                <p><strong>Playtime</strong> est une plateforme de visualisation interactive explorant comment le temps est représenté et vécu à travers différents médias culturels. Le projet analyse <strong>310 œuvres</strong> s'étendant de 1800 à 2024 à travers le cinéma, la littérature, les jeux vidéo, la musique, l'art visuel et la bande dessinée.</p>
+                
+                <div class="info-box">
+                    <h4>🎯 Objectif principal</h4>
+                    <p>Permettre l'exploration visuelle et émotionnelle des représentations culturelles du temps, rendant accessibles des patterns complexes à travers trois modes de visualisation complémentaires.</p>
+                </div>
+                
+                <h3>Structure du dataset</h3>
+                <ul>
+                    <li><strong>310 œuvres totales</strong></li>
+                    <li><strong>6 types de médiums</strong> : Music (58), Littérature (52), Art (50), Cinéma (50), Jeux vidéo (50), BD (50)</li>
+                    <li><strong>2.1 émotions moyennes</strong> par œuvre</li>
+                    <li><strong>257 œuvres (83%)</strong> avec des liens média (YouTube, images, pages web)</li>
+                    <li><strong>Période temporelle</strong> : 1800-2024 (concentration sur 1980-2010)</li>
+                </ul>
+                
+                <h3>Trois modes de visualisation</h3>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <span class="feature-icon">📅</span>
+                        <div class="feature-title">Chronologie</div>
+                        <p class="feature-desc">Timeline par décennie avec vue d'ensemble zoom-out</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🎭</span>
+                        <div class="feature-title">Émotions</div>
+                        <p class="feature-desc">Carte Valence × Arousal (simulation de force D3)</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🎬</span>
+                        <div class="feature-title">Galerie</div>
+                        <p class="feature-desc">Grille visuelle avec filtrage par type de médium</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="insights">
+                <h2>📊 Insights du dataset</h2>
+                
+                <h3>Distribution temporelle</h3>
+                <div class="highlight-box">
+                    <h4>📈 Décennies phares (Domination de l'ère moderne)</h4>
+                    <ul>
+                        <li>2010s : <strong>68 œuvres</strong> (22% du corpus)</li>
+                        <li>2000s : <strong>66 œuvres</strong> (21% du corpus)</li>
+                        <li>1990s : <strong>38 œuvres</strong> (12% du corpus)</li>
+                        <li>1980s : <strong>37 œuvres</strong> (12% du corpus)</li>
+                        <li><strong>Combiné 1980-2020</strong> : 208 œuvres (67% du total)</li>
+                    </ul>
+                </div>
+                
+                <p><strong>Œuvres historiques (pré-1950)</strong> : Seulement 19 œuvres (6%) d'avant 1950. Représentation clairsemée du XIXe siècle (7 œuvres au total).</p>
+                
+                <div class="info-box">
+                    <p><strong>💡 Insight :</strong> Le corpus reflète fortement la production culturelle contemporaine, avec la grande majorité des œuvres issues de l'ère numérique (1980+). Cela crée une lentille moderne sur la représentation du temps plutôt qu'une perspective historique.</p>
+                </div>
+                
+                <h3>Paysage émotionnel</h3>
+                
+                <div class="success-box">
+                    <h4>🎭 Top 5 émotions dominantes</h4>
+                    <ol>
+                        <li><strong>Tristesse</strong> : 101 occurrences (33% des œuvres) - La plus prévalente</li>
+                        <li><strong>Nostalgie</strong> : 90 occurrences (29% des œuvres) - Thème central</li>
+                        <li><strong>Surprise</strong> : 66 occurrences (21% des œuvres)</li>
+                        <li><strong>Sérénité</strong> : 62 occurrences (20% des œuvres)</li>
+                        <li><strong>Confiance</strong> : 60 occurrences (19% des œuvres)</li>
+                    </ol>
+                </div>
+                
+                <p><strong>Tonalité émotionnelle</strong> : Le corpus penche vers la <strong>mélancolie et la réflexion</strong>. Les œuvres explorant le temps tendent vers l'introspection (tristesse, nostalgie, sérénité) plutôt que vers l'excitation énergique ou la joie.</p>
+                
+                <p><strong>Émotions sous-représentées</strong> :</p>
+                <ul>
+                    <li>Joie : Seulement 25 occurrences (8%)</li>
+                    <li>Dégoût : Seulement 6 occurrences (2%)</li>
+                </ul>
+                
+                <div class="info-box">
+                    <p><strong>💡 Insight :</strong> Les représentations culturelles du temps favorisent la contemplation douce-amère plutôt que la célébration. La prédominance de la nostalgie suggère que le temps est souvent vu à travers la perte et le désir.</p>
+                </div>
+            </section>
+            
+            <section id="features">
+                <h2>✅ Ce qui fonctionne bien</h2>
+                
+                <h3>1. Cohérence visuelle & Iconographie</h3>
+                <div class="success-box">
+                    <p><strong>Système d'icônes complet :</strong></p>
+                    <ul>
+                        <li><strong>35+ icônes d'émotions</strong> : 😊 joie, 😢 tristesse, 🌅 nostalgie, ✨ fascination, etc.</li>
+                        <li><strong>16 icônes de médiums</strong> : 🎬 Cinéma, 🎮 Jeux vidéo, 📚 Littérature, 🎵 Music, etc.</li>
+                        <li><strong>Encodage redondant</strong> : Couleur + icône pour l'accessibilité</li>
+                        <li><strong>Application cohérente</strong> : À travers timeline, carte émotionnelle, galerie, modal, tooltips</li>
+                    </ul>
+                    <p><strong>Pourquoi ça marche :</strong> Les utilisateurs peuvent reconnaître instantanément les types de médium et les émotions sans lire les étiquettes. La redondance visuelle aide à la fois la lecture rapide et l'accessibilité.</p>
+                </div>
+                
+                <h3>2. Vue Zoom-Out de la Timeline</h3>
+                <p><strong>Toggle entre modes détaillé et aperçu :</strong></p>
+                <ul>
+                    <li><strong>Mode 🔭 Ensemble</strong> : Colonnes de 80px, points de 2px, toutes les décennies visibles d'un coup</li>
+                    <li><strong>Mode 🔍 Détails</strong> : Cartes de 220px avec métadonnées complètes</li>
+                    <li><strong>Légende contextuelle</strong> : Montre les types de médium en zoom-out, les émotions en vue détaillée</li>
+                </ul>
+                <p><strong>Pourquoi ça marche :</strong> Résout le problème "impossible de tout voir". Les utilisateurs obtiennent à la fois des perspectives macro (patterns) et micro (détails) sans perdre leur orientation.</p>
+                
+                <h3>3. Algorithme d'œuvres similaires</h3>
+                <p><strong>Scoring de similarité intelligent dans WorkDetailModal :</strong></p>
+                <ul>
+                    <li><strong>Scoring pondéré</strong> : Émotions (3pts), Catégories (2pts), Même type (1pt), Proximité temporelle (jusqu'à 1pt)</li>
+                    <li><strong>Connexions trans-temporelles</strong> : Trouve des œuvres séparées par des décennies mais liées émotionnellement</li>
+                    <li><strong>Chargement lazy</strong> : Différé de 100ms avec UI squelette évite le blocage</li>
+                </ul>
+                <p><strong>Pourquoi ça marche :</strong> Les utilisateurs découvrent des connexions inattendues. Un film des années 60 et un jeu de 2010 peuvent partager des tons nostalgiques, révélant des patterns émotionnels trans-média.</p>
+                
+                <h3>4. Navigation primaire par type de médium</h3>
+                <p><strong>Filtrage par médium (pas par format média) :</strong></p>
+                <ul>
+                    <li><strong>Vue Galerie</strong> : Filtrer par Cinéma, Jeux vidéo, Littérature (pas "vidéos" ou "images")</li>
+                    <li><strong>Maintient le focus du dataset</strong> : Type de médium = dimension analytique centrale</li>
+                    <li><strong>Cohérent à travers les vues</strong> : Même schéma couleur/icône partout</li>
+                </ul>
+                <p><strong>Pourquoi ça marche :</strong> Aligne l'interface avec la question de recherche ("Comment le cinéma vs la littérature représente-t-il le temps ?"). Le médium est intellectuellement significatif ; le format de fichier ne l'est pas.</p>
+                
+                <h3>5. Onboarding accessible aux débutants</h3>
+                <p><strong>Refonte du WelcomeModal en 5 étapes :</strong></p>
+                <ul>
+                    <li><strong>Langage simple</strong> : Jargon académique supprimé ("valence/arousal" expliqué visuellement)</li>
+                    <li><strong>Exemples concrets</strong> : "Filtrer par nostalgie + cinéma + XIXᵉ siècle"</li>
+                    <li><strong>Mentions de fonctionnalités</strong> : Toggle 🔭 Ensemble, menu contextuel clic-droit</li>
+                    <li><strong>Grilles visuelles</strong> : Montre les types de médium avec icônes dès le départ</li>
+                </ul>
+                <p><strong>Pourquoi ça marche :</strong> Les utilisateurs non-académiques peuvent commencer à explorer immédiatement. Les conseils sont actionnables plutôt que théoriques.</p>
+            </section>
+            
+            <section id="technical">
+                <h2>⚙️ Points techniques saillants</h2>
+                
+                <h3>Stack & Architecture</h3>
+                <div class="info-box">
+                    <ul>
+                        <li>React 18.3.1 + TypeScript 5.4.0</li>
+                        <li>Vite 5.4.21 (outil de build, serveur dev)</li>
+                        <li>Tailwind CSS 3.4.4 (styling)</li>
+                        <li>D3.js 7.9.0 (simulation de force, viz de données)</li>
+                        <li>Zustand 4.5.2 (gestion d'état)</li>
+                    </ul>
+                </div>
+                
+                <h3>Optimisations de performance</h3>
+                <ol>
+                    <li><strong>Détection de collision mémorisée</strong> : EmotionMapCanvas - La simulation de force ne recalcule que lorsque les œuvres filtrées changent</li>
+                    <li><strong>Calcul lazy des œuvres similaires</strong> : setTimeout de 100ms pour différer le scoring CPU-intensif</li>
+                    <li><strong>Rendu conditionnel de la légende</strong> : Les vagues d'émotion de la timeline sont cachées en mode zoom-out</li>
+                </ol>
+                
+                <h3>Pipeline de données</h3>
+                <p><code>Playtime_Master.csv</code> → <code>scripts/csv-to-json.mjs</code> → <code>src/data/works.json</code> → Interfaces TypeScript</p>
+            </section>
+            
+            <section id="ux">
+                <h2>🎨 Innovations UX</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <span class="feature-icon">📂</span>
+                        <div class="feature-title">Divulgation progressive</div>
+                        <p class="feature-desc">Filtres réduits par défaut, empêche de submerger les débutants tout en gardant les fonctionnalités avancées accessibles.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <span class="feature-icon">🏷️</span>
+                        <div class="feature-title">Légendes contextuelles</div>
+                        <p class="feature-desc">Dynamiques selon le mode de vue - La légende explique toujours ce que les couleurs représentent actuellement.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <span class="feature-icon">🖼️</span>
+                        <div class="feature-title">Thumbnails visuels</div>
+                        <p class="feature-desc">Extraction automatique de thumbnails YouTube, Vimeo et images directes dans les modals.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <span class="feature-icon">🔍</span>
+                        <div class="feature-title">Recherche multi-modale</div>
+                        <p class="feature-desc">Combine recherche de titre, créateur + empilement de filtres (émotions, médiums, plage d'années).</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <span class="feature-icon">👁️</span>
+                        <div class="feature-title">Aperçus au survol</div>
+                        <p class="feature-desc">Tooltips riches avec thumbnail, badges d'émotions, catégories - évaluation sans clic.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <span class="feature-icon">⌨️</span>
+                        <div class="feature-title">Navigation au clavier</div>
+                        <p class="feature-desc">ESC pour fermer, ← → pour naviguer dans les œuvres similaires, étiquettes ARIA.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="removed">
+                <h2>🗑️ Fonctionnalités retirées & Expérimentations</h2>
+                
+                <h3>Pourquoi retirer des fonctionnalités ?</h3>
+                <p>Toutes les fonctionnalités retirées partageaient un problème commun : <strong>elles imposaient des structures que le dataset ne pouvait pas supporter</strong>, ou créaient de la complexité sans valeur ajoutée claire.</p>
+                
+                <div class="warning-box">
+                    <h4>❌ 1. NodeDrawer.tsx (Supprimé)</h4>
+                    <p><strong>Pourquoi retiré :</strong></p>
+                    <ul>
+                        <li>État réduit/ouvert complexe</li>
+                        <li>Sidebar compressait le canvas principal</li>
+                        <li>Header en double inutile</li>
+                        <li>Mauvais focus : détails des œuvres en compétition avec visualisation</li>
+                    </ul>
+                    <p><strong>Remplacé par :</strong> WorkDetailModal (overlay centré avec touches ESC/flèches)</p>
+                    <p><strong>Leçon :</strong> Les modals sont meilleurs pour le contenu focalisé. Les sidebars fonctionnent pour les filtres persistants, pas les détails transitoires.</p>
+                </div>
+                
+                <div class="warning-box">
+                    <h4>❌ 2. Filtre Realm/Philosophie temporelle (Caché dans l'UI)</h4>
+                    <p><strong>Ce que c'était :</strong> Trois "royaumes" basés sur la philosophie temporelle - Cosmique, Humain, Perturbé</p>
+                    <p><strong>Pourquoi caché :</strong></p>
+                    <ul>
+                        <li>Pas dans le dataset - les œuvres n'ont pas de tags realm explicites</li>
+                        <li>Abstraction académique trop théorique</li>
+                        <li>Inutilisé - jamais montré dans l'UI</li>
+                        <li>Confus - le slogan "3 visages du temps" ne faisait aucun sens pour les utilisateurs</li>
+                    </ul>
+                    <p><strong>Leçon :</strong> Garder l'UI alignée avec la réalité du dataset. Ne pas imposer de cadres théoriques que les utilisateurs ne peuvent pas voir ou vérifier.</p>
+                </div>
+                
+                <div class="warning-box">
+                    <h4>❌ 3. Timeline de trajectoire émotionnelle (Non implémenté)</h4>
+                    <p><strong>Pourquoi non implémenté :</strong></p>
+                    <ul>
+                        <li>Pas assez de données historiques : 67% des œuvres de 1980-2020, seulement 19 pré-1950</li>
+                        <li>Aucune tendance claire : Les émotions ne montrent pas d'évolution significative</li>
+                        <li>Bruit de visualisation : 8 émotions × 12 périodes = 96 points de données (écrasant)</li>
+                    </ul>
+                    <p><strong>Alternative implémentée :</strong> Vagues d'émotions dans la timeline (émotions dominantes par décennie)</p>
+                    <p><strong>Leçon :</strong> Besoin de profondeur historique suffisante pour l'analyse évolutionnaire. 310 œuvres à dominante moderne ne peuvent pas montrer des tendances sur 200 ans.</p>
+                </div>
+                
+                <div class="warning-box">
+                    <h4>❌ 4. Générateur de playlists cross-média (Non implémenté)</h4>
+                    <p><strong>Pourquoi non implémenté :</strong></p>
+                    <ul>
+                        <li>Problème d'export : Pas de destination claire</li>
+                        <li>Limitations de la plateforme : Impossible de regarder des films ou jouer aux jeux dans l'app</li>
+                        <li>Faible valeur : Les œuvres similaires suggèrent déjà des connexions cross-média</li>
+                        <li>Friction du partage : Pas de fonctionnalités sociales pour rendre le partage significatif</li>
+                    </ul>
+                    <p><strong>Leçon :</strong> Les fonctionnalités génératives nécessitent des sorties actionnables. Sans intégration de lecture/jeu, les playlists semblent creuses.</p>
+                </div>
+            </section>
+            
+            <section id="ai">
+                <h2>🤖 Intégration IA/LLM</h2>
+                
+                <h3>Fonctionnalités LLM actuelles</h3>
+                
+                <div class="success-box">
+                    <h4>💬 1. Conversation avec le corpus (CorpusConversation.tsx)</h4>
+                    <p><strong>Fonctionnalité :</strong> Interface de chat IA pour l'exploration du dataset</p>
+                    <ul>
+                        <li>L'utilisateur demande : "Quels films des années 90 explorent la nostalgie ?"</li>
+                        <li>L'IA répond : Avec suggestions d'œuvres + conseils de filtrage</li>
+                        <li>Contextuel : Accès au corpus complet de 310 œuvres</li>
+                    </ul>
+                    <p><strong>Points forts :</strong> Requêtes en langage naturel, explique les connexions entre œuvres</p>
+                    <p><strong>Limitations :</strong> Pas de filtrage automatique (l'utilisateur doit appliquer manuellement les suggestions du LLM), pas de mémoire entre sessions</p>
+                </div>
+                
+                <div class="success-box">
+                    <h4>📝 2. Récit contextuel d'œuvre (WorkContextNarrative.tsx)</h4>
+                    <p><strong>Fonctionnalité :</strong> Description générée par IA de l'unicité d'une œuvre dans le corpus</p>
+                    <ul>
+                        <li>Analyse la position de l'œuvre dans l'espace temporel/émotionnel/médiatique</li>
+                        <li>Génère un récit de 2-3 paragraphes expliquant sa signification</li>
+                        <li>Exemple : "Ce film de 1967 se distingue comme l'une des rares œuvres des années 60 explorant l'anxiété technologique..."</li>
+                    </ul>
+                    <p><strong>Points forts :</strong> Aide les utilisateurs à comprendre <em>pourquoi</em> une œuvre compte, révèle des patterns</p>
+                    <p><strong>Limitations :</strong> Peut être verbeux ou générique, régénération à chaque ouverture de modal (pas encore de cache)</p>
+                </div>
+                
+                <h3>Améliorations LLM potentielles (Non encore implémentées)</h3>
+                
+                <div class="info-box">
+                    <h4>💡 Idées futures</h4>
+                    <ul>
+                        <li><strong>Filtrage conversationnel</strong> : "montre-moi des films nostalgiques des 90s" → applique automatiquement les filtres</li>
+                        <li><strong>Nommage & descriptions de clusters</strong> : Le LLM génère des noms lisibles pour les clusters émotionnels</li>
+                        <li><strong>Détection de patterns temporels</strong> : Le LLM raconte les tendances temporelles</li>
+                        <li><strong>Explication de similarité</strong> : Quand des œuvres similaires sont montrées, explique <em>pourquoi</em> elles sont similaires</li>
+                        <li><strong>Résumés personnalisés d'œuvres</strong> : Réécriture des commentaires pour plus de clarté</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section id="future">
+                <h2>🚀 Potentiel futur</h2>
+                
+                <h3>Améliorations à court terme</h3>
+                <ul>
+                    <li>📸 <strong>Thumbnails de décennie dans la timeline</strong> : Montrer 1-2 œuvres représentatives par décennie</li>
+                    <li>🎨 <strong>Illustrations d'état vide</strong> : Illustrations personnalisées pour différents états vides</li>
+                    <li>✨ <strong>Œuvres similaires améliorées</strong> : Montrer le score de similarité (% de match), surligner les émotions/catégories qui se chevauchent</li>
+                    <li>💾 <strong>Export des favoris</strong> : Exporter en JSON, CSV ou URL partageable</li>
+                    <li>📱 <strong>Responsive mobile</strong> : Navigation tactile, filtres rétractables, gestes de balayage</li>
+                </ul>
+                
+                <h3>Expansions à moyen terme</h3>
+                <ul>
+                    <li>🏷️ <strong>Tags générés par les utilisateurs</strong> : Système de tags communautaires avec votes</li>
+                    <li>🧬 <strong>Comparaisons d'ADN temporel</strong> : Comparer les empreintes radar de 2+ œuvres</li>
+                    <li>▶️ <strong>Intégration de lecture de playlists</strong> : Intégrer le lecteur YouTube, API Spotify</li>
+                    <li>🗺️ <strong>Constructeur de parcours temporel</strong> : Chemins narratifs interactifs à travers le corpus</li>
+                    <li>📊 <strong>Comparaisons cross-dataset</strong> : Comparer le corpus Playtime à d'autres datasets culturels</li>
+                </ul>
+                
+                <h3>Directions de recherche à long terme</h3>
+                <ul>
+                    <li>🧠 <strong>Cartographie d'ontologie temporelle</strong> : Construire une ontologie formelle des concepts temporels</li>
+                    <li>📈 <strong>Analyse de sentiment sur les commentaires</strong> : NLP sur le champ commentaire</li>
+                    <li>🤖 <strong>Modélisation prédictive</strong> : Entraîner un modèle ML pour prédire les émotions à partir des métadonnées</li>
+                    <li>🎨 <strong>Espace d'embedding multimodal</strong> : Intégrer les œuvres en utilisant texte + image + audio</li>
+                    <li>👥 <strong>Filtrage collaboratif</strong> : "Les utilisateurs qui ont marqué X ont aussi marqué Y"</li>
+                </ul>
+            </section>
+            
+            <section>
+                <h2>🎓 Principaux enseignements</h2>
+                
+                <div class="highlight-box">
+                    <h4>Ce que nous avons appris</h4>
+                    <ol>
+                        <li><strong>La cohérence visuelle compte plus que la quantité de fonctionnalités</strong> - Icônes + couleurs > filtres complexes</li>
+                        <li><strong>Vue d'ensemble avant les détails</strong> - Le zoom-out de la timeline était la fonctionnalité la plus demandée</li>
+                        <li><strong>Le type de médium est la dimension analytique principale</strong> - Pas le format média (vidéo/image), mais la catégorie intellectuelle (cinéma/littérature)</li>
+                        <li><strong>Les clusters émotionnels sont plus utiles que les filtres d'émotions individuels</strong> - 6 clusters > 35 cases à cocher d'émotions</li>
+                        <li><strong>Retirer les fonctionnalités qui n'ajoutent pas de valeur à CE dataset</strong> - Timeline de trajectoire émotionnelle : pas assez de profondeur historique</li>
+                        <li><strong>Les LLM excellent dans le contexte, pas le filtrage</strong> - Récits d'œuvres : utiles ; Conversation corpus : utile pour les questions</li>
+                        <li><strong>L'optimisation de performance permet une UX plus riche</strong> - Détection de collision mémorisée → carte émotionnelle fluide</li>
+                    </ol>
+                </div>
+            </section>
+            
+            <div style="text-align: center; padding: 2rem 0;">
+                <a href="/" class="back-button">← Retour à Playtime</a>
+            </div>
+            
+            <div style="text-align: center; padding: 2rem 0; color: #94a3b8; font-size: 0.875rem;">
+                <p><strong>Dernière mise à jour :</strong> 15 novembre 2025</p>
+                <p><strong>Version :</strong> 1.0 (Post-Système d'icônes, Post-Corrections de cohérence)</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
