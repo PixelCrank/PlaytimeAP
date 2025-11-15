@@ -20,6 +20,9 @@ export default function WorkComparisonPanel() {
     if (works.length < 2) return null;
 
     const [work1, work2] = works;
+    
+    // Safety check - ensure both works exist
+    if (!work1 || !work2) return null;
 
     // Emotion comparison
     const emotions1 = new Set(work1.emotions || []);
@@ -154,6 +157,9 @@ export default function WorkComparisonPanel() {
     const insights: string[] = [];
     const [work1, work2] = works;
     
+    // Safety check
+    if (!work1 || !work2) return [];
+    
     // Temporal insights
     if (comparison.temporalDistance) {
       if (comparison.temporalDistance < 10) {
@@ -198,6 +204,14 @@ export default function WorkComparisonPanel() {
         </span>
       </button>
     );
+  }
+
+  // Safety check before rendering
+  if (works.length >= 2 && (!works[0] || !works[1])) {
+    // If we have 2 IDs but can't find the works, something is wrong
+    console.error('Comparison error: Unable to find works', comparisonWorkIds);
+    clearComparison();
+    return null;
   }
 
   // Two works selected - expanded view
