@@ -41,10 +41,10 @@ export default function EmotionMapCanvas() {
       return { ...w, valence, arousal, fx: null, fy: null };
     });
 
-    // Scales
+    // Scales - match the rendering scales
     const x = d3
       .scaleLinear()
-      .domain([-1, 1])
+      .domain([-0.9, 1.1])
       .range([0, innerW]);
 
     const y = d3
@@ -92,9 +92,10 @@ export default function EmotionMapCanvas() {
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Scales for current viewport
+    // Shift domain slightly left to show more positive emotions on right
     const x = d3
       .scaleLinear()
-      .domain([-1, 1])
+      .domain([-0.9, 1.1])
       .range([0, innerW]);
 
     const y = d3
@@ -103,22 +104,24 @@ export default function EmotionMapCanvas() {
       .range([innerH, 0]);
 
     // Grid lines for better readability
-    const gridValues = [-1, -0.5, 0, 0.5, 1];
+    // Center line at 0.1 (slightly shifted from true 0 to match data median)
+    const gridValuesX = [-0.9, -0.4, 0.1, 0.6, 1.1];
+    const gridValuesY = [-1, -0.5, 0, 0.5, 1];
     
     // Vertical grid lines
-    gridValues.forEach(val => {
+    gridValuesX.forEach(val => {
       g.append("line")
         .attr("x1", x(val))
         .attr("x2", x(val))
         .attr("y1", 0)
         .attr("y2", innerH)
-        .attr("stroke", val === 0 ? "#cbd5e1" : "#f1f5f9")
-        .attr("stroke-width", val === 0 ? 2 : 1)
-        .attr("stroke-dasharray", val === 0 ? "4 4" : "none");
+        .attr("stroke", val === 0.1 ? "#cbd5e1" : "#f1f5f9")
+        .attr("stroke-width", val === 0.1 ? 2 : 1)
+        .attr("stroke-dasharray", val === 0.1 ? "4 4" : "none");
     });
     
     // Horizontal grid lines
-    gridValues.forEach(val => {
+    gridValuesY.forEach(val => {
       g.append("line")
         .attr("x1", 0)
         .attr("x2", innerW)
@@ -131,10 +134,10 @@ export default function EmotionMapCanvas() {
 
     // Axes with custom styling
     const xAxis = d3.axisBottom(x).ticks(5).tickFormat((d: any) => {
-      if (d === -1) return "😔 Négatif";
-      if (d === 0) return "";
-      if (d === 1) return "😊 Positif";
-      return String(d);
+      if (d <= -0.8) return "😔 Négatif";
+      if (d >= 0 && d <= 0.2) return "";
+      if (d >= 1) return "😊 Positif";
+      return "";
     });
     
     const yAxis = d3.axisLeft(y).ticks(5).tickFormat((d: any) => {
