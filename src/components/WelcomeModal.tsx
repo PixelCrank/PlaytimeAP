@@ -121,12 +121,13 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
               <h3 className="font-bold text-lg text-slate-900">Recherche et filtres</h3>
             </div>
             <p className="text-sm text-slate-700 mb-3 leading-relaxed">
-              Utilisez la barre de recherche pour trouver une œuvre par titre ou créateur. 
-              Combinez les filtres par <strong>émotion</strong>, <strong>médium</strong>, et <strong>catégorie</strong> pour affiner.
+              Utilisez la <strong>barre de filtres horizontale</strong> au-dessus du viewport pour filtrer par 
+              <strong>émotion</strong>, <strong>médium</strong>, et <strong>catégorie</strong>. 
+              Les résultats se mettent à jour instantanément dans toutes les vues.
             </p>
             <div className="bg-white p-3 rounded-lg text-xs text-slate-600">
-              <strong>Exemple :</strong> Filtrez par "nostalgie" + "cinéma" + "XIXᵉ siècle" pour découvrir 
-              des films nostalgiques sur cette époque
+              <strong>Exemple :</strong> Cliquez sur "Émotions" → sélectionnez "nostalgie", puis "Médiums" → "Cinéma" 
+              pour découvrir des films nostalgiques
             </div>
           </div>
 
@@ -140,7 +141,8 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
               <em>Mélancolie sombre</em>, <em>Contemplatif</em>, <em>Résilient</em>, etc.
             </p>
             <div className="bg-white p-3 rounded-lg text-xs text-slate-600">
-              Cliquez sur un cluster dans la barre latérale pour explorer ces familles émotionnelles
+              Dans la barre latérale, cliquez sur "Clusters émotionnels" pour les voir, 
+              puis sélectionnez un cluster pour explorer ces familles émotionnelles
             </div>
           </div>
 
@@ -179,7 +181,7 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
               <div className="text-2xl mb-2">🧬</div>
               <div className="text-xs font-semibold text-purple-900 mb-1">DNA Temporel</div>
               <div className="text-[10px] text-purple-700 leading-relaxed">
-                Diagramme radar montrant 4 dimensions : émotions, catégories, médias, complexité
+                Diagramme radar avec 6 axes (💭 🏷️ 🧩 ⏳ 🪞 🔗). Survolez les points pour voir les détails
               </div>
             </div>
             <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -203,6 +205,61 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
                 Ajoutez aux favoris, créez des notes personnelles, construisez votre collection
               </div>
             </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: "Outils d'analyse avancés",
+      description: "Découvrez des patterns et connexions cachés",
+      emoji: "🔬",
+      content: (
+        <div className="space-y-4">
+          <p className="text-slate-700 text-center leading-relaxed">
+            Dans la barre latérale, section <strong>"Ma Collection & Outils"</strong>, 
+            découvrez des analyses puissantes qui s'ouvrent en plein écran :
+          </p>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-4 bg-gradient-to-br from-violet-50 to-purple-50 rounded-lg border-2 border-violet-200">
+              <div className="text-2xl mb-2">📈</div>
+              <div className="text-xs font-semibold text-violet-900 mb-1">Trajectoire émotionnelle</div>
+              <div className="text-[10px] text-violet-700 leading-relaxed">
+                Évolution des émotions à travers les décennies
+              </div>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-lg border-2 border-cyan-200">
+              <div className="text-2xl mb-2">🎭</div>
+              <div className="text-xs font-semibold text-cyan-900 mb-1">Remix trans-média</div>
+              <div className="text-[10px] text-cyan-700 leading-relaxed">
+                Découvrez des œuvres similaires dans d'autres médiums
+              </div>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-lg border-2 border-indigo-200">
+              <div className="text-2xl mb-2">📊</div>
+              <div className="text-xs font-semibold text-indigo-900 mb-1">Statistiques du corpus</div>
+              <div className="text-[10px] text-indigo-700 leading-relaxed">
+                Patterns par médium, royaume temporel, et matrice émotions
+              </div>
+            </div>
+            <div className="p-4 bg-gradient-to-br from-orange-50 to-red-50 rounded-lg border-2 border-orange-200">
+              <div className="text-2xl mb-2">🔬</div>
+              <div className="text-xs font-semibold text-orange-900 mb-1">Analyse des manques</div>
+              <div className="text-[10px] text-orange-700 leading-relaxed">
+                Identifiez les émotions et périodes sous-représentées
+              </div>
+            </div>
+          </div>
+
+          <div className="p-5 bg-gradient-to-br from-pink-50 to-purple-50 rounded-xl border-2 border-pink-300">
+            <div className="flex items-center gap-3 mb-2">
+              <span className="text-2xl">💬</span>
+              <h3 className="font-bold text-slate-900">Discuter avec le corpus</h3>
+            </div>
+            <p className="text-xs text-slate-700 leading-relaxed">
+              Posez des questions en langage naturel à l'IA qui connaît toutes les 310 œuvres. 
+              Elle peut même générer des créations originales basées sur le corpus !
+            </p>
           </div>
         </div>
       ),
