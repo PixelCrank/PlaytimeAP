@@ -176,6 +176,7 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
           
           return (
             <g key={`${dim.key}-point`} className="cursor-help">
+              <title>{`${dim.label}: ${Math.round(dim.value * 100)}%`}</title>
               <circle
                 cx={x}
                 cy={y}
@@ -184,9 +185,7 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
                 stroke="white"
                 strokeWidth="2"
                 className="transition-all hover:r-7"
-              >
-                <title>{dim.icon} {dim.label}: {Math.round(dim.value * 100)}%</title>
-              </circle>
+              />
             </g>
           );
         })}
