@@ -12,8 +12,7 @@ interface Gap {
   suggestion: string;
 }
 
-export default function CorpusGapAnalyzer() {
-  const [isOpen, setIsOpen] = useState(false);
+export default function CorpusGapAnalyzer({ isOpen, onClose }: Props) {
   const filters = useStore(s => s.filters);
   const centuryFilter = useStore(s => s.centuryFilter);
 
@@ -147,15 +146,7 @@ export default function CorpusGapAnalyzer() {
   }, [filtered]);
 
   if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition text-sm font-medium shadow-md"
-      >
-        <span className="text-lg">🔬</span>
-        <span>Analyse des manques</span>
-      </button>
-    );
+    return null;
   }
 
   return (
@@ -171,7 +162,7 @@ export default function CorpusGapAnalyzer() {
             </p>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => onClose()}
             className="text-white hover:text-orange-100 text-2xl leading-none"
           >
             ×

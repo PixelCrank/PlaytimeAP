@@ -5,8 +5,12 @@ import { buildPredicateWithCentury } from "../lib/filters";
 
 type Tab = "medium" | "realm" | "emotion-matrix";
 
-export default function AnalysisHub() {
-  const [isOpen, setIsOpen] = useState(false);
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function AnalysisHub({ isOpen, onClose }: Props) {
   const [activeTab, setActiveTab] = useState<Tab>("medium");
   const filters = useStore(s => s.filters);
   const centuryFilter = useStore(s => s.centuryFilter);
@@ -111,15 +115,7 @@ export default function AnalysisHub() {
   }, [filtered]);
 
   if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition text-sm font-medium shadow-md"
-      >
-        <span className="text-lg">📊</span>
-        <span>Statistiques du corpus</span>
-      </button>
-    );
+    return null;
   }
 
   return (
@@ -135,7 +131,7 @@ export default function AnalysisHub() {
             </p>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={() => onClose()}
             className="text-white hover:text-blue-100 text-2xl leading-none"
           >
             ×

@@ -2,8 +2,12 @@ import { useState, useMemo } from "react";
 import { useStore } from "../store/useStore";
 import data from "../data/works.json";
 
-export default function CrossMediumRemix() {
-  const [isOpen, setIsOpen] = useState(false);
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function CrossMediumRemix({ isOpen, onClose }: Props) {
   const [sourceWork, setSourceWork] = useState<any | null>(null);
   const [remixes, setRemixes] = useState<any[]>([]);
   const [chain, setChain] = useState<any[]>([]); // Track remix chain history
@@ -88,15 +92,7 @@ export default function CrossMediumRemix() {
   }, [all]);
 
   if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white rounded-lg hover:from-cyan-600 hover:to-blue-700 transition text-sm font-medium shadow-md"
-      >
-        <span className="text-lg">🎭</span>
-        <span>Remix trans-média</span>
-      </button>
-    );
+    return null;
   }
 
   return (
@@ -113,7 +109,7 @@ export default function CrossMediumRemix() {
           </div>
           <button
             onClick={() => {
-              setIsOpen(false);
+              onClose();
               setSourceWork(null);
               setRemixes([]);
               setChain([]);
@@ -298,7 +294,7 @@ export default function CrossMediumRemix() {
                         </div>
                         <div className="flex-1 cursor-pointer" onClick={() => {
                           setSelectedId(remix.work.id);
-                          setIsOpen(false);
+                          onClose();
                         }}>
                           <div className="flex items-center gap-2 mb-2">
                             <span className="px-2 py-0.5 bg-slate-200 text-slate-800 text-xs rounded font-medium">

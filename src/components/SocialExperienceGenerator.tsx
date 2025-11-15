@@ -12,8 +12,12 @@ interface SocialScenario {
   prompt: string;
 }
 
-export default function SocialExperienceGenerator() {
-  const [isOpen, setIsOpen] = useState(false);
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function SocialExperienceGenerator({ isOpen, onClose }: Props) {
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
   const setSelectedId = useStore(s => s.setSelectedId);
 
@@ -114,15 +118,7 @@ export default function SocialExperienceGenerator() {
   }, [all]);
 
   if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition text-sm font-medium shadow-md"
-      >
-        <span className="text-lg">🎭</span>
-        <span>Scénarios d'usage</span>
-      </button>
-    );
+    return null;
   }
 
   const currentScenario = scenarios.find(s => s.id === selectedScenario);
@@ -141,7 +137,7 @@ export default function SocialExperienceGenerator() {
           </div>
           <button
             onClick={() => {
-              setIsOpen(false);
+              onClose();
               setSelectedScenario(null);
             }}
             className="text-white hover:text-indigo-100 text-2xl leading-none"
@@ -244,7 +240,7 @@ export default function SocialExperienceGenerator() {
                       className="p-3 border rounded-lg hover:border-indigo-400 hover:shadow-sm transition cursor-pointer"
                       onClick={() => {
                         setSelectedId(work.id);
-                        setIsOpen(false);
+                        onClose();
                       }}
                     >
                       <h5 className="font-semibold text-slate-900 mb-1">

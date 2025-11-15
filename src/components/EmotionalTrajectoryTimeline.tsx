@@ -7,8 +7,12 @@ interface DecadeData {
   emotions: Record<string, number>;
 }
 
-export default function EmotionalTrajectoryTimeline() {
-  const [isOpen, setIsOpen] = useState(false);
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function EmotionalTrajectoryTimeline({ isOpen, onClose }: Props) {
   const [hoveredDecade, setHoveredDecade] = useState<string | null>(null);
 
   const all = data as any[];
@@ -98,15 +102,7 @@ export default function EmotionalTrajectoryTimeline() {
   };
 
   if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-lg hover:from-violet-600 hover:to-purple-700 transition text-sm font-medium shadow-md"
-      >
-        <span className="text-lg">📈</span>
-        <span>Trajectoire émotionnelle</span>
-      </button>
-    );
+    return null;
   }
 
   return (
@@ -122,7 +118,7 @@ export default function EmotionalTrajectoryTimeline() {
             </p>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={onClose}
             className="text-white hover:text-violet-100 text-2xl leading-none"
           >
             ×

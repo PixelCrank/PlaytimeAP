@@ -45,6 +45,11 @@ export default function App() {
   const [lightboxWorkId, setLightboxWorkId] = useState<string | null>(null);
   const [showPlaylistBuilder, setShowPlaylistBuilder] = useState(false);
   const [showSerendipity, setShowSerendipity] = useState(false);
+  const [showEmotionalTrajectory, setShowEmotionalTrajectory] = useState(false);
+  const [showCrossMediumRemix, setShowCrossMediumRemix] = useState(false);
+  const [showAnalysisHub, setShowAnalysisHub] = useState(false);
+  const [showCorpusGap, setShowCorpusGap] = useState(false);
+  const [showSocialExperience, setShowSocialExperience] = useState(false);
   const [quickSearch, setQuickSearch] = useState("");
 
   useEffect(() => {
@@ -473,9 +478,27 @@ export default function App() {
                   <div>
                     <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Analyse</h3>
                     <div className="space-y-2">
-                      <EmotionalTrajectoryTimeline />
-                      <CrossMediumRemix />
-                      <AnalysisHub />
+                      <button
+                        onClick={() => setShowEmotionalTrajectory(true)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 rounded-lg flex items-center gap-3 transition"
+                      >
+                        <span>📈</span>
+                        <span>Trajectoire émotionnelle</span>
+                      </button>
+                      <button
+                        onClick={() => setShowCrossMediumRemix(true)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 rounded-lg flex items-center gap-3 transition"
+                      >
+                        <span>🎭</span>
+                        <span>Remix trans-média</span>
+                      </button>
+                      <button
+                        onClick={() => setShowAnalysisHub(true)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 rounded-lg flex items-center gap-3 transition"
+                      >
+                        <span>📊</span>
+                        <span>Statistiques du corpus</span>
+                      </button>
                     </div>
                   </div>
                   
@@ -483,8 +506,20 @@ export default function App() {
                   <div>
                     <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Recherche</h3>
                     <div className="space-y-2">
-                      <CorpusGapAnalyzer />
-                      <SocialExperienceGenerator />
+                      <button
+                        onClick={() => setShowCorpusGap(true)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 rounded-lg flex items-center gap-3 transition"
+                      >
+                        <span>🔬</span>
+                        <span>Analyse des manques</span>
+                      </button>
+                      <button
+                        onClick={() => setShowSocialExperience(true)}
+                        className="w-full px-4 py-2 text-left text-sm hover:bg-slate-50 rounded-lg flex items-center gap-3 transition"
+                      >
+                        <span>🎭</span>
+                        <span>Scénarios d'usage</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -557,6 +592,13 @@ export default function App() {
       )}
       {showPlaylistBuilder && <VideoPlaylistBuilder onClose={() => setShowPlaylistBuilder(false)} />}
       {showSerendipity && <SerendipityExplorer isOpen={showSerendipity} onClose={() => setShowSerendipity(false)} />}
+      
+      {/* Analysis & Research Modals */}
+      {showEmotionalTrajectory && <EmotionalTrajectoryTimeline isOpen={showEmotionalTrajectory} onClose={() => setShowEmotionalTrajectory(false)} />}
+      {showCrossMediumRemix && <CrossMediumRemix isOpen={showCrossMediumRemix} onClose={() => setShowCrossMediumRemix(false)} />}
+      {showAnalysisHub && <AnalysisHub isOpen={showAnalysisHub} onClose={() => setShowAnalysisHub(false)} />}
+      {showCorpusGap && <CorpusGapAnalyzer isOpen={showCorpusGap} onClose={() => setShowCorpusGap(false)} />}
+      {showSocialExperience && <SocialExperienceGenerator isOpen={showSocialExperience} onClose={() => setShowSocialExperience(false)} />}
 
       <footer className="border-t bg-white px-4 md:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
         <span className="text-center sm:text-left">© 2025 Crank Studio · Playtime v1.0</span>
