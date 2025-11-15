@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useStore } from "../store/useStore";
 import data from "../data/works.json";
 import type { WorkNode } from "../lib/types";
@@ -15,6 +15,14 @@ export default function WorkComparisonPanel() {
     const allWorks = data as WorkNode[];
     return comparisonWorkIds.map(id => allWorks.find(w => w.id === id)).filter(Boolean) as WorkNode[];
   }, [comparisonWorkIds]);
+
+  // Safety check: clear comparison if works can't be found
+  useEffect(() => {
+    if (comparisonWorkIds.length >= 2 && works.length < 2) {
+      console.error('Comparison error: Unable to find works', comparisonWorkIds);
+      clearComparison();
+    }
+  }, [comparisonWorkIds, works.length, clearComparison]);
 
   const comparison = useMemo(() => {
     if (works.length < 2) return null;
@@ -188,7 +196,7 @@ export default function WorkComparisonPanel() {
     }
     
     return insights;
-  }, [comparison, works]);
+  }, [comparison, comparisonWorkIds]);
 
   // Two works selected - show compact badge when collapsed
   if (!isExpanded) {
@@ -204,14 +212,6 @@ export default function WorkComparisonPanel() {
         </span>
       </button>
     );
-  }
-
-  // Safety check before rendering
-  if (works.length >= 2 && (!works[0] || !works[1])) {
-    // If we have 2 IDs but can't find the works, something is wrong
-    console.error('Comparison error: Unable to find works', comparisonWorkIds);
-    clearComparison();
-    return null;
   }
 
   // Two works selected - expanded view
