@@ -10,11 +10,11 @@ export const emotionIcons: Record<string, string> = {
   'anticipation': '🤔',
   'confiance': '🤝',
   
-  // Extended emotions
-  'nostalgie': '🌅',
+  // Extended emotions - Popular emotions with distinctive icons
+  'nostalgie': '🕰️',
   'mélancolie': '🌧️',
-  'fascination': '✨',
-  'sérénité': '😌',
+  'fascination': '🌟',
+  'sérénité': '🧘',
   'anxiété': '😰',
   'tension': '😬',
   'vigilance': '👀',

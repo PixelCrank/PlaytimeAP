@@ -9,9 +9,13 @@ interface ConnectionNode {
   categories: string[];
 }
 
-export default function SerendipityExplorer() {
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function SerendipityExplorer({ isOpen, onClose }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
 
   const all = data as any[];
 
@@ -53,15 +57,7 @@ export default function SerendipityExplorer() {
   const currentWork = selectedId ? all.find(w => w.id === selectedId) : randomWork;
 
   if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition text-sm font-medium shadow-md"
-      >
-        <span className="text-lg">✨</span>
-        <span>Mode Sérendipité</span>
-      </button>
-    );
+    return null;
   }
 
   return (
@@ -77,7 +73,7 @@ export default function SerendipityExplorer() {
             </p>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={onClose}
             className="text-white hover:text-pink-100 text-2xl leading-none"
           >
             ×

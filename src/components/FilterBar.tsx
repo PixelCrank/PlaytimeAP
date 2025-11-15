@@ -20,8 +20,21 @@ export default function FilterBar() {
   const mediumTypes = ['Littérature', 'Cinéma', 'Jeux vidéo', 'Music', 'Art', 'BD'];
 
   const categories = [
-    'Identité', 'Mémoire', 'Temps vécu', 'Cosmique', 'Écologique',
-    'Technologique', 'Humain', 'Dérangé', 'Cyclique', 'Linéaire'
+    'temps vécu',
+    'représentation du temps',
+    'temps et identité',
+    'expérience du temps',
+    'manipulations du temps',
+    'temps et sacré',
+    'nature du temps',
+    'temps et espace',
+    'temps biologique',
+    'temps et rêve',
+    'temps cosmique',
+    'temps géologique',
+    'temps écologique',
+    'manipulation du temps',
+    'temps et expérience'
   ];
 
   const toggleEmotion = (emotion: string) => {

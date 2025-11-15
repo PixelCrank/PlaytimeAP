@@ -44,6 +44,7 @@ export default function App() {
   const [showShareSnapshot, setShowShareSnapshot] = useState(false);
   const [lightboxWorkId, setLightboxWorkId] = useState<string | null>(null);
   const [showPlaylistBuilder, setShowPlaylistBuilder] = useState(false);
+  const [showSerendipity, setShowSerendipity] = useState(false);
   const [quickSearch, setQuickSearch] = useState("");
 
   useEffect(() => {
@@ -420,7 +421,13 @@ export default function App() {
                   <MediumMoodExplorer />
                 </div>
                 
-                <SerendipityExplorer />
+                <button
+                  onClick={() => setShowSerendipity(true)}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:from-pink-600 hover:to-purple-700 transition text-sm font-medium shadow-md"
+                >
+                  <span className="text-lg">✨</span>
+                  <span>Mode Sérendipité</span>
+                </button>
               </div>
             </div>
             
@@ -549,6 +556,7 @@ export default function App() {
         />
       )}
       {showPlaylistBuilder && <VideoPlaylistBuilder onClose={() => setShowPlaylistBuilder(false)} />}
+      {showSerendipity && <SerendipityExplorer isOpen={showSerendipity} onClose={() => setShowSerendipity(false)} />}
 
       <footer className="border-t bg-white px-4 md:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
         <span className="text-center sm:text-left">© 2025 Crank Studio · Playtime v1.0</span>

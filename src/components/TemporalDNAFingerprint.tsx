@@ -14,36 +14,48 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
       { 
         key: 'emotions', 
         label: 'Émotions',
+        icon: '💭',
+        description: `${work.emotions?.length || 0} émotion(s) associée(s)`,
         value: (work.emotions?.length || 0) / 5, // Normalize to 0-1 (max 5 emotions)
         color: '#3b82f6'
       },
       { 
         key: 'categories', 
         label: 'Catégories',
+        icon: '🏷️',
+        description: `${work.categories?.length || 0} catégorie(s) temporelle(s)`,
         value: (work.categories?.length || 0) / 4, // Normalize to 0-1 (max 4 categories)
         color: '#8b5cf6'
       },
       { 
         key: 'complexity', 
         label: 'Complexité',
+        icon: '🧩',
+        description: 'Richesse émotionnelle et thématique',
         value: Math.min(((work.emotions?.length || 0) + (work.categories?.length || 0)) / 8, 1), // Emotional + thematic complexity
         color: '#ec4899'
       },
       { 
         key: 'temporal', 
         label: 'Temporalité',
+        icon: '⏳',
+        description: work.annee ? `Distance temporelle (${work.annee})` : 'Date non spécifiée',
         value: work.annee ? Math.min((2024 - Number(work.annee)) / 200, 1) : 0.5, // Age factor
         color: '#f59e0b'
       },
       { 
         key: 'identity', 
         label: 'Identité',
+        icon: '🪞',
+        description: 'Exploration de l\'identité temporelle',
         value: work.categories?.some(c => c.toLowerCase().includes('identité')) ? 1 : 0,
         color: '#10b981'
       },
       { 
         key: 'media', 
         label: 'Média',
+        icon: '🔗',
+        description: work.lien ? 'Lien média disponible' : 'Pas de lien média',
         value: work.lien ? 1 : 0,
         color: '#06b6d4'
       },
@@ -103,7 +115,7 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
               
               {/* Labels */}
               {showLabels && (
-                <>
+                <g className="cursor-help">
                   {/* Label background */}
                   <circle
                     cx={endX}
@@ -114,18 +126,20 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
                     strokeWidth="2"
                   />
                   
-                  {/* Label text */}
+                  {/* Icon as label */}
                   <text
                     x={endX}
                     y={endY}
                     textAnchor="middle"
                     dominantBaseline="middle"
-                    className="text-[8px] font-semibold"
-                    fill={dim.color}
+                    className="text-[14px]"
                   >
-                    {dim.label.slice(0, 3)}
+                    {dim.icon}
                   </text>
-                </>
+                  
+                  {/* Tooltip on hover */}
+                  <title>{dim.label}: {dim.description}</title>
+                </g>
               )}
             </g>
           );
@@ -171,15 +185,22 @@ export default function TemporalDNAFingerprint({ work, size = 200, showLabels = 
       </svg>
 
       {showLabels && (
-        <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+        <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
           {fingerprint.map((dim) => (
-            <div key={dim.key} className="flex items-center gap-2">
-              <div 
-                className="w-3 h-3 rounded-full" 
-                style={{ backgroundColor: dim.color }}
-              />
-              <span className="text-slate-700">{dim.label}</span>
-              <span className="text-slate-400 ml-auto">{Math.round(dim.value * 100)}%</span>
+            <div 
+              key={dim.key} 
+              className="flex items-center gap-2 group cursor-help"
+              title={dim.description}
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="text-base">{dim.icon}</span>
+                <div 
+                  className="w-2 h-2 rounded-full" 
+                  style={{ backgroundColor: dim.color }}
+                />
+              </div>
+              <span className="text-slate-700 font-medium">{dim.label}</span>
+              <span className="text-slate-400 ml-auto font-mono">{Math.round(dim.value * 100)}%</span>
             </div>
           ))}
         </div>
