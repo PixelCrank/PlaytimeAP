@@ -632,7 +632,8 @@ export default function App() {
       {showPlaylistBuilder && <VideoPlaylistBuilder onClose={() => setShowPlaylistBuilder(false)} />}
       {showSerendipity && <SerendipityExplorer isOpen={showSerendipity} onClose={() => setShowSerendipity(false)} />}
       
-      {/* Analysis & Research Modals */}
+      {/* Collection & Analysis Modals */}
+      <CollectionPanel isOpen={showCollection} onClose={() => setShowCollection(false)} />
       {showEmotionalTrajectory && <EmotionalTrajectoryTimeline isOpen={showEmotionalTrajectory} onClose={() => setShowEmotionalTrajectory(false)} />}
       {showCrossMediumRemix && <CrossMediumRemix isOpen={showCrossMediumRemix} onClose={() => setShowCrossMediumRemix(false)} />}
       {showAnalysisHub && <AnalysisHub isOpen={showAnalysisHub} onClose={() => setShowAnalysisHub(false)} />}
