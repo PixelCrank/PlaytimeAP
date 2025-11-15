@@ -27,6 +27,7 @@ export default function CorpusConversation() {
   ]);
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [creativeOutput, setCreativeOutput] = useState<{ title: string; content: string; emoji: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const setFilters = useStore(s => s.setFilters);
   const setSelectedId = useStore(s => s.setSelectedId);
@@ -245,15 +246,18 @@ export default function CorpusConversation() {
     const work3 = works.length > 2 ? pick(works.filter(w => w.id !== work1.id && w.id !== work2.id)) : work2;
 
     let content = '';
+    let title = '';
+    let emoji = '';
 
     if (type === 'script') {
+      title = 'Concept de scénario généré';
+      emoji = '🎬';
       const sharedEmotions = work1.emotions?.filter(e => work2.emotions?.includes(e)) || [];
       const emotion = sharedEmotions[0] || work1.emotions?.[0] || 'mélancolie';
       const decade1 = Math.floor((work1.anneeNum || 2000) / 10) * 10;
       const decade2 = Math.floor((work2.anneeNum || 2000) / 10) * 10;
 
-      content = `🎬 **Concept de scénario généré**\n\n`;
-      content += `**Titre provisoire**: "Entre ${decade1} et ${decade2}"\n\n`;
+      content = `**Titre provisoire**: "Entre ${decade1} et ${decade2}"\n\n`;
       content += `**Prémisse**: Un personnage découvre un objet mystérieux qui le connecte à deux époques (${decade1}s et ${decade2}s). `;
       content += `Inspiré par l'atmosphère de "${work1.titre}" (${work1.annee}) et la structure narrative de "${work2.titre}" (${work2.annee}), `;
       content += `le récit explore **${emotion}** à travers le temps.\n\n`;
@@ -270,8 +274,7 @@ export default function CorpusConversation() {
       const allCategories = works.flatMap(w => w.categories || []);
       const uniqueCategories = [...new Set(allCategories)].slice(0, 3);
 
-      content = `🎨 **Proposition de projet artistique**\n\n`;
-      content += `**Titre**: "Archive émotionnelle : ${topEmotions.join(', ')}"\n\n`;
+      content = `**Titre**: "Archive émotionnelle : ${topEmotions.join(', ')}"\n\n`;
       content += `**Concept**: Installation interactive explorant ${topEmotions[0]} à travers ${works.length} œuvres culturelles. `;
       content += `Visiteurs naviguent dans un espace physique où chaque zone représente une décennie, `;
       content += `avec des fragments de "${work1.titre}", "${work2.titre}", "${work3.titre}" et d'autres œuvres qui dialoguent.\n\n`;
@@ -286,8 +289,7 @@ export default function CorpusConversation() {
       const targetMediums = ['Jeux vidéo', 'Cinéma', 'Art visuel', 'Série TV'].filter(m => m !== source.type);
       const target = pick(targetMediums);
 
-      content = `🔄 **Concept d'adaptation transmédia**\n\n`;
-      content += `**Source**: "${source.titre}" (${source.annee}, ${source.type})\n`;
+      content = `**Source**: "${source.titre}" (${source.annee}, ${source.type})\n`;
       content += `**Vers**: ${target}\n\n`;
       content += `**Vision créative**: `;
       
@@ -311,8 +313,7 @@ export default function CorpusConversation() {
       content += `\n\n**Pourquoi ça marcherait**: L'exploration de ${source.categories?.slice(0, 2).join(' et ') || 'temps et identité'} dans "${source.titre}" se prête parfaitement à ${target === 'Jeux vidéo' ? 'l\'interactivité' : target === 'Cinéma' ? 'la narration visuelle' : 'l\'expérience immersive'}.`;
     }
     else if (type === 'collaboration') {
-      content = `🤝 **Collaboration impossible**\n\n`;
-      content += `**Concept**: Et si ${work1.createur || 'le créateur de "' + work1.titre + '"'} rencontrait "${work2.titre}" ?\n\n`;
+      content = `**Concept**: Et si ${work1.createur || 'le créateur de "' + work1.titre + '"'} rencontrait "${work2.titre}" ?\n\n`;
       content += `**Pitch**: Imaginez ${work1.createur || 'le créateur de "' + work1.titre + '"'} (${work1.annee}) `;
       content += `découvrant "${work2.titre}" (${work2.annee}). `;
       
@@ -323,7 +324,7 @@ export default function CorpusConversation() {
         content += `Séparés par ${yearDiff} ans, `;
       }
       
-      content += `ces deux œuvres partagent ${work1.emotions?.filter(e => work2.emotions?.includes(e)).length || 'plusieurs'} émotions communes.\n\n`;
+      content += `ces deux œuvres partagent ${work1.emotions?.filter((e: string) => work2.emotions?.includes(e)).length || 'plusieurs'} émotions communes.\n\n`;
       content += `**Projet résultant**: Une œuvre hybride ${work1.type}/${work2.type} qui explore `;
       content += `${[...new Set([...(work1.emotions || []), ...(work2.emotions || [])])].slice(0, 2).join(' et ')} `;
       content += `à travers une lentille ${work3.categories?.[0] || 'temporelle'}.\n\n`;
@@ -331,11 +332,7 @@ export default function CorpusConversation() {
       content += `**Inspiration**: Ce projet synthétiserait l'approche de "${work1.titre}" avec l'univers de "${work2.titre}" pour créer une expérience inédite.`;
     }
 
-    setMessages(prev => [...prev, {
-      id: Date.now().toString(),
-      type: 'assistant',
-      content
-    }]);
+    setCreativeOutput({ title, content, emoji });
   };
 
   const suggestions = [
@@ -560,6 +557,74 @@ export default function CorpusConversation() {
           </button>
         </div>
       </form>
+
+      {/* Creative Output Modal */}
+      {creativeOutput && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4" onClick={() => setCreativeOutput(null)}>
+          <div 
+            className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-pink-600 via-purple-600 to-indigo-600 px-6 py-5 text-white shrink-0">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl">{creativeOutput.emoji}</span>
+                  <h2 className="text-2xl font-bold">{creativeOutput.title}</h2>
+                </div>
+                <button
+                  onClick={() => setCreativeOutput(null)}
+                  className="p-2 hover:bg-white/20 rounded-lg transition"
+                  title="Fermer"
+                >
+                  <span className="text-2xl">✕</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="p-8 overflow-y-auto flex-1 prose prose-slate max-w-none">
+              {creativeOutput.content.split('\n').map((line, i) => {
+                if (line.startsWith('**') && line.endsWith('**')) {
+                  const text = line.slice(2, -2);
+                  if (text.includes(':')) {
+                    const [label, ...rest] = text.split(':');
+                    return (
+                      <div key={i} className="mb-3">
+                        <span className="font-bold text-indigo-900">{label}:</span>
+                        <span className="text-slate-700">{rest.join(':')}</span>
+                      </div>
+                    );
+                  }
+                  return <h3 key={i} className="text-xl font-bold text-slate-900 mt-6 mb-2">{text}</h3>;
+                }
+                if (line.trim() === '') {
+                  return <div key={i} className="h-2" />;
+                }
+                return <p key={i} className="text-slate-700 leading-relaxed mb-3">{line}</p>;
+              })}
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 bg-slate-50 border-t shrink-0 flex justify-between items-center">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(creativeOutput.content);
+                }}
+                className="px-4 py-2 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg transition"
+              >
+                📋 Copier le texte
+              </button>
+              <button
+                onClick={() => setCreativeOutput(null)}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

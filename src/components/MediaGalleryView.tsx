@@ -4,14 +4,10 @@ import works from "../data/works.json";
 import type { WorkNode } from "../lib/types";
 import { analyzeMediaUrl, type MediaType } from "../lib/media";
 import { buildPredicateWithCentury } from "../lib/filters";
-import { getMediumIcon } from "../lib/mediumIcons";
-import { typeColor } from "../lib/colors";
 import EmptyStateWithSuggestions from "./EmptyStateWithSuggestions";
 import WorkContextMenu from "./WorkContextMenu";
 
 const entries = works as WorkNode[];
-
-type MediumFilter = 'all' | string;
 
 export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (workId: string) => void }) {
   const filters = useStore(s => s.filters);
@@ -20,7 +16,6 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
   const bookmarked = useStore(s => s.bookmarked);
   const toggleBookmark = useStore(s => s.toggleBookmark);
   
-  const [mediumFilter, setMediumFilter] = useState<MediumFilter>('all');
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'emotion'>('date');
   const [contextMenu, setContextMenu] = useState<{ workId: string; x: number; y: number } | null>(null);
 
@@ -36,15 +31,9 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
       .filter(w => w.mediaInfo !== null);
   }, [filters, centuryFilter]);
 
-  // Apply medium type filter
-  const filteredByType = useMemo(() => {
-    if (mediumFilter === 'all') return worksWithMedia;
-    return worksWithMedia.filter(w => w.type === mediumFilter);
-  }, [worksWithMedia, mediumFilter]);
-
   // Sort works
   const sortedWorks = useMemo(() => {
-    const sorted = [...filteredByType];
+    const sorted = [...worksWithMedia];
     switch (sortBy) {
       case 'title':
         return sorted.sort((a, b) => a.titre.localeCompare(b.titre));
@@ -62,29 +51,12 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
           return aYear - bYear;
         });
     }
-  }, [filteredByType, sortBy]);
-
-  // Get unique medium types from filtered works and their counts
-  const mediumCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    worksWithMedia.forEach(w => {
-      const type = w.type || 'Autre';
-      counts.set(type, (counts.get(type) || 0) + 1);
-    });
-    return counts;
-  }, [worksWithMedia]);
-
-  // Get all unique medium types sorted by count
-  const mediumTypes = useMemo(() => {
-    return Array.from(mediumCounts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .map(([type]) => type);
-  }, [mediumCounts]);
+  }, [worksWithMedia, sortBy]);
 
   return (
     <div className="h-full flex flex-col bg-slate-50">
-      {/* Filter Bar */}
-      <div className="bg-white border-b px-4 md:px-6 py-3 md:py-4 space-y-3">
+      {/* Gallery Header */}
+      <div className="bg-white border-b px-4 md:px-6 py-3 md:py-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-2 md:gap-3">
             <h2 className="text-base md:text-lg font-bold text-slate-800">🎬 Galerie Média</h2>
@@ -105,39 +77,6 @@ export default function MediaGalleryView({ onOpenLightbox }: { onOpenLightbox: (
               <option value="emotion">Émotion</option>
             </select>
           </div>
-        </div>
-
-        {/* Medium Type Filters */}
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => setMediumFilter('all')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-              mediumFilter === 'all'
-                ? 'bg-violet-600 text-white shadow-md'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            Tous ({worksWithMedia.length})
-          </button>
-          {mediumTypes.map((type) => {
-            const count = mediumCounts.get(type) || 0;
-            const color = typeColor[type] || '#64748b';
-            const isActive = mediumFilter === type;
-            return (
-              <button
-                key={type}
-                onClick={() => setMediumFilter(type)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
-                  isActive
-                    ? 'text-white shadow-md'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                }`}
-                style={isActive ? { backgroundColor: color } : {}}
-              >
-                {getMediumIcon(type)} {type} ({count})
-              </button>
-            );
-          })}
         </div>
       </div>
 

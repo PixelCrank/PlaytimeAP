@@ -1,21 +1,18 @@
 // Medium type icons for visual identification
 export const mediumIcons: Record<string, string> = {
+  'Littérature': '📚',
+  'Cinéma': '🎬',
+  'Jeux vidéo': '🎮',
+  'Music': '🎵',
+  'Art': '🎨',
+  'BD': '📖',
+  // Fallback aliases
   'Livre': '📚',
   'Film': '🎬',
   'Jeu vidéo': '🎮',
   'Musique': '🎵',
-  'Philosophie': '🧠',
   'Art visuel': '🎨',
-  'Série TV': '📺',
-  'Podcast': '🎙️',
-  'Théâtre': '🎭',
   'Bande dessinée': '📖',
-  'Photographie': '📷',
-  'Sculpture': '🗿',
-  'Architecture': '🏛️',
-  'Danse': '💃',
-  'Opéra': '🎼',
-  'Performance': '🎪',
 };
 
 // Get icon for medium type

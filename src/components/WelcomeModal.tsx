@@ -258,21 +258,21 @@ export default function WelcomeModal({ onClose }: WelcomeModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6 text-white">
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-8 py-6 text-white shrink-0">
           <div className="text-5xl mb-3 text-center">{currentStep.emoji}</div>
           <h2 className="text-2xl font-bold text-center">{currentStep.title}</h2>
           <p className="text-indigo-100 text-center mt-2">{currentStep.description}</p>
         </div>
 
         {/* Content */}
-        <div className="p-8">
+        <div className="p-8 overflow-y-auto flex-1">
           {currentStep.content}
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-6 bg-slate-50 flex items-center justify-between border-t">
+        <div className="px-8 py-6 bg-slate-50 flex items-center justify-between border-t shrink-0">
           <div className="flex gap-2">
             {steps.map((_, idx) => (
               <div

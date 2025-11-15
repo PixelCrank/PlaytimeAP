@@ -4,7 +4,7 @@ import TemporalTimelineView from "./components/TemporalTimelineView";
 import EmotionMapCanvas from "./components/EmotionMapCanvas";
 import WorkDetailModal from "./components/WorkDetailModal";
 import EmotionLegend from "./components/EmotionLegend";
-import EmotionRangeFilter from "./components/EmotionRangeFilter";
+import FilterBar from "./components/FilterBar";
 import InsightsPanel from "./components/InsightsPanel";
 import SerendipityExplorer from "./components/SerendipityExplorer";
 import CorpusGapAnalyzer from "./components/CorpusGapAnalyzer";
@@ -25,8 +25,6 @@ import MediaLightbox from "./components/MediaLightbox";
 import VideoPlaylistBuilder from "./components/VideoPlaylistBuilder";
 import EmotionalClusters from "./components/EmotionalClusters";
 import MediumMoodExplorer from "./components/MediumMoodExplorer";
-import MegaCategoryFilter from "./components/MegaCategoryFilter";
-import MediumFilter from "./components/MediumFilter";
 import { useStore } from "./store/useStore";
 
 export default function App() {
@@ -426,28 +424,7 @@ export default function App() {
               </div>
             </div>
             
-            {/* 2. REFINE - Advanced filtering (collapsed by default) */}
-            <div className="border-t-2 pt-5">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="w-full flex items-center justify-between text-left hover:bg-slate-50 rounded-lg p-3 transition group"
-              >
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                  <span className="text-xl">🎚️</span>
-                  Affiner
-                  <span className="text-xs font-normal text-slate-500">({showFilters ? 'filtres' : 'ouvrir'})</span>
-                </h2>
-                <span className="text-slate-400 text-lg group-hover:text-slate-600">{showFilters ? "−" : "+"}</span>
-              </button>
-              
-              {showFilters && (
-                <div className="mt-4 space-y-4">
-                  <EmotionRangeFilter />
-                  <MediumFilter />
-                  <MegaCategoryFilter />
-                </div>
-              )}
-            </div>
+            
             
             {/* 3. COLLECTION & TOOLS - Combined collapsed section */}
             <div className="border-t-2 pt-5">
@@ -509,20 +486,26 @@ export default function App() {
           </div>
         </aside>
 
-        <main className="flex-1 relative lg:ml-0">
-          <div className="absolute inset-0">
-            {view === "constellation" ? (
-              <TemporalTimelineView />
-            ) : view === "emotion" ? (
-              <>
-                <EmotionMapCanvas />
-                <div className="absolute bottom-6 left-6 right-6 z-10">
-                  <EmotionLegend />
-                </div>
-              </>
-            ) : (
-              <MediaGalleryView onOpenLightbox={(workId) => setLightboxWorkId(workId)} />
-            )}
+        <main className="flex-1 relative lg:ml-0 flex flex-col">
+          {/* Filter Bar - Above viewport */}
+          <FilterBar />
+          
+          {/* Main content area */}
+          <div className="flex-1 relative">
+            <div className="absolute inset-0">
+              {view === "constellation" ? (
+                <TemporalTimelineView />
+              ) : view === "emotion" ? (
+                <>
+                  <EmotionMapCanvas />
+                  <div className="absolute bottom-6 left-6 right-6 z-10">
+                    <EmotionLegend />
+                  </div>
+                </>
+              ) : (
+                <MediaGalleryView onOpenLightbox={(workId) => setLightboxWorkId(workId)} />
+              )}
+            </div>
           </div>
           <WorkDetailModal />
         </main>
