@@ -252,7 +252,7 @@ export default function CorpusConversation() {
     if (type === 'script') {
       title = 'Concept de scénario généré';
       emoji = '🎬';
-      const sharedEmotions = work1.emotions?.filter(e => work2.emotions?.includes(e)) || [];
+      const sharedEmotions = work1.emotions?.filter((e: string) => work2.emotions?.includes(e)) || [];
       const emotion = sharedEmotions[0] || work1.emotions?.[0] || 'mélancolie';
       const decade1 = Math.floor((work1.anneeNum || 2000) / 10) * 10;
       const decade2 = Math.floor((work2.anneeNum || 2000) / 10) * 10;
