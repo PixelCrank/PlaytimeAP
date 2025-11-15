@@ -32,6 +32,7 @@ export default function App() {
   const setFilters = useStore((state) => state.setFilters);
   const realm = useStore((state) => state.realm);
   const centuryFilter = useStore((state) => state.centuryFilter);
+  const bookmarked = useStore((state) => state.bookmarked);
   
   const [view, setView] = useState<"constellation" | "emotion" | "gallery">("constellation");
   const [showWelcome, setShowWelcome] = useState(false);
@@ -47,6 +48,7 @@ export default function App() {
   const [showSerendipity, setShowSerendipity] = useState(false);
   const [showEmotionalTrajectory, setShowEmotionalTrajectory] = useState(false);
   const [showCrossMediumRemix, setShowCrossMediumRemix] = useState(false);
+  const [showCollection, setShowCollection] = useState(false);
   const [showAnalysisHub, setShowAnalysisHub] = useState(false);
   const [showCorpusGap, setShowCorpusGap] = useState(false);
   const [showSocialExperience, setShowSocialExperience] = useState(false);
@@ -479,7 +481,20 @@ export default function App() {
                   {/* Collection */}
                   <div>
                     <h3 className="text-xs font-semibold text-slate-600 uppercase tracking-wide mb-2">Collection</h3>
-                    <CollectionPanel />
+                    <button
+                      onClick={() => setShowCollection(true)}
+                      className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition text-sm font-medium shadow-md"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">⭐</span>
+                        <span>Ma Collection</span>
+                      </div>
+                      {bookmarked.size > 0 && (
+                        <span className="bg-white/30 px-2 py-0.5 rounded-full text-xs font-bold">
+                          {bookmarked.size}
+                        </span>
+                      )}
+                    </button>
                     <div className="mt-2 space-y-2">
                       <button
                         onClick={() => setShowVisitHistory(true)}

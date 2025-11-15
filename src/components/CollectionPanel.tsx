@@ -5,8 +5,12 @@ import type { Work } from "../lib/types";
 
 type SortOption = "recent" | "title" | "year" | "emotion";
 
-export default function CollectionPanel() {
-  const [isOpen, setIsOpen] = useState(false);
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function CollectionPanel({ isOpen, onClose }: Props) {
   const bookmarked = useStore((s) => s.bookmarked);
   const toggleBookmark = useStore((s) => s.toggleBookmark);
   const setSelectedId = useStore((s) => s.setSelectedId);
@@ -89,24 +93,7 @@ export default function CollectionPanel() {
     return Array.from(emotions).sort();
   }, [bookmarkedWorks]);
 
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="w-full flex items-center justify-between gap-2 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition text-sm font-medium shadow-md"
-      >
-        <div className="flex items-center gap-2">
-          <span className="text-lg">⭐</span>
-          <span>Ma Collection</span>
-        </div>
-        {bookmarked.size > 0 && (
-          <span className="bg-white/30 px-2 py-0.5 rounded-full text-xs font-bold">
-            {bookmarked.size}
-          </span>
-        )}
-      </button>
-    );
-  }
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -122,7 +109,7 @@ export default function CollectionPanel() {
             </p>
           </div>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={onClose}
             className="text-white hover:text-purple-100 text-2xl leading-none"
           >
             ×
@@ -208,7 +195,7 @@ export default function CollectionPanel() {
                           className="font-bold text-slate-800 text-sm leading-tight cursor-pointer hover:text-purple-600"
                           onClick={() => {
                             setSelectedId(work.id);
-                            setIsOpen(false);
+                            onClose();
                           }}
                         >
                           {work.titre}
